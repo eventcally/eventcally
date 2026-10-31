@@ -52,28 +52,6 @@ async function assertRequired(page, fieldId) {
   await assertInvalid(page, fieldId, "Pflichtfeld");
 }
 
-async function select2(page, selectId, textToEnter, expectedText = null, expectedValue = null) {
-  const container = page.locator(`#select2-${selectId}-container`);
-  await container.click();
-
-  const input = page.locator(`input[aria-controls="select2-${selectId}-results"]`);
-  await input.pressSequentially(textToEnter, { delay: 500 });
-  await input.press("Enter");
-
-  if (expectedText) {
-    // select2 renders a "×" clear affordance in front of the label for some
-    // widget variants, so either form is acceptable.
-    await expect(async () => {
-      const text = await container.textContent();
-      expect([expectedText, `×${expectedText}`]).toContain(text);
-    }).toPass();
-  }
-
-  if (expectedValue) {
-    await expect(page.locator(`#${selectId}`)).toHaveValue(expectedValue);
-  }
-}
-
 /**
  * Picks an option in an `AppTypeahead` (Vue 3 pages): types into `#<inputId>`, waits for the
  * lookup and clicks the option with `expectedText`.
@@ -86,22 +64,6 @@ async function typeahead(page, inputId, textToEnter, expectedText) {
 }
 
 /**
- * Picks an option in an ajax multi-select select2. Unlike the single variant it renders no
- * `#select2-<id>-container`; the search field lives inside the selection that follows `#<id>`.
- */
-async function select2Multiple(page, selectId, textToEnter, expectedText) {
-  const selection = page.locator(`#${selectId} + .select2 .select2-selection--multiple`);
-  await selection.click();
-
-  const input = selection.locator("input.select2-search__field");
-  await input.pressSequentially(textToEnter, { delay: 500 });
-  await expect(page.locator(`#select2-${selectId}-results`)).toContainText(expectedText);
-  await input.press("Enter");
-
-  await expect(selection.locator("li.select2-selection__choice")).toContainText(expectedText);
-}
-
-/**
  * Asserts that ANY element in the matched set contains the text. Playwright's
  * `toContainText` on a locator resolving to several elements is a strict-mode
  * violation instead, so selectors like `div.alert` would otherwise break as soon
@@ -111,117 +73,11 @@ async function shouldContain(locator, text) {
   await expect(locator.filter({ hasText: text }).first()).toBeAttached();
 }
 
-async function inputsShouldHaveSameValue(page, input1, input2) {
-  const value = await page.locator(input1).inputValue();
-  await expect(page.locator(input2)).toHaveValue(value);
-}
-
 async function screenshotDatepicker(page, elementId, screenshotName = "datepicker") {
   await page.locator(elementId).click();
   await expect(page.locator("#ui-datepicker-div")).toBeVisible();
   await page.locator(".ui-datepicker-next > .ui-icon").click();
   await screenshot(page, screenshotName);
-}
-
-/**
- * jQuery UI datepicker + timepicker + the recurrence modal, driven almost
- * entirely through visibility toggling.
- */
-async function checkEventStartEnd(page, update = false, recurrence = false, prefix = "") {
-  const id = (suffix) => page.locator(`#${prefix}${suffix}`);
-  // A second date definition adds a second `.modal-recurrence`, so every
-  // `:visible` selector in the original has to stay scoped to the open one.
-  const openModal = page.locator(".modal-recurrence").filter({ visible: true }).first();
-
-  if (update && recurrence) {
-    await expect(id("single-event-container")).toBeHidden();
-    await expect(id("recc-event-container")).toBeVisible();
-    await page.locator(`div[data-prefix="${prefix}"] [name="riedit"]`).click();
-  } else {
-    await checkEventAllday(page, prefix);
-
-    await id("start-user").click();
-    await expect(page.locator("#ui-datepicker-div")).toBeVisible();
-    await page.locator("#ui-datepicker-div a.ui-state-default").first().click(); // select first date
-    await expect(page.locator("#ui-datepicker-div")).toBeHidden();
-
-    await id("start-time").click();
-    const timepicker = page.locator(".ui-timepicker-wrapper").filter({ visible: true }).first();
-    await expect(timepicker).toBeVisible();
-    await timepicker.locator('.ui-timepicker-am[data-time="0"]').click(); // select 00:00
-    await expect(page.locator("#ui-datepicker-div")).toBeHidden();
-
-    await expect(id("end-container")).toBeHidden();
-    await id("end-show-container").locator(".show-link").click();
-    await expect(id("end-show-container")).toBeHidden();
-    await expect(id("end-container")).toBeVisible();
-    await inputsShouldHaveSameValue(page, `#${prefix}start-user`, `#${prefix}end-user`);
-    await expect(id("end-time")).toHaveValue("03:00");
-    await id("end-hide-container").locator(".hide-link").click();
-    await expect(id("end-show-container")).toBeVisible();
-    await expect(id("end-container")).toBeHidden();
-    await expect(id("end-user")).toHaveValue("");
-    await expect(id("end-time")).toHaveValue("");
-
-    await expect(id("recc-event-container")).toBeHidden();
-    await id("recc-button").click();
-  }
-
-  await expect(openModal).toBeVisible();
-  // The retrying value assertions below wait for the modal to copy the start
-  // values across.
-  await inputsShouldHaveSameValue(page, `#${prefix}start-user`, `#${prefix}recc-start-user`);
-  await inputsShouldHaveSameValue(page, `#${prefix}start-time`, `#${prefix}recc-start-time`);
-  await expect(id("rirtemplate").locator("option")).toHaveCount(4);
-  await expect(openModal.locator('input[value="BYENDDATE"]')).toBeChecked();
-  await openModal.locator(".modal-footer .btn-primary").click();
-
-  await expect(id("single-event-container")).toBeHidden();
-  await expect(id("recc-event-container")).toBeVisible();
-
-  if (recurrence === false) {
-    await page.locator('[name="ridelete"]').filter({ visible: true }).first().click();
-    await expect(id("single-event-container")).toBeVisible();
-    await expect(id("recc-event-container")).toBeHidden();
-    await expect(id("end-container")).toBeHidden();
-  }
-}
-
-async function checkEventAllday(page, prefix = "") {
-  const id = (suffix) => page.locator(`#${prefix}${suffix}`);
-  const openModal = page.locator(".modal-recurrence").filter({ visible: true }).first();
-
-  // Turn on
-  await id("allday").click();
-  await expect(id("end-container")).toBeVisible();
-  await expect(id("start-time")).toBeHidden();
-  await expect(id("end-time")).toBeHidden();
-
-  // Recurrence
-  await id("recc-button").click();
-  await expect(openModal).toBeVisible();
-  await expect(id("recc-allday")).toBeChecked();
-  await expect(id("recc-start-time")).toBeHidden();
-  await expect(id("recc-fo-end-time")).toBeHidden();
-
-  await id("recc-allday").click();
-  await expect(id("recc-start-time")).toBeVisible();
-  await expect(id("recc-fo-end-time")).toBeVisible();
-  await openModal.locator(".modal-footer .btn-secondary").click();
-
-  // Turn off
-  await id("allday").click();
-  await expect(id("start-time")).toBeVisible();
-  await expect(id("end-time")).toBeVisible();
-
-  // Turn again
-  await id("allday").click();
-  await expect(id("end-container")).toBeVisible();
-
-  // Removing end turns off allday
-  await id("end-hide-container").locator(".hide-link").click();
-  await expect(id("allday")).not.toBeChecked();
-  await expect(id("start-time")).toBeVisible();
 }
 
 /**
@@ -320,13 +176,8 @@ module.exports = {
   assertValid,
   assertInvalid,
   assertRequired,
-  select2,
-  select2Multiple,
   typeahead,
-  inputsShouldHaveSameValue,
   screenshotDatepicker,
-  checkEventStartEnd,
   checkVueEventStartEnd,
-  checkEventAllday,
   authorize,
 };

@@ -1,12 +1,38 @@
-def test_get_pagination_urls(client, seeder, app, utils):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_get_pagination_urls(app):
+    from types import SimpleNamespace
 
-    for i in range(101):
-        seeder.upsert_event_organizer(admin_unit_id, "Organizer %d" % i)
+    from project.presentation.web.views.utils import get_pagination_urls
 
-    utils.get_endpoint_ok(
-        "manage_admin_unit.event_organizers", id=admin_unit_id, page=2, per_page=10
+    pagination = SimpleNamespace(
+        page=2,
+        pages=5,
+        total=50,
+        has_prev=True,
+        has_next=True,
+        prev_num=1,
+        next_num=3,
     )
+
+    with app.test_request_context("/eventdates?per_page=10"):
+        result = get_pagination_urls(pagination)
+
+    assert result["page"] == 2
+    assert result["pages"] == 5
+    assert result["total"] == 50
+    assert "page=1" in result["prev_url"]
+    assert "page=1" in result["first_url"]
+    assert "page=3" in result["next_url"]
+    assert "page=5" in result["last_url"]
+    assert "per_page=10" in result["next_url"]
+    assert get_pagination_urls(None) == {}
+
+
+def test_handle_sql_error_without_orig():
+    from sqlalchemy.exc import SQLAlchemyError
+
+    from project.presentation.web.views.utils import handleSqlError
+
+    assert handleSqlError(SQLAlchemyError("boom")) == "boom"
 
 
 def test_truncate():
@@ -148,3 +174,48 @@ def test_create_ical_events_for_event(client, app, db, utils, seeder):
 
         ical = ical_event.to_ical()
         assert ical
+
+
+def test_handle_sql_error_without_unique_violation():
+    from types import SimpleNamespace
+
+    from sqlalchemy.exc import SQLAlchemyError
+
+    from project.presentation.web.views.utils import handleSqlError
+
+    error = SQLAlchemyError("boom")
+    error.orig = SimpleNamespace(message="Nope", pgcode="23503")
+
+    assert handleSqlError(error) == "Nope"
+
+
+def test_flash_errors_with_prefix(app):
+    from types import SimpleNamespace
+
+    from project.presentation.web.views.utils import flash_errors
+
+    form = SimpleNamespace(
+        errors={"name": ["Too short"]},
+        name=SimpleNamespace(label=SimpleNamespace(text="Name")),
+    )
+
+    with app.test_request_context("/"):
+        from flask import session
+
+        flash_errors(form, "Place")
+        flashed = session["_flashes"]
+
+    assert flashed == [("danger", "Fehler im Feld Place Name: Too short")]
+
+
+def test_flash_message_defaults_the_link_text(app):
+    from project.presentation.web.views.utils import flash_message
+
+    with app.test_request_context("/"):
+        from flask import session
+
+        flash_message("Saved", "/somewhere")
+        category, message = session["_flashes"][0]
+
+    assert category == "success"
+    assert str(message) == 'Saved &ndash; <a href="/somewhere">Anzeigen</a>'

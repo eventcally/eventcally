@@ -1,9 +1,7 @@
 const { test, expect } = require("../fixtures");
 const {
   screenshot,
-  select2,
   typeahead,
-  checkEventStartEnd,
   checkVueEventStartEnd,
   shouldContain,
 } = require("../fixtures/helpers");
@@ -15,11 +13,6 @@ test.describe("Event", () => {
       await login();
       const adminUnitId = createAdminUnit();
       await page.goto(`/manage/admin_unit/${adminUnitId}/event/create`);
-
-      await expect(page.locator("[data-test=legacy-form-link] a")).toHaveAttribute(
-        "href",
-        `/manage/admin_unit/${adminUnitId}/legacy/event/create`,
-      );
 
       await page.locator("#name").fill("Stadtfest");
       await checkVueEventStartEnd(page, 0, recurrence);
@@ -91,10 +84,6 @@ test.describe("Event", () => {
       .locator("[data-test=chip]");
 
     await page.goto(updateUrl);
-    await expect(page.locator("[data-test=legacy-form-link] a")).toHaveAttribute(
-      "href",
-      `/manage/admin_unit/${adminUnitId}/legacy/event/${eventId}/update`,
-    );
     await page.locator("#co_organizers").pressSequentially("Mein V");
     await page.locator("[data-test=option]", { hasText: "Mein Veranstalter" }).click();
     await expect(coOrganizerChips).toContainText("Mein Veranstalter");
@@ -129,21 +118,6 @@ test.describe("Event", () => {
 
     await page.goto(`/manage/admin_unit/${adminUnitId}/events`);
     await shouldContain(page.locator("main .badge"), "Entwurf");
-  });
-
-  test("creates event with the previous form", async ({ page, login }) => {
-    await login();
-    const adminUnitId = createAdminUnit();
-    await page.goto(`/manage/admin_unit/${adminUnitId}/legacy/event/create`);
-
-    await page.locator("#name").fill("Stadtfest");
-    await checkEventStartEnd(page, false, false, "date_definitions-0-");
-    await select2(page, "event_place", "Gos", "Goslar, 38640 Goslar");
-    await select2(page, "organizer", "Mei", "Meine Crew");
-
-    await page.locator("#submit").click();
-    await expect(page).toHaveURL(/\/actions/);
-    await shouldContain(page.locator("div.alert"), "Veranstaltung erfolgreich veröffentlicht");
   });
 
   test("read and actions", async ({ page, login }) => {

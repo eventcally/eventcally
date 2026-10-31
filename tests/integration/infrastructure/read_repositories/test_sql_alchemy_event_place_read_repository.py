@@ -9,7 +9,6 @@ from sqlalchemy import text
 from project.application.queries import (
     EventPlaceSort,
     ListEventPlacesQuery,
-    ListEventPlaceSuggestionsQuery,
     LookupEventPlacesQuery,
     PageRequest,
     TrackableCriteria,
@@ -90,14 +89,6 @@ def _list(read_repo, admin_unit_id, **kwargs):
     return read_repo(
         "list", ListEventPlacesQuery(admin_unit_id=admin_unit_id, **kwargs)
     )
-
-
-def _suggest(read_repo, admin_unit_id, **kwargs):
-    result = read_repo(
-        "list_suggestions",
-        ListEventPlaceSuggestionsQuery(admin_unit_id=admin_unit_id, **kwargs),
-    )
-    return [item.name for item in result]
 
 
 def test_organization_exists(read_repo, places):
@@ -404,53 +395,6 @@ def test_is_name_taken(read_repo, places, name, exclude, expected):
 
 def test_is_name_taken_for_unknown_organization(read_repo, places):
     assert read_repo("is_name_taken", -1, "Alpha") is False
-
-
-def test_suggestions_rank_prefix_matches_first(read_repo, places):
-    admin_unit_id, _, _ = places
-
-    assert _suggest(read_repo, admin_unit_id, keyword="halle") == [
-        "halle am See",
-        "Stadthalle",
-        "Zentrale Halle",
-    ]
-
-
-def test_suggestions_without_keyword_are_sorted_by_name(read_repo, places):
-    admin_unit_id, _, _ = places
-
-    assert _suggest(read_repo, admin_unit_id) == [
-        "Alpha",
-        "Bravo",
-        "halle am See",
-        "Stadthalle",
-        "Zentrale Halle",
-    ]
-
-
-def test_suggestions_are_limited_and_scoped(read_repo, places):
-    admin_unit_id, other_admin_unit_id, _ = places
-
-    assert _suggest(read_repo, admin_unit_id, limit=2) == ["Alpha", "Bravo"]
-    assert _suggest(read_repo, other_admin_unit_id) == ["Halle B"]
-    assert _suggest(read_repo, 4711, keyword="halle") == []
-
-
-def test_suggestions_carry_location(app, db, read_repo, places):
-    admin_unit_id, _, ids = places
-
-    with app.app_context():
-        from project.infrastructure.models import EventPlace, Location
-
-        db.session.get(EventPlace, ids["alpha"]).location = Location(city="Goslar")
-        db.session.commit()
-
-    result = read_repo(
-        "list_suggestions",
-        ListEventPlaceSuggestionsQuery(admin_unit_id=admin_unit_id, keyword="alpha"),
-    )
-
-    assert [(item.name, item.location.city) for item in result] == [("Alpha", "Goslar")]
 
 
 def _count_selects(app, db, call):

@@ -32,7 +32,6 @@ import project.presentation.web.views.manage_admin_unit.api_key.view_handler
 import project.presentation.web.views.manage_admin_unit.app.view_handler
 import project.presentation.web.views.manage_admin_unit.app_installation.view_handler
 import project.presentation.web.views.manage_admin_unit.event.view_handler
-import project.presentation.web.views.manage_admin_unit.event_legacy.view_handler
 import project.presentation.web.views.manage_admin_unit.event_organizer.view_handler
 import project.presentation.web.views.manage_admin_unit.event_place.view_handler
 import project.presentation.web.views.manage_admin_unit.incoming_event_reference.view_handler

@@ -148,15 +148,12 @@ describe("EventEditPage", () => {
     document.body.innerHTML = "";
   });
 
-  it("loads the create form from a template and links the previous form", async () => {
+  it("loads the create form from a template", async () => {
     const wrapper = await mountPage({ organizationId: 5, templateId: 9 });
 
     expect(GET).toHaveBeenCalledWith("/bff/manage/organizations/{id}/events/create-form", {
       params: { path: { id: 5 }, query: { template_id: 9 } },
     });
-    expect(wrapper.find('[data-test="legacy-form-link"] a').attributes("href")).toBe(
-      "/manage/admin_unit/5/legacy/event/create?template_id=9",
-    );
     expect(wrapper.text()).toContain("Create Event");
     expect(wrapper.find("#status").exists()).toBe(false);
     expect(wrapper.find("#reference_request_admin_unit_id-11").element).toHaveProperty("checked", true);
@@ -235,9 +232,6 @@ describe("EventEditPage", () => {
     expect(GET).toHaveBeenCalledWith("/bff/manage/organizations/{id}/events/{event_id}/form", {
       params: { path: { id: 5, event_id: 8 } },
     });
-    expect(wrapper.find('[data-test="legacy-form-link"] a').attributes("href")).toBe(
-      "/manage/admin_unit/5/legacy/event/8/update",
-    );
     expect(wrapper.find('[data-test="organizer-edit"]').attributes("href")).toBe(
       "/manage/admin_unit/5/event_organizer/1/update",
     );

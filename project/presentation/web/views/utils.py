@@ -7,7 +7,6 @@ from flask_security import current_user
 from markupsafe import Markup
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from sqlalchemy.exc import SQLAlchemyError
-from wtforms import FormField
 
 from project.application.queries import GetSettingsQuery
 from project.domain.errors import BaseError
@@ -91,10 +90,6 @@ def flash_errors(form, prefix=None):
     for field_name, errors in form.errors.items():
         field = getattr(form, field_name)
         field_label = field.label.text
-
-        if isinstance(field, FormField):
-            flash_errors(field.form, field_label)
-            continue
 
         if prefix:
             field_label = f"{prefix} {field_label}"

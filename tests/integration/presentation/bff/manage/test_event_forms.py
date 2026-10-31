@@ -908,3 +908,229 @@ def test_create_unknown_rating_is_422(client, seeder, utils, setup):
 
     assert response.status_code == 422
     assert _error_locs(response) == [["rating"]]
+
+
+# referenced event change notices
+
+
+def _form_to_body(form, **values):
+    """The PUT body the Vue form sends for the values its GET returned."""
+    body = dict(
+        name=form["name"],
+        description=form["description"],
+        date_definitions=form["date_definitions"],
+        status=form["status"],
+        public_status=form["public_status"],
+        organizer_id=form["organizer"]["id"],
+        event_place_id=form["event_place"]["id"],
+        co_organizer_ids=[o["id"] for o in form["co_organizers"]],
+        category_ids=form["category_ids"],
+        custom_category_ids=[
+            c["id"] for s in form["custom_category_sets"] for c in s["selected"]
+        ],
+        photo=form["photo"],
+        external_link=form["external_link"],
+        ticket_link=form["ticket_link"],
+        tags=form["tags"],
+        internal_tags=form["internal_tags"],
+        kid_friendly=form["kid_friendly"],
+        accessible_for_free=form["accessible_for_free"],
+        registration_required=form["registration_required"],
+        booked_up=form["booked_up"],
+        age_from=form["age_from"],
+        age_to=form["age_to"],
+        expected_participants=form["expected_participants"],
+        price_info=form["price_info"],
+        target_group_origin=form["target_group_origin"],
+        attendance_mode=form["attendance_mode"],
+        rating=form["rating"],
+    )
+    body.update(values)
+    return body
+
+
+def _referenced_event(client, app, seeder, utils, **values):
+    """An event of "Other Crew", created through the form and referenced by the
+    first organization. Returns the other organization's id and the event id."""
+    _, admin_unit_id = seeder.setup_base()
+    other_admin_unit_id = _other_organization(seeder)
+
+    utils.logout()
+    utils.login("other@test.de")
+    _shell(utils, other_admin_unit_id)
+
+    response = utils.post_json(
+        _urls(other_admin_unit_id)["events"],
+        _body(
+            seeder,
+            other_admin_unit_id,
+            name="Name",
+            photo=_photo(seeder),
+            **values,
+        ),
+    )
+    assert response.status_code == 201
+    event_id = response.json["id"]
+    seeder.create_reference(event_id, admin_unit_id)
+    return other_admin_unit_id, event_id
+
+
+def _put_form(utils, admin_unit_id, event_id, **values):
+    urls = _urls(admin_unit_id, event_id)
+    form = utils.get_json_ok(urls["form"]).json
+    response = utils.put_json(urls["event"], _form_to_body(form, **values))
+    assert response.status_code == 200
+    return form
+
+
+def _handle_pending_events(app):
+    with app.app_context():
+        app.test_event_dispatcher.handle_pending_events()
+
+
+def test_referenced_event_update_sends_mail(client, app, seeder, utils):
+    admin_unit_id, event_id = _referenced_event(client, app, seeder, utils)
+
+    _put_form(utils, admin_unit_id, event_id, name="Changed name")
+    _handle_pending_events(app)
+
+    assert (
+        app.test_email_service.sent_emails[0]["subject"]
+        == "Empfohlene Veranstaltung wurde geändert"
+    )
+    assert app.test_email_service.sent_emails[0]["recipient"] == "test@test.de"
+
+
+def test_referenced_event_non_dirty_update_does_not_send_mail(
+    client, app, seeder, utils
+):
+    admin_unit_id, event_id = _referenced_event(client, app, seeder, utils)
+
+    _put_form(utils, admin_unit_id, event_id)
+    _handle_pending_events(app)
+
+    assert len(app.test_email_service.sent_emails) == 0
+
+
+def test_referenced_allday_event_non_dirty_update_does_not_send_mail(
+    client, app, seeder, utils
+):
+    """An all-day end is stored as 23:59:59, but the form's wall-clock input
+    (`YYYY-MM-DDTHH:MM`) has no seconds. Unless the value object widens it back,
+    an untouched all-day event looks changed and sends a notice whose old and
+    new dates render identically."""
+    admin_unit_id, event_id = _referenced_event(
+        client,
+        app,
+        seeder,
+        utils,
+        date_definitions=[dict(start="2030-12-31T00:00", allday=True)],
+    )
+
+    with app.app_context():
+        from project.infrastructure.extensions import db
+        from project.infrastructure.models import Event
+        from project.shared.dateutils import berlin_tz
+
+        date_definition = db.session.get(Event, event_id).date_definitions[0]
+        # Without these the test degrades into a plain non-dirty update as soon
+        # as the form stops producing an all-day event, and still passes.
+        assert date_definition.allday
+        assert date_definition.end.astimezone(berlin_tz) == datetime.datetime(
+            2030, 12, 31, 23, 59, 59, tzinfo=berlin_tz
+        )
+
+    _put_form(utils, admin_unit_id, event_id)
+    _handle_pending_events(app)
+
+    assert len(app.test_email_service.sent_emails) == 0
+
+
+def test_referenced_recurring_event_non_dirty_update_does_not_send_mail(
+    client, app, seeder, utils
+):
+    # A recurring event re-posted unchanged sent a "referenced event changed"
+    # mail whose old/new summary printed identically (the notice only renders
+    # start + a "Recurring event" flag, never the recurrence_rule content).
+    #
+    # EventDateDefinitionValueObject equality is plain pydantic ``==``, which
+    # is exact on strings, so ``recurrence_rule`` is normalized by the
+    # ``NullableRecurrenceRule`` type. The recurrence editor appends an EXDATE
+    # line with a bare "\n" once a single occurrence is excluded from a series,
+    # e.g. "RRULE:FREQ=WEEKLY;COUNT=5\nEXDATE:20260504". A browser normalizes
+    # textarea line breaks to CRLF, so the same rule can come back with
+    # different line endings, which compare unequal byte-for-byte.
+    recurrence_rule_lf = "RRULE:FREQ=WEEKLY;COUNT=5\nEXDATE:20260504"
+    admin_unit_id, event_id = _referenced_event(
+        client,
+        app,
+        seeder,
+        utils,
+        date_definitions=[
+            dict(start="2026-04-06T11:00", recurrence_rule=recurrence_rule_lf)
+        ],
+    )
+
+    with app.app_context():
+        from project.infrastructure.extensions import db
+        from project.infrastructure.models import Event
+
+        event = db.session.get(Event, event_id)
+        assert event.date_definitions[0].recurrence_rule == recurrence_rule_lf
+
+    recurrence_rule_crlf = recurrence_rule_lf.replace("\n", "\r\n")
+    form = utils.get_json_ok(_urls(admin_unit_id, event_id)["form"]).json
+    form["date_definitions"][0]["recurrence_rule"] = recurrence_rule_crlf
+    response = utils.put_json(
+        _urls(admin_unit_id, event_id)["event"], _form_to_body(form)
+    )
+    assert response.status_code == 200
+    _handle_pending_events(app)
+
+    assert len(app.test_email_service.sent_emails) == 0
+
+
+def test_referenced_recurring_event_change_sends_mail_but_diff_is_indistinguishable(
+    client, app, seeder, utils
+):
+    # Here the recurrence rule genuinely changes (fewer occurrences), so
+    # sending a mail is correct. But the notice only ever renders
+    # "(Recurring event)" for a recurring definition -- never the
+    # recurrence_rule content -- so the "before"/"after" lines print
+    # identically even though the event's actual occurrences changed.
+    admin_unit_id, event_id = _referenced_event(
+        client,
+        app,
+        seeder,
+        utils,
+        date_definitions=[
+            dict(start="2026-04-06T11:00", recurrence_rule="RRULE:FREQ=WEEKLY;COUNT=5")
+        ],
+    )
+
+    urls = _urls(admin_unit_id, event_id)
+    form = utils.get_json_ok(urls["form"]).json
+    # A real change: five occurrences shrink to three.
+    form["date_definitions"][0]["recurrence_rule"] = "RRULE:FREQ=WEEKLY;COUNT=3"
+    response = utils.put_json(urls["event"], _form_to_body(form))
+    assert response.status_code == 200
+    _handle_pending_events(app)
+
+    with app.app_context():
+        from project.infrastructure.extensions import db
+        from project.infrastructure.models import Event
+
+        event = db.session.get(Event, event_id)
+        assert event.date_definitions[0].recurrence_rule == "RRULE:FREQ=WEEKLY;COUNT=3"
+
+    assert len(app.test_email_service.sent_emails) == 1
+    body = app.test_email_service.sent_emails[0]["body"]
+
+    old_section = body.split("Termine (bisher):")[1].split("Termine (neu):")[0]
+    new_section = body.split("Termine (neu):")[1]
+    old_line = old_section.strip().splitlines()[0].strip()
+    new_line = new_section.strip().splitlines()[0].strip()
+
+    # The mail correctly reports that something changed, but the rendered
+    # lines are byte-identical: the recipient cannot tell what changed.
+    assert old_line == new_line == "- 06.04.26 11:00 (Serientermin)"

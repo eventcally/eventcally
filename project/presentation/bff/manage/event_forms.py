@@ -37,6 +37,7 @@ from project.domain.models.enums.event_target_group_origin import EventTargetGro
 from project.domain.models.value_objects.event_date_definition_value_object import (
     EventDateDefinitionValueObject,
 )
+from project.domain.translation import dummy_gettext
 from project.presentation.bff.errors import FieldValidationError
 from project.presentation.bff.manage import bff_manage_bp
 from project.presentation.bff.manage.events import LOOKUP_PER_PAGE
@@ -111,8 +112,7 @@ def _event_or_404(id: int, event_id: int, query_bus: QueryBus):
 
 
 def _to_wall_clock(value: Optional[datetime]) -> Optional[datetime]:
-    """The naive Berlin wall-clock time the date and time inputs show (as
-    `CustomDateTimeField` renders it)."""
+    """The naive Berlin wall-clock time the date and time inputs show."""
     if value is None:
         return None
 
@@ -120,8 +120,7 @@ def _to_wall_clock(value: Optional[datetime]) -> Optional[datetime]:
 
 
 def _from_wall_clock(value: Optional[datetime]) -> Optional[datetime]:
-    """A naive wall-clock time of the form as Berlin time (as `CustomDateTimeField`
-    reads it)."""
+    """A naive wall-clock time of the form as Berlin time."""
     if value is None:
         return None
 
@@ -129,6 +128,18 @@ def _from_wall_clock(value: Optional[datetime]) -> Optional[datetime]:
         return value.astimezone(berlin_tz)
 
     return value.replace(tzinfo=berlin_tz)
+
+
+# `get_localized_enum_name` builds these msgids at runtime, so extraction cannot find
+# them. Keep the ones no template or component names literally.
+_ENUM_LABELS = (
+    dummy_gettext("EventAttendanceMode.offline"),
+    dummy_gettext("EventPublicStatus.published"),
+    dummy_gettext("EventStatus.scheduled"),
+    dummy_gettext("EventTargetGroupOrigin.both"),
+    dummy_gettext("EventTargetGroupOrigin.resident"),
+    dummy_gettext("EventTargetGroupOrigin.tourist"),
+)
 
 
 def _choices(members) -> list[EventFormChoice]:

@@ -14,7 +14,6 @@ from project.application.queries.list_licenses_query import ListLicensesQuery
 from project.application.queries.lookup_custom_event_categories_query import (
     LookupCustomEventCategoriesQuery,
 )
-from project.application.queries.lookup_licenses_query import LookupLicensesQuery
 from project.application.read_models.image_read_model import LicenseRefReadModel
 from project.application.read_models.page import Page
 from project.application.read_models.reference_data_read_models import (
@@ -50,18 +49,6 @@ class AbstractReferenceDataReadRepository(abc.ABC):
     def list_custom_event_categories(
         self, query: ListCustomEventCategoriesQuery
     ) -> Page[CustomEventCategoryRefReadModel]:  # pragma: no cover
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def lookup_licenses(
-        self, query: LookupLicensesQuery
-    ) -> Page[LicenseRefReadModel]:  # pragma: no cover
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def get_license(
-        self, license_id: ObjectId
-    ) -> Optional[LicenseRefReadModel]:  # pragma: no cover
         raise NotImplementedError
 
     @abc.abstractmethod

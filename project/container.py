@@ -884,19 +884,7 @@ class Cqrs(containers.DeclarativeContainer):
                     query_handlers.IsEventPlaceNameTakenHandler,
                     repo=read_repos.event_place_read_repo,
                 ),
-                queries.ListEventPlaceSuggestionsQuery: providers.Factory(
-                    query_handlers.ListEventPlaceSuggestionsHandler,
-                    repo=read_repos.event_place_read_repo,
-                ),
                 # S7 entries
-                queries.LookupLicensesQuery: providers.Factory(
-                    query_handlers.LookupLicensesHandler,
-                    repo=read_repos.reference_data_read_repo,
-                ),
-                queries.GetLicenseQuery: providers.Factory(
-                    query_handlers.GetLicenseHandler,
-                    repo=read_repos.reference_data_read_repo,
-                ),
                 queries.ListAllEventCategoriesQuery: providers.Factory(
                     query_handlers.ListAllEventCategoriesHandler,
                     repo=read_repos.reference_data_read_repo,

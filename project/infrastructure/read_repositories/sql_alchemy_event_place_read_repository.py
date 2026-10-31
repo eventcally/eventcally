@@ -1,11 +1,8 @@
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy import exists, func, select
 from sqlalchemy.orm import contains_eager, joinedload, undefer, undefer_group
 
-from project.application.queries.list_event_place_suggestions_query import (
-    ListEventPlaceSuggestionsQuery,
-)
 from project.application.queries.list_event_places_query import (
     EventPlaceSort,
     ListEventPlacesQuery,
@@ -195,29 +192,6 @@ class SqlAlchemyEventPlaceReadRepository(AbstractEventPlaceReadRepository):
             filters.append(EventPlace.id != exclude_id)
 
         return self.session.execute(select(exists().where(*filters))).scalar_one()
-
-    def list_suggestions(
-        self, query: ListEventPlaceSuggestionsQuery
-    ) -> List[EventPlaceSuggestionReadModel]:
-        filters = [EventPlace.admin_unit_id == query.admin_unit_id]
-        order_by = []
-
-        if query.keyword:
-            filters.append(EventPlace.name.ilike(f"%{query.keyword}%"))
-            order_by.append(EventPlace.name.ilike(f"{query.keyword}%").desc())
-
-        order_by.extend([func.lower(EventPlace.name), EventPlace.id])
-
-        stmt = (
-            select(EventPlace)
-            .where(*filters)
-            .options(joinedload(EventPlace.location))
-            .order_by(*order_by)
-            .limit(query.limit)
-        )
-        places = self.session.execute(stmt).scalars().all()
-
-        return [_to_suggestion(place) for place in places]
 
 
 def _to_list_item(row) -> EventPlaceListItemReadModel:

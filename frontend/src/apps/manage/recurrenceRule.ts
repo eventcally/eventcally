@@ -1,4 +1,4 @@
-// The recurrence rules the previous event form (`jquery.recurrenceinput.js`) writes, and
+// The recurrence rules the previous event form wrote, and
 // nothing else: `RRULE:FREQ=...` with an optional `INTERVAL`, the weekdays of a weekly
 // rule, a day or a weekday of the month (and the month of a yearly rule), `COUNT` or
 // `UNTIL`, plus `EXDATE`/`RDATE` lines. A stored rule outside this subset does not parse

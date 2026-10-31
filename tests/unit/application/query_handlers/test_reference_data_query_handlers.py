@@ -5,14 +5,12 @@ from project.application.query_handlers import (
     GetCustomEventCategoryHandler,
     GetEventCategoryByNameHandler,
     GetEventCategoryHandler,
-    GetLicenseHandler,
     ListAllEventCategoriesHandler,
     ListCustomEventCategoriesHandler,
     ListCustomEventCategorySetsHandler,
     ListEventCategoriesHandler,
     ListLicensesHandler,
     LookupCustomEventCategoriesHandler,
-    LookupLicensesHandler,
 )
 from project.application.read_models.page import Page
 from project.application.read_repositories.abstract_reference_data_read_repository import (
@@ -39,12 +37,6 @@ class FakeRepo(AbstractReferenceDataReadRepository):
 
     def list_custom_event_categories(self, query):
         return self._page("categories", query)
-
-    def lookup_licenses(self, query):
-        return self._page("lookup_licenses", query)
-
-    def get_license(self, license_id):
-        self.calls.append(("get_license", license_id))
 
     def list_all_event_categories(self):
         self.calls.append(("all_event_categories", None))
@@ -86,8 +78,6 @@ def test_handlers_pass_queries_through():
 def test_lookup_handlers_pass_queries_through():
     repo = FakeRepo()
 
-    LookupLicensesHandler(repo).handle(queries.LookupLicensesQuery(term="cc"))
-    GetLicenseHandler(repo).handle(queries.GetLicenseQuery(id=2))
     ListAllEventCategoriesHandler(repo).handle(queries.ListAllEventCategoriesQuery())
     GetEventCategoryHandler(repo).handle(queries.GetEventCategoryQuery(id=3))
     GetEventCategoryByNameHandler(repo).handle(
@@ -100,9 +90,7 @@ def test_lookup_handlers_pass_queries_through():
         queries.GetCustomEventCategoryQuery(id=4)
     )
 
-    assert repo.calls[0][1].term == "cc"
-    assert [name for name, _ in repo.calls[1:]] == [
-        "get_license",
+    assert [name for name, _ in repo.calls] == [
         "all_event_categories",
         "get_event_category",
         "get_event_category_by_name",
