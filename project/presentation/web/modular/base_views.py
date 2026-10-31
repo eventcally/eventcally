@@ -1,6 +1,6 @@
 from typing import Optional
 
-from flask import flash, jsonify, redirect, render_template, request
+from flask import flash, redirect, render_template, request
 from flask.views import View
 from flask_babel import lazy_gettext
 from wtforms import RadioField, SelectField, StringField
@@ -82,20 +82,6 @@ class BaseView(View):
 
     def check_access(self, **kwargs):
         return self.handler.check_access(**kwargs)
-
-    def handle_backend_for_frontend(self, object=None, form=None, **kwargs):
-        bff_header = request.headers.get("X-Backend-For-Frontend")
-        if bff_header and form:
-            method = getattr(self, f"handle_bff_{bff_header}", None)
-            if callable(method):
-                field_name = request.args.get("field_name")
-                field = form.get_field_by_name(field_name)
-                return jsonify(method(object, form, field, **kwargs))
-
-        return None
-
-    def handle_bff_ajax_lookup(self, object, form, field, **kwargs):
-        return field.loader.get_ajax_pagination(request.args.get("term"))
 
     def render_template(self, **kwargs):
         kwargs.setdefault("title", self.get_title(**kwargs))
@@ -337,11 +323,6 @@ class BaseCreateView(BaseFormView):
         form = self.create_form(**kwargs)
         object = None
 
-        response = self.handle_backend_for_frontend(object, form, **kwargs)
-
-        if response:
-            return response
-
         if form.validate_on_submit():
             response = self.dispatch_validated_form(form, object, **kwargs)
             if response:
@@ -366,11 +347,6 @@ class BaseObjectFormView(BaseFormView):
             return response
 
         form = self.create_form(obj=object)
-
-        response = self.handle_backend_for_frontend(object, form, **kwargs)
-
-        if response:  # pragma: no cover
-            return response
 
         if form.validate_on_submit():
             response = self.dispatch_validated_form(form, object, **kwargs)

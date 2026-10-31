@@ -23,7 +23,6 @@ import EventDateDefinitionFields from "../components/EventDateDefinitionFields.v
 import EventOrganizerCreateModal from "../components/EventOrganizerCreateModal.vue";
 import EventPlaceCreateModal from "../components/EventPlaceCreateModal.vue";
 import LabeledField from "../components/LabeledField.vue";
-import LegacyFormLink from "../components/LegacyFormLink.vue";
 import {
   eventFormFields,
   eventFormValue,
@@ -65,11 +64,6 @@ const title = computed(() =>
   t(isUpdate.value ? "Update %(model_display_name)s" : "Create %(model_display_name)s", {
     model_display_name: t("Event"),
   }),
-);
-const legacyHref = computed(() =>
-  isUpdate.value
-    ? manage.eventLegacyUpdate(props.organizationId, props.id!)
-    : manage.eventLegacyCreate(props.organizationId, props.templateId),
 );
 const choices = (items: { value: number; label: string }[]) =>
   items.map((item) => ({ value: item.value, text: item.label }));
@@ -214,8 +208,6 @@ onMounted(load);
 
 <template>
   <div>
-    <LegacyFormLink :href="legacyHref" />
-
     <AppBreadcrumb :items="[{ label: t('Events'), href: manage.events(organizationId) }, { label: title }]" />
 
     <div v-if="loadError" class="alert alert-danger" role="alert">{{ loadError }}</div>

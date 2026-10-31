@@ -557,13 +557,6 @@ class UtilActions(object):
         content = (path / filename).read_bytes()
         self.mock_get_request_with_content(url, content)
 
-    def ajax_lookup(self, url: str, field_name: str, term: str = ""):
-        ajax_url = f"{url}?field_name={field_name}&term={term}"
-        ajax_response = self.get_json_ok(
-            ajax_url, headers={"X-Backend-For-Frontend": "ajax_lookup"}
-        )
-        return ajax_response
-
     def _create_jwt_assertion(self, issuer, subject, private_pem, kid, audience=None):
         from authlib.oauth2.rfc7523.assertion import sign_jwt_bearer_assertion
 

@@ -8,8 +8,6 @@ from project.application.queries import (
     ListEventCategoriesQuery,
     ListLicensesQuery,
     LookupCustomEventCategoriesQuery,
-    LookupLicensesQuery,
-    PageRequest,
 )
 
 
@@ -23,37 +21,6 @@ def read_repo(app, db):
                 return getattr(repo, method)(*args, **kwargs)
 
     return call
-
-
-def test_lookup_licenses_orders_by_sort_and_filters_code_or_name(read_repo):
-    page = read_repo("lookup_licenses", LookupLicensesQuery())
-    assert page.total == len(page.items) > 3
-    assert page.items[0].code == "CC0 1.0"
-
-    page = read_repo("lookup_licenses", LookupLicensesQuery(term="nothing-like"))
-    assert page.items == []
-
-    page = read_repo("lookup_licenses", LookupLicensesQuery(term="BY-sa"))
-    assert [item.code for item in page.items] == ["CC BY-SA 4.0"]
-
-    page = read_repo("lookup_licenses", LookupLicensesQuery(term="zero"))
-    assert [item.code for item in page.items] == ["CC0 1.0"]
-
-
-def test_lookup_licenses_pages(read_repo):
-    page = read_repo(
-        "lookup_licenses", LookupLicensesQuery(page=PageRequest(page=2, per_page=2))
-    )
-
-    assert len(page.items) == 2
-    assert page.has_prev
-
-
-def test_get_license(read_repo):
-    license = read_repo("lookup_licenses", LookupLicensesQuery()).items[1]
-
-    assert read_repo("get_license", license.id) == license
-    assert read_repo("get_license", 4711) is None
 
 
 def test_event_categories(read_repo):

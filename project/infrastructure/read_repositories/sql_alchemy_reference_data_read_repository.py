@@ -15,7 +15,6 @@ from project.application.queries.list_licenses_query import ListLicensesQuery
 from project.application.queries.lookup_custom_event_categories_query import (
     LookupCustomEventCategoriesQuery,
 )
-from project.application.queries.lookup_licenses_query import LookupLicensesQuery
 from project.application.read_models.image_read_model import LicenseRefReadModel
 from project.application.read_models.page import Page
 from project.application.read_models.reference_data_read_models import (
@@ -95,25 +94,6 @@ class SqlAlchemyReferenceDataReadRepository(AbstractReferenceDataReadRepository)
             CustomEventCategory.category_set_id == query.category_set_id,
         )
 
-    def lookup_licenses(self, query: LookupLicensesQuery) -> Page[LicenseRefReadModel]:
-        filters = []
-
-        if query.term:
-            like = parse_like_term(query.term)
-            filters.append(or_(License.code.ilike(like), License.name.ilike(like)))
-
-        return self._page(
-            License,
-            query.page,
-            _to_license,
-            *filters,
-            order_by=[License.sort, License.id],
-        )
-
-    def get_license(self, license_id: ObjectId) -> Optional[LicenseRefReadModel]:
-        license = self.session.get(License, license_id)
-        return _to_license(license) if license else None
-
     def list_all_event_categories(self) -> List[EventCategoryRefReadModel]:
         categories = self.session.execute(select(EventCategory)).scalars().all()
         return [_to_event_category(category) for category in categories]
@@ -163,12 +143,6 @@ class SqlAlchemyReferenceDataReadRepository(AbstractReferenceDataReadRepository)
     ) -> Optional[CustomEventCategoryRefReadModel]:
         category = self.session.get(CustomEventCategory, category_id)
         return _to_custom_event_category(category) if category else None
-
-
-def _to_license(license) -> LicenseRefReadModel:
-    return LicenseRefReadModel(
-        id=license.id, name=license.name, code=license.code, url=license.url
-    )
 
 
 def _to_event_category(category) -> EventCategoryRefReadModel:

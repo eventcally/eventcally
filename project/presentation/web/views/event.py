@@ -1,8 +1,5 @@
-import logging
-from datetime import datetime
-
 from dependency_injector.wiring import Provide, inject
-from flask import Response, current_app, jsonify, render_template, request, url_for
+from flask import Response, current_app, render_template, url_for
 from flask_babel import gettext
 from flask_security import current_user
 
@@ -30,8 +27,6 @@ from project.presentation.web.views.utils import (
 )
 from project.shared.dateutils import create_icalendar
 from project.shared.utils import get_event_category_name
-
-logger = logging.getLogger(__name__)
 
 
 @main_bp.route("/event/<int:event_id>")
@@ -91,30 +86,6 @@ def event_report(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_
         title=gettext("Report event"),
         boot=build_boot_data(base="/"),
     )
-
-
-@main_bp.route("/events/rrule", methods=["POST"])
-def event_rrule():
-    year = request.json["year"]
-    month = request.json["month"]
-    day = request.json["day"]
-    rrule_str = request.json["rrule"]
-    start = int(request.json["start"])
-    batch_size = 10
-    start_date = datetime(year, month, day)
-
-    from project.shared.dateutils import calculate_occurrences
-
-    try:
-        result = calculate_occurrences(
-            start_date, '"%d.%m.%Y"', rrule_str, start, batch_size
-        )
-        return jsonify(result)
-    except Exception as e:
-        logger.exception(
-            "Could not calculate the occurrences", extra={"rrule": rrule_str}
-        )
-        return getattr(e, "message", "Unknown error"), 400
 
 
 def get_event_category_choices():

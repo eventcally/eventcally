@@ -26,8 +26,7 @@ def _render_shell(title):
 
 
 class CreateView(BaseCreateView):
-    """A shell: the Vue page reads and saves through `/bff/manage`. The previous form
-    lives on under `/legacy/event/create` (`event_legacy`)."""
+    """A shell: the Vue page reads and saves through `/bff/manage`."""
 
     def dispatch_request(self, **kwargs):
         response = self.check_access(**kwargs)

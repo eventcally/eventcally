@@ -45,7 +45,6 @@ from .get_incoming_organization_verification_request_review_handler import (
     GetIncomingOrganizationVerificationRequestReviewHandler,
 )
 from .get_installable_app_handler import GetInstallableAppHandler
-from .get_license_handler import GetLicenseHandler
 from .get_mail_job_status_handler import GetMailJobStatusHandler
 from .get_manage_menu_options_handler import GetManageMenuOptionsHandler
 from .get_manageable_organization_handler import GetManageableOrganizationHandler
@@ -124,7 +123,6 @@ from .list_dump_places_handler import ListDumpPlacesHandler
 from .list_event_categories_handler import ListEventCategoriesHandler
 from .list_event_dates_handler import ListEventDatesHandler
 from .list_event_organizers_handler import ListEventOrganizersHandler
-from .list_event_place_suggestions_handler import ListEventPlaceSuggestionsHandler
 from .list_event_places_handler import ListEventPlacesHandler
 from .list_events_handler import ListEventsHandler
 from .list_external_calendar_events_handler import ListExternalCalendarEventsHandler
@@ -192,7 +190,6 @@ from .list_webhook_delivery_attempts_for_app_handler import (
 from .lookup_custom_event_categories_handler import LookupCustomEventCategoriesHandler
 from .lookup_event_organizers_handler import LookupEventOrganizersHandler
 from .lookup_event_places_handler import LookupEventPlacesHandler
-from .lookup_licenses_handler import LookupLicensesHandler
 from .search_event_dates_handler import SearchEventDatesHandler
 from .search_events_handler import SearchEventsHandler
 from .search_organizations_handler import SearchOrganizationsHandler

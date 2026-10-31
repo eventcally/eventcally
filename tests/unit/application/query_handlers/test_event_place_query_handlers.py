@@ -7,7 +7,6 @@ from project.application.query_handlers import (
     GetEventPlaceRefHandler,
     IsEventPlaceNameTakenHandler,
     ListEventPlacesHandler,
-    ListEventPlaceSuggestionsHandler,
     LookupEventPlacesHandler,
 )
 from project.application.read_models.event_place_read_models import (
@@ -32,7 +31,6 @@ class FakeEventPlaceReadRepository(AbstractEventPlaceReadRepository):
         self.details = {detail.id: detail for detail in details}
         self.taken = set(taken)
         self.list_queries = []
-        self.suggestion_queries = []
         self.lookup_queries = []
         self.refs = {(7, 3): EventPlaceSuggestionReadModel(id=3, name="Halle")}
 
@@ -73,10 +71,6 @@ class FakeEventPlaceReadRepository(AbstractEventPlaceReadRepository):
             and place_id != exclude_id
             for organization_id, taken_name, place_id in self.taken
         )
-
-    def list_suggestions(self, query):
-        self.suggestion_queries.append(query)
-        return [EventPlaceSuggestionReadModel(id=1, name="Place")]
 
 
 class TestListEventPlacesHandler:
@@ -132,17 +126,6 @@ class TestIsEventPlaceNameTakenHandler:
 
     def test_own_name_is_not_taken(self):
         assert self._handle(admin_unit_id=7, name="Halle", exclude_id=3) is False
-
-
-class TestListEventPlaceSuggestionsHandler:
-    def test_passes_query_through_without_organization_check(self):
-        repo = FakeEventPlaceReadRepository()
-        query = queries.ListEventPlaceSuggestionsQuery(admin_unit_id=9, keyword="ha")
-
-        result = ListEventPlaceSuggestionsHandler(repo).handle(query)
-
-        assert [item.name for item in result] == ["Place"]
-        assert repo.suggestion_queries == [query]
 
 
 class TestGetEventPlaceForEditHandler:

@@ -6,73 +6,14 @@ from flask_cors import cross_origin
 from flask_security import url_for_security
 from flask_security.utils import localize_callback
 
-from project.application.queries import (
-    GetCustomWidgetQuery,
-    IsEventOrganizerNameTakenQuery,
-    IsEventPlaceNameTakenQuery,
-    ListEventPlaceSuggestionsQuery,
-)
+from project.application.queries import GetCustomWidgetQuery
 from project.application.query_bus import QueryBus
 from project.container import Application
 from project.infrastructure.extensions import csrf
 from project.infrastructure.user_datastore import find_user_by_email
-from project.presentation.shared.maputils import find_gmaps_places, get_gmaps_place
 from project.presentation.shared.query_results import result_or_404
 from project.presentation.web.views.main_blueprint import main_bp
 from project.shared.dateutils import gmt_tz
-from project.shared.utils import get_place_str
-
-
-@main_bp.route("/js/check/event_place/name", methods=["POST"])
-@inject
-def js_check_event_place_name(
-    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
-):
-    csrf.protect()
-
-    name = request.form["name"]
-    admin_unit_id = (
-        int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
-    )
-    event_place_id = (
-        int(request.form["event_place_id"])
-        if "event_place_id" in request.form
-        else None
-    )
-    query = IsEventPlaceNameTakenQuery(
-        admin_unit_id=admin_unit_id, name=name, exclude_id=event_place_id
-    )
-
-    if not query_bus.handle(query):
-        return jsonify(True)
-
-    error = gettext("A place already exists with this name.")
-    return jsonify(error)
-
-
-@main_bp.route("/js/check/organizer/name", methods=["POST"])
-@inject
-def js_check_organizer_name(
-    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
-):
-    csrf.protect()
-
-    name = request.form["name"]
-    admin_unit_id = (
-        int(request.form["admin_unit_id"]) if "admin_unit_id" in request.form else -1
-    )
-    organizer_id = (
-        int(request.form["organizer_id"]) if "organizer_id" in request.form else None
-    )
-    query = IsEventOrganizerNameTakenQuery(
-        admin_unit_id=admin_unit_id, name=name, exclude_id=organizer_id
-    )
-
-    if not query_bus.handle(query):
-        return jsonify(True)
-
-    error = gettext("An organizer already exists with this name.")
-    return jsonify(error)
 
 
 @main_bp.route("/js/check/register/email", methods=["POST"])
@@ -91,75 +32,6 @@ def js_check_register_email():
     link = ' &ndash; <a href="%s">%s</a>' % (url, link_text)
     error = msg + link
     return jsonify(error)
-
-
-@main_bp.route("/js/autocomplete/place")
-@inject
-def js_autocomplete_place(
-    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
-):
-    csrf.protect()
-
-    admin_unit_id = int(request.args.get("admin_unit_id", "0"))
-    keyword = request.args.get("keyword")
-    exclude_gmaps = request.args.get("exclude_gmaps")
-    places_result = list()
-    google_places_result = list()
-
-    if admin_unit_id > 0:
-        places = query_bus.handle(
-            ListEventPlaceSuggestionsQuery(
-                admin_unit_id=admin_unit_id, keyword=keyword or None, limit=5
-            )
-        )
-        places_result = [{"id": p.id, "text": get_place_str(p)} for p in places]
-
-    if not exclude_gmaps:
-        google_places = find_gmaps_places(keyword) if keyword else list()
-        google_places_result = [
-            {
-                "id": p["place_id"],
-                "gmaps_id": p["place_id"],
-                "text": p["description"],
-                "main_text": p["structured_formatting"]["main_text"],
-            }
-            for p in google_places
-        ]
-
-    if exclude_gmaps:
-        results = places_result
-    elif admin_unit_id <= 0:
-        results = google_places_result
-    else:
-        results = list()
-
-        if len(places) > 0:
-            results.append(
-                {
-                    "text": gettext("Places of organization"),
-                    "children": places_result,
-                }
-            )
-
-        if len(google_places) > 0:
-            results.append(
-                {
-                    "text": gettext("Places of Google Maps"),
-                    "children": google_places_result,
-                }
-            )
-
-    result = {"results": results}
-    return jsonify(result)
-
-
-@main_bp.route("/js/autocomplete/gmaps_place")
-def js_autocomplete_gmaps_place():
-    csrf.protect()
-
-    gmaps_id = request.args["gmaps_id"]
-    place = get_gmaps_place(gmaps_id)
-    return jsonify(place)
 
 
 def _gmt_iso(value):

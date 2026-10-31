@@ -1,9 +1,6 @@
 import abc
-from typing import List, Optional
+from typing import Optional
 
-from project.application.queries.list_event_place_suggestions_query import (
-    ListEventPlaceSuggestionsQuery,
-)
 from project.application.queries.list_event_places_query import ListEventPlacesQuery
 from project.application.queries.lookup_event_places_query import LookupEventPlacesQuery
 from project.application.read_models.event_place_read_models import (
@@ -46,12 +43,6 @@ class AbstractEventPlaceReadRepository(abc.ABC):
         name: str,
         exclude_id: Optional[ObjectId] = None,
     ) -> bool:  # pragma: no cover
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    def list_suggestions(
-        self, query: ListEventPlaceSuggestionsQuery
-    ) -> List[EventPlaceSuggestionReadModel]:  # pragma: no cover
         raise NotImplementedError
 
     @abc.abstractmethod

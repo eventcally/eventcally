@@ -3,7 +3,6 @@ from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import FormField, HiddenField, SubmitField
 
-from project.application.query_bus import QueryBus
 from project.domain.models.entities.actor import Actor
 
 
@@ -23,11 +22,6 @@ class BaseForm(FlaskForm):
         from flask import current_app
 
         return current_app.container.context.context_provider().current_actor
-
-    def get_query_bus(self) -> QueryBus:
-        from flask import current_app
-
-        return current_app.container.cqrs.query_bus()
 
     def get_input_fields(self):
         return list(

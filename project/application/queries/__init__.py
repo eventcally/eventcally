@@ -45,7 +45,6 @@ from .get_incoming_organization_verification_request_review_query import (
     GetIncomingOrganizationVerificationRequestReviewQuery,
 )
 from .get_installable_app_query import GetInstallableAppQuery
-from .get_license_query import GetLicenseQuery
 from .get_mail_job_status_query import GetMailJobStatusQuery
 from .get_manage_menu_options_query import GetManageMenuOptionsQuery
 from .get_manageable_organization_query import GetManageableOrganizationQuery
@@ -116,7 +115,6 @@ from .list_dump_places_query import ListDumpPlacesQuery
 from .list_event_categories_query import ListEventCategoriesQuery
 from .list_event_dates_query import ListEventDatesQuery
 from .list_event_organizers_query import EventOrganizerSort, ListEventOrganizersQuery
-from .list_event_place_suggestions_query import ListEventPlaceSuggestionsQuery
 from .list_event_places_query import EventPlaceSort, ListEventPlacesQuery
 from .list_events_query import ListEventsQuery
 from .list_external_calendar_events_query import ListExternalCalendarEventsQuery
@@ -185,7 +183,6 @@ from .list_webhook_delivery_attempts_for_app_query import (
 from .lookup_custom_event_categories_query import LookupCustomEventCategoriesQuery
 from .lookup_event_organizers_query import LookupEventOrganizersQuery
 from .lookup_event_places_query import LookupEventPlacesQuery
-from .lookup_licenses_query import LookupLicensesQuery
 from .organization_relation_sort import OrganizationRelationSort
 from .page_request import PageRequest
 from .search_event_dates_query import SearchEventDatesQuery

@@ -35,8 +35,7 @@ class ImageReadModel(BaseReadModel):
 
 
 class ImageEditReadModel(BaseReadModel):
-    """Fills `Base64ImageForm`: `process` reads `data`/`encoding_format`, the license
-    select formats `id`/`code`/`name`."""
+    """An image with its bytes, copyright text and license, for the edit forms."""
 
     model_config = ConfigDict(frozen=True)
 
