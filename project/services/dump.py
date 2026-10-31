@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import shutil
 
@@ -24,6 +25,9 @@ from project.shared.paths import dump_org_path, dump_path
 from project.shared.utils import clear_files_in_dir, make_dir
 
 BATCH_SIZE = 200
+
+
+logger = logging.getLogger(__name__)
 
 
 def _query_bus():
@@ -117,7 +121,7 @@ class Dumper(object):
         with open(path, "w") as outfile:
             json.dump(result, outfile, ensure_ascii=False, indent=4)
 
-        current_app.logger.info(f"{len(items)} item(s) dumped to {path}.")
+        logger.info("Dumped items", extra={"count": len(items), "path": path})
 
     def dump_item(self, items, schema, file_base_name):
         result = schema.dump(items)
@@ -126,7 +130,7 @@ class Dumper(object):
         with open(path, "w") as outfile:
             json.dump(result, outfile, ensure_ascii=False, indent=4)
 
-        current_app.logger.info(f"Item dumped to {path}.")
+        logger.info("Dumped item", extra={"path": path})
 
     def setup_tmp_dir(self):
         self.tmp_path = os.path.join(self.dump_base_path, f"tmp-{self.file_base_name}")
@@ -138,7 +142,7 @@ class Dumper(object):
     def zip_tmp_dir(self):
         zip_base_name = os.path.join(self.dump_base_path, self.file_base_name)
         zip_path = shutil.make_archive(zip_base_name, "zip", self.tmp_path)
-        current_app.logger.info(f"Zipped all up to {zip_path}.")
+        logger.info("Zipped dump", extra={"path": zip_path})
 
     def dump_image(self, image):
         if not image:
@@ -215,6 +219,6 @@ def dump_admin_unit(admin_unit_id):
 
 
 def clear_admin_unit_dumps():
-    current_app.logger.info("Clearing admin unit dumps..")
+    logger.info("Clearing admin unit dumps")
     clear_files_in_dir(dump_org_path)
-    current_app.logger.info("Done.")
+    logger.info("Cleared admin unit dumps")

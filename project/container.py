@@ -1,7 +1,8 @@
 """Dependency Injection Container for EventCally application."""
 
+import logging
+
 from dependency_injector import containers, providers
-from flask import current_app
 
 from project.application import (
     command_handlers,
@@ -158,10 +159,6 @@ from project.infrastructure.sql_alchemy_unit_of_work import SqlAlchemyUnitOfWork
 from project.shared.context import ContextProvider
 
 
-def get_app_logger():  # pragma: no cover
-    return current_app.logger
-
-
 class Infrastructure(containers.DeclarativeContainer):
     db = providers.Object(db)  # SQLAlchemy database instance
     session_factory = providers.Callable(lambda: db.session)
@@ -171,7 +168,7 @@ class Infrastructure(containers.DeclarativeContainer):
         SqlAlchemyReadSessionScope,
         read_session=read_session,
     )
-    logger = providers.Callable(get_app_logger)
+    logger = providers.Object(logging.getLogger("project.webhooks"))
     localization_service = providers.Singleton(
         FlaskBabelLocalizationService,
     )

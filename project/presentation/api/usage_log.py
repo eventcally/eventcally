@@ -39,6 +39,9 @@ SECRET_QUERY_ARGS = {
 }
 
 
+logger = logging.getLogger(__name__)
+
+
 @dataclass
 class ApiUsageAuth:
     auth: str = "none"
@@ -65,7 +68,7 @@ def _remembering(func):
             if _usage_log_enabled():
                 func(*args, **kwargs)
         except Exception:
-            current_app.logger.exception("Could not remember the API usage auth")
+            logger.exception("Could not remember the API usage auth")
 
     return wrapper
 
@@ -170,7 +173,7 @@ def _write(status: int):
         level = logging.ERROR if status >= 500 else logging.INFO
         logging.getLogger(API_USAGE_LOGGER).log(level, "api_usage", extra=record)
     except Exception:
-        current_app.logger.exception("Could not write the API usage record")
+        logger.exception("Could not write the API usage record")
 
 
 def init_api_usage_log(app: Flask):

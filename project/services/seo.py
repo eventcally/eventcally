@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 from io import StringIO
@@ -8,9 +9,11 @@ from project.application.queries import ListSitemapEventsQuery
 from project.shared.paths import cache_path, robots_txt_path, sitemap_path
 from project.shared.utils import make_dir
 
+logger = logging.getLogger(__name__)
+
 
 def generate_sitemap():
-    current_app.logger.info("Generating sitemap..")
+    logger.info("Generating sitemap")
     make_dir(cache_path)
 
     buf = StringIO()
@@ -18,7 +21,7 @@ def generate_sitemap():
     buf.write('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
 
     events = current_app.container.cqrs.query_bus().handle(ListSitemapEventsQuery())
-    current_app.logger.info(f"Found {len(events)} events")
+    logger.info("Found sitemap events", extra={"count": len(events)})
 
     for event in events:
         loc = url_for("main.event", event_id=event.id)
@@ -37,14 +40,14 @@ def generate_sitemap():
         shutil.copyfileobj(buf, fd)
 
     size = os.path.getsize(sitemap_path)
-    current_app.logger.info(f"Generated sitemap at {sitemap_path} ({size} Bytes)")
+    logger.info("Generated sitemap", extra={"path": sitemap_path, "size_bytes": size})
 
     if size > 52428800:  # pragma: no cover
-        current_app.logger.error(f"Size of sitemap ({size} Bytes) is larger than 50MB.")
+        logger.error("Sitemap is larger than 50MB", extra={"size_bytes": size})
 
 
 def generate_robots_txt():
-    current_app.logger.info("Generating robots.txt..")
+    logger.info("Generating robots.txt")
     make_dir(cache_path)
 
     buf = StringIO()
@@ -62,4 +65,4 @@ def generate_robots_txt():
         buf.seek(0)
         shutil.copyfileobj(buf, fd)
 
-    current_app.logger.info(f"Generated robots.txt at {robots_txt_path}")
+    logger.info("Generated robots.txt", extra={"path": robots_txt_path})

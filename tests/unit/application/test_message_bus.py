@@ -1,5 +1,6 @@
 """Unit tests for MessageBus — no database required."""
 
+import logging
 from unittest.mock import MagicMock
 
 import pytest
@@ -322,3 +323,89 @@ class TestDispatchCommand:
 
         assert getattr(cmd, "actor") is actor
         assert cmd in dispatcher.dispatched
+
+
+# ---------------------------------------------------------------------------
+# Tests: logging
+# ---------------------------------------------------------------------------
+
+_LOGGER = "project.application.message_bus"
+
+
+class TestLogging:
+    def test_debug_lines_carry_fields_and_payload(self, caplog):
+        bus = _make_bus(command_handler=_FakeCommandHandler())
+        cmd = _make_fake_command(actor=Actor(user_id=7))
+
+        with caplog.at_level(logging.DEBUG, logger=_LOGGER):
+            bus.handle(cmd)
+
+        record = next(r for r in caplog.records if r.getMessage() == "Handling command")
+        assert record.message_kind == "command"
+        assert record.message_type == "_FakeCommand"
+        assert record.actor_user_id == 7
+        assert record.payload["actor"]["user_id"] == 7
+
+    def test_event_debug_line_has_handler(self, caplog):
+        ev = events.AppDeleted(actor=Actor(user_id=1), id=1, admin_unit_id=2)
+        bus = _make_bus(event_handlers_map={type(ev): [_FakeEventHandler()]})
+
+        with caplog.at_level(logging.DEBUG, logger=_LOGGER):
+            bus.handle(ev)
+
+        record = next(r for r in caplog.records if r.getMessage() == "Handling event")
+        assert record.handler == "_FakeEventHandler"
+        assert record.message_type == "AppDeleted"
+        assert "payload" in record.__dict__
+
+    def test_payload_not_computed_without_debug(self, caplog, mocker):
+        payload = mocker.patch("project.application.message_bus.message_payload")
+        bus = _make_bus(command_handler=_FakeCommandHandler())
+
+        with caplog.at_level(logging.INFO, logger=_LOGGER):
+            bus.handle(_make_fake_command())
+
+        payload.assert_not_called()
+
+    def test_dispatch_command_logs_fields(self, caplog):
+        bus = _make_bus()
+
+        with caplog.at_level(logging.DEBUG, logger=_LOGGER):
+            bus.dispatch_command(_make_fake_command())
+
+        record = next(
+            r for r in caplog.records if r.getMessage() == "Dispatched command"
+        )
+        assert record.message_type == "_FakeCommand"
+
+    def test_command_failure_logs_fields_without_payload(self, caplog):
+        handler = _FakeCommandHandler(raises=ValueError("boom"))
+        bus = _make_bus(command_handler=handler)
+
+        with caplog.at_level(logging.DEBUG, logger=_LOGGER):
+            with pytest.raises(ValueError):
+                bus.handle(_make_fake_command(actor=Actor(user_id=7)))
+
+        record = next(
+            r for r in caplog.records if r.getMessage() == "Handling command failed"
+        )
+        assert record.levelno == logging.ERROR
+        assert record.actor_user_id == 7
+        assert "payload" not in record.__dict__
+
+    def test_event_failure_logs_fields_without_payload(self, caplog):
+        class _Failing:
+            def handle(self, event, uow):
+                raise ValueError("x")
+
+        ev = events.AppDeleted(actor=Actor(), id=1, admin_unit_id=2)
+        bus = _make_bus(event_handlers_map={type(ev): [_Failing()]})
+
+        with caplog.at_level(logging.DEBUG, logger=_LOGGER):
+            bus.handle(ev)
+
+        record = next(
+            r for r in caplog.records if r.getMessage() == "Handling event failed"
+        )
+        assert record.handler == "_Failing"
+        assert "payload" not in record.__dict__

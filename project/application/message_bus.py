@@ -12,6 +12,7 @@ from project.application.abstract_event_dispatcher import AbstractEventDispatche
 from project.application.abstract_event_handler_factory import (
     AbstractEventHandlerFactory,
 )
+from project.application.log_fields import message_log_fields, message_payload
 from project.application.services.abstract_app_context_provider import (
     AbstractAppContextProvider,
 )
@@ -21,6 +22,11 @@ from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 logger = logging.getLogger(__name__)
 
 Message = Union[commands.Command, events.Event]
+
+
+def _debug(text: str, fields: dict, message) -> None:
+    if logger.isEnabledFor(logging.DEBUG):
+        logger.debug(text, extra={**fields, "payload": message_payload(message)})
 
 
 class MessageBus:
@@ -63,36 +69,42 @@ class MessageBus:
     def dispatch_command(self, command: commands.Command):
         self._set_missing_command_fields(command)
         self.command_dispatcher.dispatch(command)
-        logger.debug(f"Dispatched {command.__class__.__name__}")
+        logger.debug("Dispatched command", extra=message_log_fields("command", command))
 
     def _dispatch_event(self, event: events.Event):
-        logger.debug("dispatching event %r", event)
+        fields = message_log_fields("event", event)
+        _debug("Dispatching event", fields, event)
 
         try:
             event.validate_self()
             self.event_dispatcher.dispatch(event)
         except Exception:  # pragma: no cover
-            logger.exception("Exception dispatching event %r", event)
+            logger.exception("Dispatching event failed", extra=fields)
 
     def _handle_event(self, event: events.Event):
         handlers = self.event_handler_factory(type(event))
 
         for handler in handlers:
             uow = self.create_uow()
+            fields = {
+                **message_log_fields("event", event),
+                "handler": type(handler).__name__,
+            }
             try:
-                logger.debug("handling event %r with handler %r", event, handler)
+                _debug("Handling event", fields, event)
                 handler.handle(event, uow)
                 uow.commit()
             except Exception:  # pragma: no cover
-                logger.exception("Exception handling event %r", event)
+                logger.exception("Handling event failed", extra=fields)
                 uow.rollback()
                 continue
 
             self._dispatch_pending_events(uow)
 
     def _handle_command(self, command: commands.Command):
-        logger.debug("handling command %r", command)
         self._set_missing_command_fields(command)
+        fields = message_log_fields("command", command)
+        _debug("Handling command", fields, command)
 
         uow = self.create_uow()
         try:
@@ -104,7 +116,7 @@ class MessageBus:
             result = handler.handle(validated_command, uow)
             uow.commit()
         except Exception:
-            logger.exception("Exception handling command %r", command)
+            logger.exception("Handling command failed", extra=fields)
             uow.rollback()
             raise
 

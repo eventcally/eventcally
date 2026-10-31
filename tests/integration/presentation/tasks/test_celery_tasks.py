@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from sqlalchemy import text
 
@@ -38,7 +39,7 @@ def test_delete_admin_unit_task(client, seeder, app, db):
     assert _exists(app, db, AdminUnit, fresh_id)
 
 
-def test_delete_user_task(client, seeder, app, db):
+def test_delete_user_task(client, seeder, app, db, caplog):
     from project.infrastructure.models import User
     from project.presentation.tasks.celery_tasks import delete_user_task
 
@@ -47,11 +48,16 @@ def test_delete_user_task(client, seeder, app, db):
     stmt = 'UPDATE "user" SET deletion_requested_at = :when WHERE id = :id'
     _age(app, db, stmt, 4, id=due_id)
 
-    with app.app_context():
+    with (
+        app.app_context(),
+        caplog.at_level(logging.INFO, logger="project.presentation.tasks.celery_tasks"),
+    ):
         delete_user_task(due_id)
         delete_user_task(cancelled_id)
         delete_user_task(99999)
 
+    record = next(r for r in caplog.records if r.getMessage() == "Deleted user")
+    assert record.user_id == due_id
     assert not _exists(app, db, User, due_id)
     assert _exists(app, db, User, cancelled_id)
 

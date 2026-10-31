@@ -1,8 +1,11 @@
-from flask import current_app
+import logging
+
 from flask_mail import Message
 
 from project.application.services.abstract_mail_sender import AbstractMailSender
 from project.infrastructure.extensions import mail
+
+logger = logging.getLogger(__name__)
 
 
 class FlaskMailSender(AbstractMailSender):
@@ -17,9 +20,14 @@ class FlaskMailSender(AbstractMailSender):
 
     def _send_message(self, msg):
         if not mail.default_sender:
-            current_app.logger.info(",".join(msg.recipients))
-            current_app.logger.info(msg.subject)
-            current_app.logger.info(msg.body)
+            logger.info(
+                "Mail not sent (no MAIL_DEFAULT_SENDER)",
+                extra={
+                    "recipients": msg.recipients,
+                    "subject": msg.subject,
+                    "body": msg.body,
+                },
+            )
             return
 
         mail.send(msg)  # pragma: no cover

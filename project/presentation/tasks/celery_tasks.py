@@ -1,3 +1,5 @@
+import logging
+
 from celery import group
 from celery.schedules import crontab
 from flask import current_app
@@ -12,6 +14,8 @@ from project.application.queries import (
 from project.domain.models.entities.actor import Actor
 from project.infrastructure.celery_app import celery
 from project.infrastructure.extensions import db
+
+logger = logging.getLogger(__name__)
 
 
 def _query_bus():
@@ -85,11 +89,12 @@ def update_recurring_dates():
             )
             updated += 1
         except Exception:
-            current_app.logger.exception(
-                f"Failed to update the recurring dates of event {event_id}"
+            logger.exception(
+                "Failed to update the recurring dates of the event",
+                extra={"event_id": event_id},
             )
 
-    current_app.logger.info(f"{updated} event(s) were updated.")
+    logger.info("Updated recurring dates", extra={"count": updated})
 
 
 @celery.task(
@@ -101,7 +106,7 @@ def update_recurring_dates_task():
     try:
         update_recurring_dates()
     except Exception:
-        current_app.logger.exception("Failed update_recurring_dates_task")
+        logger.exception("Failed update_recurring_dates_task")
         db.session.rollback()
         raise
     finally:
@@ -119,7 +124,7 @@ def dump_all_task():
     try:
         dump_all()
     except Exception:
-        current_app.logger.exception("Failed dump_all_task")
+        logger.exception("Failed dump_all_task")
         db.session.rollback()
         raise
     finally:
@@ -137,7 +142,9 @@ def dump_admin_unit_task(admin_unit_id):
     try:
         dump_admin_unit(admin_unit_id)
     except Exception:
-        current_app.logger.exception(f"Failed dump_admin_unit_task {admin_unit_id}")
+        logger.exception(
+            "Failed dump_admin_unit_task", extra={"organization_id": admin_unit_id}
+        )
         db.session.rollback()
         raise
     finally:
@@ -169,7 +176,7 @@ def delete_admin_units_with_due_request_task():
 
         group(delete_admin_unit_task.s(id) for id in admin_unit_ids).delay()
     except Exception:
-        current_app.logger.exception("Failed delete_admin_units_with_due_request_task")
+        logger.exception("Failed delete_admin_units_with_due_request_task")
         db.session.rollback()
         raise
     finally:
@@ -192,11 +199,13 @@ def delete_admin_unit_task(admin_unit_id):
         )
 
         if deleted:
-            current_app.logger.info(f"Deleted admin unit {admin_unit_id}")
+            logger.info("Deleted admin unit", extra={"organization_id": admin_unit_id})
         else:
-            current_app.logger.info(f"Skipped admin unit {admin_unit_id}")
+            logger.info("Skipped admin unit", extra={"organization_id": admin_unit_id})
     except Exception:
-        current_app.logger.exception(f"Failed to delete admin unit {admin_unit_id}")
+        logger.exception(
+            "Failed to delete admin unit", extra={"organization_id": admin_unit_id}
+        )
         db.session.rollback()
         raise
     finally:
@@ -217,7 +226,7 @@ def delete_user_with_due_request_task():
 
         group(delete_user_task.s(id) for id in user_ids).delay()
     except Exception:
-        current_app.logger.exception("Failed delete_user_with_due_request_task")
+        logger.exception("Failed delete_user_with_due_request_task")
         db.session.rollback()
         raise
     finally:
@@ -238,7 +247,7 @@ def delete_ghost_users_task():
 
         group(delete_ghost_user_task.s(id) for id in user_ids).delay()
     except Exception:
-        current_app.logger.exception("Failed delete_ghost_users_task")
+        logger.exception("Failed delete_ghost_users_task")
         db.session.rollback()
         raise
     finally:
@@ -259,7 +268,7 @@ def delete_old_events_task():
 
         group(delete_event_task.s(id) for id in event_ids).delay()
     except Exception:
-        current_app.logger.exception("Failed delete_old_events_task")
+        logger.exception("Failed delete_old_events_task")
         db.session.rollback()
         raise
     finally:
@@ -280,11 +289,11 @@ def delete_user_task(user_id):
         )
 
         if deleted:
-            current_app.logger.info(f"Deleted user {user_id}")
+            logger.info("Deleted user", extra={"user_id": user_id})
         else:
-            current_app.logger.info(f"Skipped user {user_id}")
+            logger.info("Skipped user", extra={"user_id": user_id})
     except Exception:
-        current_app.logger.exception(f"Failed to delete user {user_id}")
+        logger.exception("Failed to delete user", extra={"user_id": user_id})
         db.session.rollback()
         raise
     finally:
@@ -305,11 +314,11 @@ def delete_ghost_user_task(user_id):
         )
 
         if deleted:
-            current_app.logger.info(f"Deleted ghost user {user_id}")
+            logger.info("Deleted ghost user", extra={"user_id": user_id})
         else:
-            current_app.logger.info(f"Skipped ghost user {user_id}")
+            logger.info("Skipped ghost user", extra={"user_id": user_id})
     except Exception:
-        current_app.logger.exception(f"Failed to delete ghost user {user_id}")
+        logger.exception("Failed to delete ghost user", extra={"user_id": user_id})
         db.session.rollback()
         raise
     finally:
@@ -330,11 +339,11 @@ def delete_event_task(event_id):
         )
 
         if deleted:
-            current_app.logger.info(f"Deleted event {event_id}")
+            logger.info("Deleted event", extra={"event_id": event_id})
         else:
-            current_app.logger.info(f"Skipped event {event_id}")
+            logger.info("Skipped event", extra={"event_id": event_id})
     except Exception:
-        current_app.logger.exception(f"Failed to delete event {event_id}")
+        logger.exception("Failed to delete event", extra={"event_id": event_id})
         db.session.rollback()
         raise
     finally:
@@ -352,7 +361,7 @@ def seo_generate_sitemap_task():
     try:
         generate_sitemap()
     except Exception:
-        current_app.logger.exception("Failed seo_generate_sitemap_task")
+        logger.exception("Failed seo_generate_sitemap_task")
         db.session.rollback()
         raise
     finally:
@@ -370,7 +379,7 @@ def generate_robots_txt_task():
     try:
         generate_robots_txt()
     except Exception:
-        current_app.logger.exception("Failed generate_robots_txt_task")
+        logger.exception("Failed generate_robots_txt_task")
         db.session.rollback()
         raise
     finally:

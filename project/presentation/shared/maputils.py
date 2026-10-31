@@ -1,8 +1,13 @@
+import logging
+
 import googlemaps
 from flask import current_app
 
 google_maps_api_key = None
 gmaps = None
+
+
+logger = logging.getLogger(__name__)
 
 
 def _init_gmaps():
@@ -26,8 +31,8 @@ def find_gmaps_places(query: str) -> list:
             )
             result = list(filter(lambda p: "place_id" in p, places))
 
-        except Exception as e:  # pragma: no cover
-            current_app.logger.exception(e)
+        except Exception:  # pragma: no cover
+            logger.exception("Google Maps place search failed")
 
     return result
 
@@ -46,8 +51,10 @@ def get_gmaps_place(gmaps_id) -> dict:
 
             if place["status"] == "OK":
                 result = place["result"]
-        except Exception as e:  # pragma: no cover
-            current_app.logger.exception(e)
+        except Exception:  # pragma: no cover
+            logger.exception(
+                "Google Maps place lookup failed", extra={"gmaps_id": gmaps_id}
+            )
 
     return result
 
