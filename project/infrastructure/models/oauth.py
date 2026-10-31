@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 import time
+from functools import cached_property
 from typing import Optional
 
 from authlib.integrations.sqla_oauth2 import (
@@ -197,7 +198,9 @@ class OAuth2AuthorizationCode(
 class OAuth2Token(
     db.Model, OAuth2TokenGeneratedMixin, OAuth2TokenMixin, RateLimitProviderMixin
 ):
-    @property
+    # Looked up once per instance: the rate limit key/value and the API usage record
+    # all read it during one request.
+    @cached_property
     def client(self):
         return (
             object_session(self)

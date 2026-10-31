@@ -20,3 +20,5 @@ access_log_format = os.getenv(
 errorlog = os.getenv("GUNICORN_ERROR_LOG", "-")
 loglevel = os.getenv("GUNICORN_LOG_LEVEL", "info")
 logconfig = os.getenv("GUNICORN_LOG_CONFIG", None)
+# App, gunicorn and access lines in one format (LOG_FORMAT=json|console)
+logger_class = "project.infrastructure.logging_config.GunicornLogger"

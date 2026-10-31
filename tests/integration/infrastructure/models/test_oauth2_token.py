@@ -44,3 +44,25 @@ def test_revoked_token_has_no_active_refresh_token(app, db, seeder):
 
         assert token.is_revoked()
         assert not token.is_refresh_token_active()
+
+
+def test_client_is_looked_up_once(app, db, seeder):
+    import sqlalchemy
+
+    seeder.setup_api_access()
+
+    with app.app_context():
+        token = _first_token(app)
+        client = token.client
+        queries = []
+
+        def _count(*args, **kwargs):
+            queries.append(args)
+
+        sqlalchemy.event.listen(db.engine, "before_cursor_execute", _count)
+        try:
+            assert token.client is client
+        finally:
+            sqlalchemy.event.remove(db.engine, "before_cursor_execute", _count)
+
+        assert queries == []
