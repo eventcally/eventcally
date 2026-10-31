@@ -1,48 +1,5 @@
 moment.locale("de");
 
-function do_geolocation(coordinate_field, location_field, location_name_field) {
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(function (position) {
-      coordinate_field.val(
-        position.coords.latitude + "," + position.coords.longitude
-      );
-      location_field.val("Aktuelle Position");
-      location_name_field.val("Aktuelle Position");
-
-      // Set the value, creating a new option if necessary
-      var data = { id: "current_position", text: "Aktuelle Position" };
-      if (location_field.find("option[value='" + data.id + "']").length) {
-        location_field.val(data.id).trigger('change');
-      } else {
-        var newOption = new Option(data.text, data.id, true, true);
-        location_field.append(newOption).trigger('change');
-      }
-
-      location_field.removeClass("is-invalid");
-    }, handleError);
-
-    function handleError(error) {
-      //Handle Errors
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          alert("User denied the request for Geolocation.");
-          break;
-        case error.POSITION_UNAVAILABLE:
-          alert("Location information is unavailable.");
-          break;
-        case error.TIMEOUT:
-          alert("The request to get user location timed out.");
-          break;
-        case error.UNKNOWN_ERROR:
-          alert("An unknown error occurred.");
-          break;
-      }
-    }
-  } else {
-    alert("Browser doesn't support geolocation!");
-  }
-}
-
 function get_moment_with_time_from_fields(date_field, time_field) {
   var date_time_string = $(date_field).val();
   var time_string = $(time_field).val();
@@ -62,7 +19,6 @@ function get_moment_with_time(field_id) {
 
 function set_date_bounds(picker) {
   var data_range_to_attr = picker.attr("data-range-to");
-  var data_allday_attr = picker.attr("data-allday");
 
   if (data_range_to_attr) {
     var hidden_field_id = picker.attr("id").replace("-user", "");
@@ -77,22 +33,9 @@ function set_date_bounds(picker) {
     if (end_val != "") {
       var end_moment = get_moment_with_time(data_range_to_attr);
 
-      if (data_allday_attr && $(document).find(data_allday_attr).is(':checked')) {
-        end_moment = end_moment.endOf('day');
-        set_picker_date($(document).find(data_range_to_attr), end_moment.toDate());
-      } else if (end_moment < from_moment) {
+      if (end_moment < from_moment) {
         set_picker_date($(document).find(data_range_to_attr), from_moment.toDate());
       }
-    }
-
-    var data_range_max_attr = picker.attr("data-range-max-days");
-    if (data_range_max_attr) {
-      from_moment.add(data_range_max_attr, "days");
-      $(document).find(data_range_to_attr + "-user").datepicker(
-        "option",
-        "maxDate",
-        from_moment.toDate()
-      );
     }
   }
 
@@ -114,35 +57,12 @@ function set_date_bounds(picker) {
 function set_picker_date(picker, date, timeout = -1) {
   picker.datepicker("setDate", date);
 
-  var hidden_field_id = picker.attr("id").replace("-user", "");
-  $("#" + hidden_field_id + "-time").timepicker("setTime", date);
-
   if (timeout < 0) {
     set_date_bounds(picker);
   } else {
     window.setTimeout(function () {
       set_date_bounds(picker);
     }, timeout);
-  }
-}
-
-function onAlldayChecked(checkbox, hidden_field_id) {
-  var picker = $("#" + hidden_field_id + "-user");
-  var data_range_to_attr = picker.attr("data-range-to");
-  var start_moment = get_moment_with_time("#" + hidden_field_id).startOf('day');
-
-  if (checkbox.checked) {
-    set_picker_date(picker, start_moment.toDate());
-  } else {
-    var next_hour = moment().add(1, 'hour').startOf('hour');
-    start_moment = start_moment.set({"hour": next_hour.hour(), "minute": next_hour.minute()});
-    set_picker_date(picker, start_moment.toDate());
-
-    if (data_range_to_attr) {
-      var end_moment = get_moment_with_time(data_range_to_attr);
-      end_moment = end_moment.startOf('day').set({"hour": next_hour.hour(), "minute": next_hour.minute()});
-      set_picker_date($(document).find(data_range_to_attr), end_moment.add(3, 'hours').toDate());
-    }
   }
 }
 
@@ -188,40 +108,6 @@ function start_datepicker(input) {
     $(document).find(data_range_to_attr).attr("data-range-from", "#" + hidden_field_id);
   }
 
-  var data_allday_attr = picker.attr("data-allday");
-  if (data_allday_attr) {
-    var checked = $(document).find(data_allday_attr).is(':checked')
-    $("#" + hidden_field_id + "-time").toggle(!checked);
-    if (data_range_to_attr) {
-      $(document).find(data_range_to_attr + "-time").toggle(!checked);
-    }
-
-    $(document).find(data_allday_attr).on('change', function() {
-      $("#" + hidden_field_id + "-time").toggle(!this.checked);
-      if (data_range_to_attr) {
-        $(document).find(data_range_to_attr + "-time").toggle(!this.checked);
-      }
-
-      onAlldayChecked(this, hidden_field_id)
-
-      // var start_moment = get_moment_with_time("#" + hidden_field_id).startOf('day');
-
-      // if (this.checked) {
-      //   set_picker_date(picker, start_moment.toDate());
-      // } else {
-      //   var next_hour = moment().add(1, 'hour').startOf('hour');
-      //   start_moment = start_moment.set({"hour": next_hour.hour(), "minute": next_hour.minute()});
-      //   set_picker_date(picker, start_moment.toDate());
-
-      //   if (data_range_to_attr) {
-      //     var end_moment = get_moment_with_time(data_range_to_attr);
-      //     end_moment = end_moment.startOf('day').set({"hour": next_hour.hour(), "minute": next_hour.minute()});
-      //     set_picker_date($(data_range_to_attr), end_moment.add(3, 'hours').toDate());
-      //   }
-      // }
-    });
-  }
-
   hidden_field.change(function () {
     var hidden_value = hidden_field.val();
     var existing_date = picker.datepicker("getDate");
@@ -245,174 +131,7 @@ function start_datepicker(input) {
     }
   });
 
-  $("#" + hidden_field_id + "-time").change(function () {
-    set_date_bounds(picker);
-  });
-
   return picker;
-}
-
-function start_timepicker(input) {
-  input.timepicker({
-    timeFormat: "H:i",
-  });
-}
-
-function handle_request_start(
-  result_id = "#result_container",
-  spinner_id = "#spinner",
-  error_id = "#error_alert"
-) {
-  $(result_id).hide();
-  $(spinner_id).show();
-  $(error_id).hide();
-}
-
-function create_request_error_message(
-  xhr,
-  status,
-  error,
-) {
-  return status + " " + xhr.statusText + " " + xhr.responseText;
-}
-
-function handle_request_error(
-  xhr,
-  status,
-  error,
-  result_id = "#result_container",
-  spinner_id = "#spinner",
-  error_id = "#error_alert"
-) {
-  $(error_id).text(status);
-  $(error_id).show();
-  $(spinner_id).hide();
-}
-
-function alert_request_error(
-  xhr,
-  status,
-  error,
-) {
-  alert(create_request_error_message(xhr, status, error));
-}
-
-function handle_request_success(
-  result_id = "#result_container",
-  spinner_id = "#spinner",
-  error_id = "#error_alert"
-) {
-  $(result_id).show();
-  $(spinner_id).hide();
-  $(error_id).hide();
-}
-
-function reset_location_form(prefix = "") {
-  $("#" + prefix + "location-street").val("");
-  $("#" + prefix + "location-postalCode").val("");
-  $("#" + prefix + "location-city").val("");
-  $("#" + prefix + "location-state").val("");
-  $("#" + prefix + "location-latitude").val("");
-  $("#" + prefix + "location-longitude").val("");
-}
-
-function reset_place_form(prefix = "") {
-  $("#" + prefix + "name").val("");
-  $("#" + prefix + "url").val("");
-  reset_location_form(prefix);
-}
-
-function reset_organizer_form(prefix = "") {
-  $("#" + prefix + "name").val("");
-  reset_location_form(prefix);
-}
-
-function fill_place_form_with_gmaps_place(
-  place,
-  prefix = "",
-  location_only = false
-) {
-  var street_number = "";
-  var route = "";
-  var city = "";
-
-  for (var i = 0; i < place.address_components.length; i++) {
-    var component = place.address_components[i];
-    var addressType = component.types[0];
-    var val = component.long_name;
-
-    if (addressType == "street_number") {
-      street_number = val;
-    } else if (addressType == "route") {
-      route = val;
-    } else if (addressType == "locality") {
-      city = val;
-    } else if (addressType == "administrative_area_level_1") {
-      $("#" + prefix + "location-state").val(val);
-    } else if (addressType == "postal_code") {
-      $("#" + prefix + "location-postalCode").val(val);
-    }
-  }
-
-  if (!location_only) {
-    $("#" + prefix + "name").val(place.name);
-
-    if ($.isFunction($("#" + prefix + "name").valid)) {
-      $("#" + prefix + "name").valid();
-    }
-
-    if (place.website) {
-      $("#" + prefix + "url").val(place.website);
-    }
-  }
-
-  $("#" + prefix + "location-street").val([route, street_number].join(" "));
-  $("#" + prefix + "location-city").val(city);
-  $("#" + prefix + "location-latitude").val(place.geometry.location.lat);
-  $("#" + prefix + "location-longitude").val(place.geometry.location.lng);
-}
-
-function showLink(e, element) {
-  if (e != null) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  $("#" + $(element).attr("data-show-container")).hide();
-  $("#" + $(element).attr("data-container")).show();
-  $("#" + $(element).attr("data-container")).trigger("shown");
-}
-
-function hideLink(e, element) {
-  if (e != null) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  $("#" + $(element).attr("data-show-container")).show();
-  $("#" + $(element).attr("data-container")).hide();
-  $("#" + $(element).attr("data-container")).trigger("hidden");
-}
-
-String.prototype.truncate =
-  String.prototype.truncate ||
-  function (n, useWordBoundary) {
-    if (this.length <= n) {
-      return this;
-    }
-    const subString = this.substr(0, n - 1); // the original check
-    return (
-      (useWordBoundary
-        ? subString.substr(0, subString.lastIndexOf(" "))
-        : subString) + "&hellip;"
-    );
-  };
-
-function scroll_to_element(element, complete) {
-  $("html, body").animate(
-    { scrollTop: element.offset().top },
-    { duration: "slow", complete: complete }
-  );
 }
 
 $(function () {
@@ -420,16 +139,6 @@ $(function () {
 
   $("form .datepicker").each(function (index, element) {
     start_datepicker($(element));
-  });
-
-  $("form .timepicker").each(function (index, element) {
-    start_timepicker($(element));
-  });
-
-  $("#clear_location_btn").click(function () {
-    $("#coordinate").val("");
-    $("#location_name").val("");
-    $("#location").val("").trigger('change');
   });
 
   $(".btn-print").click(function () {
@@ -445,30 +154,6 @@ $(function () {
 
   $("#copy_input_button").mouseleave(function () {
     $(this).tooltip("hide");
-  });
-
-  $("#geolocation_btn").click(function () {
-    do_geolocation($("#coordinate"), $("#location"), $("#location_name"));
-  });
-
-  $(".dropzone-wrapper").on("dragover", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    $(this).addClass("dragover");
-  });
-
-  $(".dropzone-wrapper").on("dragleave", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    $(this).removeClass("dragover");
-  });
-
-  $(".show-link").click(function (e) {
-    showLink(e, this);
-  });
-
-  $(".hide-link").click(function (e) {
-    hideLink(e, this);
   });
 
   $(document).on('select2:open', function(e) {

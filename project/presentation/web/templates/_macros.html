@@ -2,14 +2,6 @@
 
     {% set is_formrow = 'formrow' in kwargs or (field.render_kw and 'formrow' in field.render_kw) %}
 
-    {% set is_collapsible = kwargs['is_collapsible'] if 'is_collapsible' in kwargs else False %}
-    {% if is_collapsible %}
-    <div class="mb-3" id="{{ field.id }}-show-container"{% if field.data %} style="display: none;"{% endif %}>
-      <a href="#" class="show-link" data-container="{{ field.id }}-container" data-show-container="{{ field.id }}-show-container"><i class="fa fa-plus"></i> {{ field.label.text }}</a>
-    </div>
-    <div id="{{ field.id }}-container"{% if not field.data %} style="display: none;"{% endif %}>
-    {% endif %}
-
       {% set is_required = kwargs['is_required'] if 'is_required' in kwargs else field.flags.required %}
       {% set label_text = field.label.text + ' *' if is_required else field.label.text %}
       <div class="form-group {% if field.errors %} has-error{% endif -%} {% if is_formrow %} row{% endif -%}">
@@ -103,13 +95,6 @@
       </div>
         {% endif %}
       </div>
-
-    {% if is_collapsible %}
-      <div class="mb-3" id="{{ field.id }}-hide-container">
-        <a href="#" class="hide-link" data-container="{{ field.id }}-container" data-show-container="{{ field.id }}-show-container"><i class="fa fa-minus"></i> {{ field.label.text }}</a>
-      </div>
-    </div>
-    {% endif %}
 {% endmacro %}
 
 {% macro render_field(field) %}
@@ -977,38 +962,6 @@
 <script src="{{ url_for('static', filename='ext/jquery-validate.1.19.2.additional-methods.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/jquery-validate.1.19.2.messages_de.min.js')}}"></script>
 <script>
-  jQuery.validator.addMethod("dateRange", function(value, element, params) {
-    var start_id = params[0];
-    var end_id = params[1];
-
-    var start_val = $(start_id).val();
-    var end_val = $(end_id).val();
-
-    if (start_val == '' || end_val == '') {
-      return true;
-    }
-
-    var start = get_moment_with_time(start_id);
-    var end = get_moment_with_time(end_id);
-    return end >= start;
-  }, jQuery.validator.format("{{ _('The start must be before the end.') }}"));
-
-  jQuery.validator.addMethod("dateRangeDay", function(value, element, params) {
-    var start_id = params[0];
-    var end_id = params[1];
-
-    var start_val = $(start_id).val();
-    var end_val = $(end_id).val();
-
-    if (start_val == '' || end_val == '') {
-      return true;
-    }
-
-    var start = get_moment_with_time(start_id);
-    var end = get_moment_with_time(end_id);
-    var max = start.add(14, 'day');
-    return end <= max;
-  }, jQuery.validator.format("{{ _('An event can last a maximum of 180 days.') }}"));
 
   $.validator.addMethod( "time", function( value, element ) {
     return this.optional( element ) || /^([01]\d|2[0-3]|[0-9])(:[0-5]\d){1,2}$/.test( value );
@@ -1132,7 +1085,6 @@
 <script src="{{ url_for('static', filename='ext/jquery-ui-i18n.1.11.4.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/select2.4.0.13.full.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/select2.i18n.de.4.0.13.min.js')}}"></script>
-<script src="{{ url_for('static', filename='ext/jquery.timepicker.1.13.18.min.js')}}"></script>
 <script src="{{ url_for('static', filename='form.js')}}"></script>
 {% endmacro %}
 
@@ -1140,5 +1092,4 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='ext/jquery-ui.1.12.1/jquery-ui.min.css')}}">
 <link rel="stylesheet" href="{{ url_for('static', filename='ext/select2.4.0.13.min.css')}}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='ext/select2-bootstrap4.1.5.2.min.css')}}" />
-<link rel="stylesheet" href="{{ url_for('static', filename='ext/jquery.timepicker.1.13.18.min.css')}}" />
 {% endmacro %}

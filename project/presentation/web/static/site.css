@@ -87,28 +87,7 @@ tr.table-line-through td {
   height: 100px;
 }
 
-.dropzone-desc {
-  position: absolute;
-  margin: 0 auto;
-  left: 0;
-  right: 0;
-  text-align: center;
-  width: 40%;
-  top: 25px;
-}
-
-.dropzone,
-.dropzone:focus {
-  position: absolute;
-  outline: none !important;
-  width: 100%;
-  height: 100px;
-  cursor: pointer;
-  opacity: 0;
-}
-
-.dropzone-wrapper:hover,
-.dropzone-wrapper.dragover {
+.dropzone-wrapper:hover {
   background: #ecf0f5;
 }
 
