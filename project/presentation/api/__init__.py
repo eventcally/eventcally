@@ -180,6 +180,10 @@ def init_api(app):
         if request.path.startswith("/api/v1"):
             g._login_user = current_app.login_manager.anonymous_user()
 
+    from project.presentation.api.usage_log import init_api_usage_log
+
+    init_api_usage_log(app)
+
     marshmallow.init_app(app)
     app.config.update(
         {

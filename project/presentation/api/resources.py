@@ -28,6 +28,11 @@ from project.presentation.api.schemas import (
     TooManyRequestsResponseSchema,
     UnprocessableEntityResponseSchema,
 )
+from project.presentation.api.usage_log import (
+    remember_anonymous_auth,
+    remember_api_key_auth,
+    remember_token_auth,
+)
 from project.presentation.shared.oauth2_extensions import require_oauth
 from project.presentation.shared.rate_limit import (
     api_rate_limit_scope,
@@ -69,6 +74,7 @@ def require_api_access(scopes=None, app_token_required=False):
             try:  # pragma: no cover
                 try:
                     token = require_oauth.acquire_token(scopes)
+                    remember_token_auth(token)
 
                     if app_token_required and (
                         not token or not token.app_id
@@ -82,9 +88,11 @@ def require_api_access(scopes=None, app_token_required=False):
                     raise e
                 api_key = get_api_key_from_request()
                 if api_key:
+                    remember_api_key_auth(api_key)
                     limit_decorator = get_limit_decorator_for_provider(api_key)
                 else:
                     if current_app.config["API_READ_ANONYM"]:
+                        remember_anonymous_auth()
                         limit_decorator = limiter.shared_limit(
                             "60/minute", scope=api_rate_limit_scope
                         )

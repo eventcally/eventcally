@@ -1,4 +1,3 @@
-import logging
 import os
 
 from flask import Flask
@@ -23,17 +22,12 @@ from project.infrastructure.extensions import (
 
 
 def _init_logging(app: Flask):
-    gunicorn_logger = logging.getLogger("gunicorn.error")
-    if gunicorn_logger.hasHandlers():
-        app.logger.handlers = gunicorn_logger.handlers
-        app.logger.setLevel(gunicorn_logger.level)
+    from project.infrastructure.logging_config import init_logging
 
-    from project.infrastructure.one_line_formatter import (
-        init_logger_with_one_line_formatter,
-    )
-
-    init_logger_with_one_line_formatter(logging.getLogger())
-    init_logger_with_one_line_formatter(app.logger)
+    # app.logger writes through the root handler (LOG_FORMAT), not Flask's default one
+    app.logger.handlers = []
+    app.logger.propagate = True
+    init_logging()
 
 
 def _init_extensions(app: Flask):
@@ -165,11 +159,13 @@ def create_app(config_override: dict | None = None) -> Flask:
     from project.presentation.api import init_api, register_oauth2_scheme_once
     from project.presentation.bff import init_bff
     from project.presentation.cli import init_cli
+    from project.presentation.shared.request_id import init_request_id
     from project.presentation.web import init_web
     from project.presentation.web.requests import init_requests
 
     # The REST API and the BFF must be initialized before container.wire() imports
     # their modules.
+    init_request_id(app)
     init_api(app)
     init_bff(app)
     app.container = _init_container(app)

@@ -5,7 +5,13 @@ from urllib.error import URLError
 from babel import Locale
 from celery import Celery
 from celery import Task as BaseTask
-from celery.signals import after_setup_logger, after_setup_task_logger
+from celery.signals import (
+    after_setup_logger,
+    after_setup_task_logger,
+    before_task_publish,
+    task_postrun,
+    task_prerun,
+)
 from flask import current_app
 from requests.exceptions import RequestException
 
@@ -59,21 +65,47 @@ def init_celery(app):
 
 
 @after_setup_logger.connect
-def setup_logger(logger, *args, **kwargs):
-    from project.infrastructure.one_line_formatter import (
-        init_logger_with_one_line_formatter,
-    )
-
-    init_logger_with_one_line_formatter(logger)
-
-
 @after_setup_task_logger.connect
-def setup_task_logger(logger, *args, **kwargs):
-    from project.infrastructure.one_line_formatter import (
-        init_logger_with_one_line_formatter,
-    )
+def setup_logger(logger, *args, **kwargs):
+    from project.infrastructure.logging_config import use_log_formatter
 
-    init_logger_with_one_line_formatter(logger)
+    use_log_formatter(logger)
+
+
+@before_task_publish.connect
+def pass_request_id(headers=None, **kwargs):
+    """Tasks queued during a request log with its request id."""
+    from project.infrastructure.logging_config import get_log_context
+
+    request_id = get_log_context().get("request_id")
+
+    if headers is not None and request_id:
+        headers.setdefault("request_id", request_id)
+
+
+@task_prerun.connect
+def bind_task_log_context(task_id=None, task=None, **kwargs):
+    from project.infrastructure.logging_config import bind_log_context, get_log_context
+
+    request_id = task.request.get("request_id") or get_log_context().get("request_id")
+    context = {"task_id": task_id, "task_name": task.name}
+
+    if request_id:
+        context["request_id"] = request_id
+
+    # Eager tasks run inside the request: postrun restores its context, not clears it
+    task.request.log_context_tokens = bind_log_context(**context)
+
+
+@task_postrun.connect
+def reset_task_log_context(task=None, **kwargs):
+    from project.infrastructure.logging_config import reset_log_context
+
+    tokens = getattr(task.request, "log_context_tokens", None)
+
+    if tokens:
+        task.request.log_context_tokens = None
+        reset_log_context(tokens)
 
 
 @contextmanager
