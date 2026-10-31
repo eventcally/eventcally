@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from typing import Dict, List, Optional, Set
 
@@ -15,6 +16,9 @@ ENTRIES = {
 
 _MANIFEST_PATH = ("static", "dist", ".vite", "manifest.json")
 _manifest_cache: Dict[str, dict] = {}
+
+
+logger = logging.getLogger(__name__)
 
 
 def _manifest_file() -> str:
@@ -76,7 +80,7 @@ def vite_entry(name: str) -> Markup:
     chunk = _find_entry(manifest, name) if manifest else None
 
     if chunk is None:
-        current_app.logger.warning("Vite entry '%s' is not built.", name)
+        logger.warning("Vite entry is not built", extra={"entry": name})
         return Markup("<!-- vite entry '{}' not built -->").format(escape(name))
 
     imports = _collect_imports(manifest, chunk, set())

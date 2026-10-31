@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from dependency_injector.wiring import Provide, inject
@@ -29,6 +30,8 @@ from project.presentation.web.views.utils import (
 )
 from project.shared.dateutils import create_icalendar
 from project.shared.utils import get_event_category_name
+
+logger = logging.getLogger(__name__)
 
 
 @main_bp.route("/event/<int:event_id>")
@@ -108,7 +111,9 @@ def event_rrule():
         )
         return jsonify(result)
     except Exception as e:
-        current_app.logger.exception(request.json)
+        logger.exception(
+            "Could not calculate the occurrences", extra={"rrule": rrule_str}
+        )
         return getattr(e, "message", "Unknown error"), 400
 
 

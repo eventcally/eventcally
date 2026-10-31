@@ -283,7 +283,7 @@ def test_never_raises(client, app, seeder: Seeder, utils, usage_lines, mocker):
     mocker.patch.object(
         usage_log, "build_api_usage_record", side_effect=RuntimeError("boom")
     )
-    exception = mocker.patch.object(app.logger, "exception")
+    exception = mocker.patch.object(usage_log.logger, "exception")
 
     utils.get_json_ok(utils.get_url("api_v1_license_list"))
 
@@ -399,7 +399,7 @@ def test_remembering_never_raises(client, app, seeder, utils, usage_lines, mocke
 
     seeder.setup_api_access(user_access=False, use_api_key=True)
     mocker.patch.object(usage_log, "ApiUsageAuth", side_effect=RuntimeError("boom"))
-    exception = mocker.patch.object(app.logger, "exception")
+    exception = mocker.patch.object(usage_log.logger, "exception")
 
     utils.get_json_ok(utils.get_url("api_v1_license_list"))
 

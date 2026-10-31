@@ -7,6 +7,7 @@ from project.application.abstract_query_handler_factory import (
     AbstractQueryHandlerFactory,
 )
 from project.application.abstract_read_session_scope import AbstractReadSessionScope
+from project.application.log_fields import message_log_fields, message_payload
 from project.application.services.abstract_app_context_provider import (
     AbstractAppContextProvider,
 )
@@ -35,8 +36,13 @@ class QueryBus:
     def handle(
         self, query: queries.Query[queries.QueryResultType]
     ) -> queries.QueryResultType:
-        logger.debug("handling query %r", query)
         self._set_missing_query_fields(query)
+        fields = message_log_fields("query", query)
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(
+                "Handling query",
+                extra={**fields, "payload": message_payload(query)},
+            )
 
         try:
             query_type = type(query)
@@ -48,7 +54,7 @@ class QueryBus:
             with self.read_session_scope:
                 return handler.handle(validated_query)
         except Exception:
-            logger.exception("Exception handling query %r", query)
+            logger.exception("Handling query failed", extra=fields)
             raise
 
     def _set_missing_query_fields(self, query: queries.Query):

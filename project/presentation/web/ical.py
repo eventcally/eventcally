@@ -1,9 +1,10 @@
 """iCal builders over the event read models."""
 
+import logging
 import os
 
 import icalendar
-from flask import current_app, url_for
+from flask import url_for
 from flask_babel import gettext
 from icalendar.prop import vDDDLists
 
@@ -12,6 +13,8 @@ from project.domain.models.enums.event_status import EventStatus
 from project.presentation.web.views.utils import truncate
 from project.shared.dateutils import berlin_tz, date_parts_are_equal, round_to_next_day
 from project.shared.utils import get_place_str
+
+logger = logging.getLogger(__name__)
 
 
 def populate_ical_event_with_event(ical_event: icalendar.Event, event, url: str):
@@ -142,8 +145,11 @@ def create_ical_events_for_event(event) -> list:  # list[icalendar.Event]
         try:
             ical_event = create_ical_event_for_date_definition(event, date_definition)
             result.append(ical_event)
-        except Exception as e:  # pragma: no cover
-            current_app.logger.exception(e)
+        except Exception:  # pragma: no cover
+            logger.exception(
+                "Could not create the iCal event",
+                extra={"event_id": event.id, "date_definition_id": date_definition.id},
+            )
 
     return result
 

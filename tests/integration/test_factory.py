@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 import sqlalchemy
 
@@ -11,7 +13,7 @@ def test_mail_server(monkeypatch):
     app.testing = True
 
 
-def test_log_message_called_via_email_dispatched_signal(app):
+def test_log_message_called_via_email_dispatched_signal(app, caplog):
     """Covers the log_message function body registered by the factory."""
     from unittest.mock import MagicMock
 
@@ -22,9 +24,15 @@ def test_log_message_called_via_email_dispatched_signal(app):
     msg = MagicMock()
     msg.subject = "Test Subject"
     msg.body = "Test Body"
+    msg.recipients = ["a@test.de"]
 
-    with app.app_context():
+    with app.app_context(), caplog.at_level(logging.INFO, logger="project.factory"):
         email_dispatched.send(app, message=msg)
+
+    record = next(r for r in caplog.records if r.getMessage().startswith("Mail not"))
+    assert record.recipients == ["a@test.de"]
+    assert record.subject == "Test Subject"
+    assert record.body == "Test Body"
 
 
 def _remote_address(config_override, forwarded_for=None):

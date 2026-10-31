@@ -25,6 +25,23 @@ def test_update_recurring_dates(client, seeder, app):
     assert result.exit_code == 0
 
 
+def test_update_recurring_dates_logs_the_count(client, seeder, app, caplog):
+    import logging
+
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.create_event(admin_unit_id, "RRULE:FREQ=DAILY;COUNT=7")
+
+    with caplog.at_level(
+        logging.INFO, logger="project.presentation.tasks.celery_tasks"
+    ):
+        _run_cli_command(app, ["event", "update-recurring-dates"])
+
+    record = next(
+        r for r in caplog.records if r.getMessage() == "Updated recurring dates"
+    )
+    assert record.count >= 1
+
+
 def test_update_recurring_dates_adds_missing_dates_and_keeps_existing_ones(
     client, seeder, app, db
 ):

@@ -1,4 +1,5 @@
 import json
+import logging
 import os.path
 
 from flask import (
@@ -18,6 +19,8 @@ from project.infrastructure.extensions import db, limiter
 from project.presentation.web.views.main_blueprint import main_bp
 from project.presentation.web.views.utils import get_settings
 from project.shared.paths import cache_path, dump_path, robots_txt_file, sitemap_file
+
+logger = logging.getLogger(__name__)
 
 
 @main_bp.route("/")
@@ -120,7 +123,7 @@ def developer():
             "ctime": os.path.getctime(all_path),
         }
     else:
-        current_app.logger.info("No file at %s" % all_path)
+        logger.info("No dump file", extra={"path": all_path})
 
     return render_template("developer/read.html", dump_file=dump_file)
 

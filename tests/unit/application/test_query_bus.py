@@ -1,5 +1,6 @@
 """Unit tests for QueryBus — no database required."""
 
+import logging
 from typing import Optional
 
 import pytest
@@ -159,3 +160,46 @@ def test_scope_exits_and_error_propagates_when_handler_raises():
     assert scope.entered == 1
     assert scope.exited == 1
     assert scope.exit_exc_types == [RuntimeError]
+
+
+_LOGGER = "project.application.query_bus"
+
+
+def test_debug_line_has_fields_and_payload(caplog):
+    bus, _, _, _ = _make_bus(actor=Actor(user_id=42))
+
+    with caplog.at_level(logging.DEBUG, logger=_LOGGER):
+        bus.handle(_FakeQuery(value=1))
+
+    record = next(r for r in caplog.records if r.getMessage() == "Handling query")
+    assert record.message_kind == "query"
+    assert record.message_type == "_FakeQuery"
+    assert record.actor_user_id == 42
+    assert record.payload["value"] == 1
+
+
+def test_payload_not_computed_without_debug(caplog, mocker):
+    payload = mocker.patch("project.application.query_bus.message_payload")
+    bus, _, _, _ = _make_bus()
+
+    with caplog.at_level(logging.INFO, logger=_LOGGER):
+        bus.handle(_FakeQuery(value=1))
+
+    payload.assert_not_called()
+
+
+def test_failure_logs_fields_without_payload(caplog):
+    bus, _, _, _ = _make_bus(
+        handler=_FakeHandler(error=RuntimeError("boom")), actor=Actor(user_id=42)
+    )
+
+    with caplog.at_level(logging.DEBUG, logger=_LOGGER):
+        with pytest.raises(RuntimeError):
+            bus.handle(_FakeQuery(value=1))
+
+    record = next(
+        r for r in caplog.records if r.getMessage() == "Handling query failed"
+    )
+    assert record.levelno == logging.ERROR
+    assert record.message_type == "_FakeQuery"
+    assert "payload" not in record.__dict__

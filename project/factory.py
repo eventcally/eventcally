@@ -1,3 +1,4 @@
+import logging
 import os
 
 from flask import Flask
@@ -19,6 +20,8 @@ from project.infrastructure.extensions import (
     migrate,
     security,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def _init_logging(app: Flask):
@@ -47,8 +50,14 @@ def _init_extensions(app: Flask):
     if app.config["MAIL_SUPPRESS_SEND"]:
 
         def log_message(app, message):
-            app.logger.info(message.subject)
-            app.logger.info(message.body)
+            logger.info(
+                "Mail not sent (MAIL_SUPPRESS_SEND)",
+                extra={
+                    "recipients": message.recipients,
+                    "subject": message.subject,
+                    "body": message.body,
+                },
+            )
 
         email_dispatched.connect(log_message, weak=False)
 
