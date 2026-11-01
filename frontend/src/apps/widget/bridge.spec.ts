@@ -94,6 +94,16 @@ describe("bridge", () => {
       });
     });
 
+    it("reports the URL it is given", () => {
+      window.__eventcallyWidget!.ready = true;
+      host(() => usePageViewTracking(() => "http://x/p?"));
+
+      expect(window.parentIFrame!.sendMessage).toHaveBeenCalledWith({
+        type: "EVENTCALLY_ANALYTICS_EVENT",
+        data: { event: "pageView", url: "http://x/p?" },
+      });
+    });
+
     it("waits for the ready event and reports only once", () => {
       host(() => usePageViewTracking());
       expect(window.parentIFrame!.sendMessage).not.toHaveBeenCalled();

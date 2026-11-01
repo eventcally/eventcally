@@ -13,6 +13,12 @@ export const routes: RouteRecordRaw[] = [
     name: "calendar",
     component: () => import("./pages/CalendarWidget.vue"),
   },
+  {
+    // The iframe page customers embed; the URL is a contract (see legacyQuery.ts).
+    path: "/organizations/:id(\\d+)/widget/eventdates",
+    name: "eventdates",
+    component: () => import("./pages/EventDatesWidget.vue"),
+  },
 ];
 
 export const router = createRouter({

@@ -1,8 +1,13 @@
 from datetime import date, datetime
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
+from project.application.queries.page_request import (
+    DEFAULT_PER_PAGE,
+    MAX_PER_PAGE,
+    PageRequest,
+)
 from project.application.read_models.organization_read_models import (
     OrganizationListItemReadModel,
 )
@@ -120,6 +125,27 @@ class WidgetEventDateParams(PageParams):
     category_id: List[int] = []
 
 
+class OrganizationWidgetEventDateParams(BaseModel):
+    """The query of the legacy iframe widget page, kept lenient like its WTForms form:
+    the dates and the category are plain strings that the route parses."""
+
+    page: int = Field(default=1, ge=1)
+    per_page: int = Field(default=DEFAULT_PER_PAGE, ge=1)
+    date_from: Optional[str] = None
+    date_to: Optional[str] = None
+    keyword: Optional[str] = Field(default=None, max_length=255)
+    category_id: Optional[str] = None
+    tag: Optional[str] = Field(default=None, max_length=255)
+
+    @field_validator("per_page")
+    @classmethod
+    def clamp_per_page(cls, value: int) -> int:
+        return min(value, MAX_PER_PAGE)
+
+    def to_page_request(self) -> PageRequest:
+        return PageRequest(page=self.page, per_page=self.per_page)
+
+
 class WidgetPhoto(BaseModel):
     url_200: str
     url_500: str
@@ -136,6 +162,7 @@ class WidgetEvent(BaseModel):
     public_status: str
     booked_up: Optional[bool] = None
     attendance_mode: Optional[str] = None
+    organization_id: int
     organization_name: str
     organizer_name: Optional[str] = None
     place_name: Optional[str] = None

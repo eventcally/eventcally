@@ -37,6 +37,8 @@ interface Window {
   __eventcallyWidget?: {
     settings: Record<string, unknown> | null;
     ready: boolean;
+    /** The URL the page was loaded with (the iframe page reports it as its first page view). */
+    initialHref?: string;
   };
   parentIFrame?: {
     sendMessage: (message: unknown, targetOrigin?: string) => void;

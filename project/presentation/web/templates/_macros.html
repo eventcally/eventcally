@@ -987,43 +987,6 @@
 </script>
 {% endmacro %}
 
-{% macro render_widget_styles(styles) %}
-<style>
-  body {
-      {% if 'background' in styles %}
-          background-color: {{ styles['background'] }};
-      {% endif %}
-      {% if 'font' in styles %}
-          font-family: {{ styles['font'] }};
-      {% endif %}
-  }
-
-  {% if 'background' in styles %}
-  .page-link, .page-item.disabled .page-link {
-        background-color: {{ styles['background'] }};
-  }
-  {% endif %}
-
-  {% if 'primary' in styles %}
-  .btn-primary,
-  .btn-primary:hover,
-  .btn-primary:active,
-  .btn-primary:not(:disabled):not(.disabled):active,
-  .btn-primary:focus {
-      background-color: {{ styles['primary'] }};
-      border-color: {{ styles['primary'] }};
-  }
-  {% endif %}
-
-  {% if 'link' in styles %}
-  .card-title, .page-link, .page-link:hover, a, a:hover {
-      color: {{ styles['link'] }};
-  }
-  {% endif %}
-
-</style>
-{% endmacro %}
-
 {% macro render_share_modal(share_links) %}
 <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
