@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="{{ boot.locale }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ _('Widget') }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='ext/bootstrap.5.3.3.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='ext/font-awesome.5.13.1/css/all.min.css')}}">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script id="boot" type="application/json">{{ boot | tojson }}</script>
+    <script>
+      // This page never waits for the embedding page: the settings come from the server
+      // (raw iframe embeds send nothing), iframeResizer only reports when it is ready.
+      window.__eventcallyWidget = {
+        settings: JSON.parse(document.getElementById("boot").textContent).widget.settings,
+        ready: false,
+        initialHref: document.location.href
+      };
+      window.iFrameResizer = {
+        onReady: function () {
+          window.__eventcallyWidget.ready = true;
+          if (document.location.search.length) {
+            if (window.parentIFrame) window.parentIFrame.scrollToOffset(0, 0);
+          }
+          window.dispatchEvent(new CustomEvent("eventcally:ready"));
+        }
+      };
+    </script>
+    <script src="{{ url_for('static', filename='ext/iframeResizer.4.3.2.contentWindow.min.js')}}"></script>
+    {{ vite_entry("widget") }}
+  </body>
+</html>

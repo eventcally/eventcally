@@ -34,13 +34,16 @@ export function scrollToTop(): void {
   window.parentIFrame?.scrollToOffset(0, 0);
 }
 
-/** Reports one `pageView` once the page is mounted and iframeResizer is ready. */
-export function usePageViewTracking(): void {
+/**
+ * Reports one `pageView` once the page is mounted and iframeResizer is ready. `href` says which
+ * URL it is: the iframe page reports the URL it was loaded with, before the router tidied it.
+ */
+export function usePageViewTracking(href: () => string = () => document.location.href): void {
   let sent = false;
   const report = () => {
     if (sent || !window.__eventcallyWidget?.ready) return;
     sent = true;
-    trackAnalytics({ event: "pageView", url: document.location.href });
+    trackAnalytics({ event: "pageView", url: href() });
   };
 
   onMounted(() => {

@@ -3,11 +3,7 @@ from flask import Response, current_app, render_template, url_for
 from flask_babel import gettext
 from flask_security import current_user
 
-from project.application.queries import (
-    GetEventDetailQuery,
-    ListAllEventCategoriesQuery,
-    ListUpcomingEventDatesQuery,
-)
+from project.application.queries import GetEventDetailQuery, ListUpcomingEventDatesQuery
 from project.application.query_bus import QueryBus
 from project.container import Application
 from project.presentation.shared.access import (
@@ -26,7 +22,6 @@ from project.presentation.web.views.utils import (
     get_share_links,
 )
 from project.shared.dateutils import create_icalendar
-from project.shared.utils import get_event_category_name
 
 
 @main_bp.route("/event/<int:event_id>")
@@ -85,16 +80,6 @@ def event_report(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_
         entry="public",
         title=gettext("Report event"),
         boot=build_boot_data(base="/"),
-    )
-
-
-def get_event_category_choices():
-    categories = current_app.container.cqrs.query_bus().handle(
-        ListAllEventCategoriesQuery()
-    )
-    return sorted(
-        [(c.id, get_event_category_name(c)) for c in categories],
-        key=lambda category: category[1],
     )
 
 

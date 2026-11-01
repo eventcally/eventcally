@@ -141,11 +141,6 @@ $(function () {
     start_datepicker($(element));
   });
 
-  $(".btn-print").click(function () {
-    window.print();
-    return false;
-  });
-
   $("#copy_input_button").click(function () {
     $("#copy_input").select();
     document.execCommand("copy");

@@ -1,6 +1,7 @@
 from dependency_injector.wiring import Provide, inject
 
 from project.application.queries import (
+    GetOrganizationWidgetSettingsQuery,
     ListAllEventCategoriesQuery,
     SearchEventDatesQuery,
 )
@@ -13,6 +14,7 @@ from project.presentation.bff.public.event_date_mapping import (
     photo_of,
 )
 from project.presentation.bff.public.schemas import (
+    OrganizationWidgetEventDateParams,
     WidgetCategory,
     WidgetCategoryList,
     WidgetEvent,
@@ -21,6 +23,11 @@ from project.presentation.bff.public.schemas import (
     WidgetEventDateParams,
 )
 from project.presentation.bff.routing import bff_route
+from project.presentation.shared.legacy_widget_search import legacy_widget_criteria
+from project.presentation.shared.query_results import (
+    abort_if_page_out_of_range,
+    result_or_404,
+)
 from project.shared.dateutils import form_input_to_date
 from project.shared.utils import get_event_category_name
 
@@ -42,6 +49,7 @@ def _to_widget_date(hit) -> WidgetEventDate:
             attendance_mode=(
                 event.attendance_mode.name if event.attendance_mode else None
             ),
+            organization_id=event.admin_unit.id,
             organization_name=event.admin_unit.name,
             organizer_name=event.organizer.name if event.organizer else None,
             place_name=event.event_place.name if event.event_place else None,
@@ -78,6 +86,36 @@ def list_widget_event_dates(
     page = query_bus.handle(
         SearchEventDatesQuery(criteria=criteria, page=query.to_page_request())
     )
+    return WidgetEventDatePage(
+        items=[_to_widget_date(h) for h in page.items],
+        page=page.page,
+        per_page=page.per_page,
+        total=page.total,
+        pages=page.pages,
+    )
+
+
+@bff_route(
+    bff_public_bp,
+    "/widget/organizations/<int:id>/event-dates",
+    query=OrganizationWidgetEventDateParams,
+    response=WidgetEventDatePage,
+    summary="Event dates of the legacy organization widget page",
+)
+@inject
+def list_organization_widget_event_dates(
+    id: int,
+    query: OrganizationWidgetEventDateParams,
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    result_or_404(query_bus.handle(GetOrganizationWidgetSettingsQuery(id=id)))
+    page = query_bus.handle(
+        SearchEventDatesQuery(
+            criteria=legacy_widget_criteria(query_bus, id, query),
+            page=query.to_page_request(),
+        )
+    )
+    abort_if_page_out_of_range(page)
     return WidgetEventDatePage(
         items=[_to_widget_date(h) for h in page.items],
         page=page.page,

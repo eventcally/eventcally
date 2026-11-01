@@ -1,4 +1,4 @@
-"""Page and feed parity of the event reads (detail pages, iCal, widget, manage list).
+"""Page and feed parity of the event reads (detail pages, iCal, manage list).
 
 `data/event_read_parity.json.gz` was captured from the ORM read path before event reads
 moved to the query bus (`UPDATE_READ_PARITY=1`). HTML is compared after removing CSRF
@@ -23,10 +23,6 @@ SNAPSHOT_PATH = Path(__file__).parent / "data" / "event_read_parity.json.gz"
 def _normalize(text: str) -> str:
     text = re.sub(r'(csrf_token[^>]*value=")[^"]*"', r'\1"', text)
     text = re.sub(r'nonce="[^"]*"', 'nonce=""', text)
-    # The default `date_from` of the widget form is the day the test runs.
-    text = re.sub(
-        r'(id="date_from" name="date_from" value=")(?!2040)[0-9-]+"', r'\1TODAY"', text
-    )
     text = re.sub(
         r'"[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{20,}"', '""', text
     )
@@ -84,24 +80,8 @@ def _requests(utils: UtilActions, ids):
 
     for name in ("a", "b", "c"):
         requests[f"org_{name}_ical"] = url("main.organization_ical", id=ids[name])
-        requests[f"org_{name}_widget"] = url("main.widget_event_dates", id=ids[name])
 
     requests["org_unknown_ical"] = url("main.organization_ical", id=4711)
-    requests["org_unknown_widget"] = url("main.widget_event_dates", id=4711)
-
-    widget_args = {
-        "keyword": {"keyword": "Jam"},
-        "category": {"category_id": 3},
-        "page": {"page": 1, "per_page": 3},
-        "date_from": {"date_from": "2040-04-01"},
-        "styles": {"s_ft": "Arial", "s_bg": "#ffffff", "s_pr": "#112233"},
-        "coordinate": {"coordinate": "51.9,10.4", "distance": 20000},
-    }
-
-    for key, args in widget_args.items():
-        requests[f"org_a_widget_{key}"] = url(
-            "main.widget_event_dates", id=ids["a"], **args
-        )
 
     for organizer_id in range(1, 6):
         requests[f"organizer_{organizer_id}_ical"] = url(
