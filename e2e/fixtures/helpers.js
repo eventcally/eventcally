@@ -73,13 +73,6 @@ async function shouldContain(locator, text) {
   await expect(locator.filter({ hasText: text }).first()).toBeAttached();
 }
 
-async function screenshotDatepicker(page, elementId, screenshotName = "datepicker") {
-  await page.locator(elementId).click();
-  await expect(page.locator("#ui-datepicker-div")).toBeVisible();
-  await page.locator(".ui-datepicker-next > .ui-icon").click();
-  await screenshot(page, screenshotName);
-}
-
 /**
  * One date card of the Vue event form (`EventDateDefinitionFields`): start, the end that
  * "+ End" opens three hours later, all-day and the recurrence editor. With `recurrence`
@@ -177,7 +170,6 @@ module.exports = {
   assertInvalid,
   assertRequired,
   typeahead,
-  screenshotDatepicker,
   checkVueEventStartEnd,
   authorize,
 };

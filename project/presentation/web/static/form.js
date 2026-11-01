@@ -1,15 +1,7 @@
-$.datepicker.setDefaults($.datepicker.regional["de"]);
 $.fn.select2.defaults.set("language", "de");
 
 (function() {
   var CustomFormModule = function() {
-
-    function processClearDatePickerButton($el) {
-      var datepicker = $($el.attr("data-target"));
-      $el.click(function () {
-        datepicker.datepicker().val(null).trigger("change");
-      });
-    }
 
     function processSelect2Tags($el) {
       $el.select2({
@@ -38,11 +30,6 @@ $.fn.select2.defaults.set("language", "de");
       $("form[data-role=validation-form]").each(function () {
         var $el = $(this);
         processFormValidation($el);
-      });
-
-      $("button[data-role=clear-datepicker-btn]").each(function () {
-        var $el = $(this);
-        processClearDatePickerButton($el);
       });
 
       $(".autocomplete").select2({
