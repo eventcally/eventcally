@@ -21,7 +21,7 @@ def test_event_dates_shell(client, seeder: Seeder, utils: UtilActions):
     response = utils.get_ok(url)
 
     utils.assert_response_contains(response, "iframeResizer.4.3.2.contentWindow.min.js")
-    utils.assert_response_contains(response, "dist/assets")
+    utils.assert_response_contains(response, 'id="boot"')
     # Customers embed the page on their own sites.
     assert "X-Frame-Options" not in response.headers
 
