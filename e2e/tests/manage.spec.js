@@ -1,5 +1,5 @@
 const { test, expect } = require("../fixtures");
-const { screenshot, screenshotDatepicker } = require("../fixtures/helpers");
+const { screenshot } = require("../fixtures/helpers");
 const {
   createAdminUnit,
   createAdminUnitOrganizationInvitation,

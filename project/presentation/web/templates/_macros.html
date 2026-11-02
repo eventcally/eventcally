@@ -1044,15 +1044,12 @@
 {% endmacro %}
 
 {% macro render_form_scripts() %}
-<script src="{{ url_for('static', filename='ext/jquery-ui.1.12.1/jquery-ui.min.js')}}"></script>
-<script src="{{ url_for('static', filename='ext/jquery-ui-i18n.1.11.4.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/select2.4.0.13.full.min.js')}}"></script>
 <script src="{{ url_for('static', filename='ext/select2.i18n.de.4.0.13.min.js')}}"></script>
 <script src="{{ url_for('static', filename='form.js')}}"></script>
 {% endmacro %}
 
 {% macro render_form_styles() %}
-<link rel="stylesheet" href="{{ url_for('static', filename='ext/jquery-ui.1.12.1/jquery-ui.min.css')}}">
 <link rel="stylesheet" href="{{ url_for('static', filename='ext/select2.4.0.13.min.css')}}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='ext/select2-bootstrap4.1.5.2.min.css')}}" />
 {% endmacro %}

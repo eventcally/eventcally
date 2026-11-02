@@ -47,11 +47,6 @@ tr.table-line-through td {
   width: 1%;
 }
 
-.ui-autocomplete,
-.ui-datepicker {
-  z-index: 1051 !important;
-}
-
 .btn-google {
   color: white;
   background-color: #ea4335;
