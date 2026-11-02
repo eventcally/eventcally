@@ -71,7 +71,7 @@ dev = [
     "pytest-split==0.11.0",
     "pytest-datadir==1.8.0",
     "requests-mock==1.12.1",
-    "coverage==7.16.2",
+    "coverage==7.17.0",
     "black==26.10.1",
     "isort==5.12.0",
     "flake8==6.1.0",
