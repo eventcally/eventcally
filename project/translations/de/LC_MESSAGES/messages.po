@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-02 00:00+0100\n"
+"POT-Creation-Date: 2026-11-03 16:05+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -57,6 +57,7 @@ msgstr ""
 "%(email)s hat deine Einladung akzeptiert, um die Organisation "
 "%(admin_unit_name)s zu erstellen."
 
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:43
 #: project/presentation/bff/manage/event_organizers.py:190
 #: project/presentation/bff/manage/event_places.py:181
 #: project/presentation/bff/manage/outgoing_relations.py:206
@@ -65,16 +66,19 @@ msgstr ""
 msgid "%(model_display_name)s successfully created"
 msgstr "%(model_display_name)s erfolgreich erstellt"
 
+#: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:50
+#: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:45
 #: project/presentation/web/modular/base_views.py:435
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr "%(model_display_name)s erfolgreich gelöscht"
 
-#: project/presentation/web/views/user_blueprint/oauth2_token/views.py:52
+#: frontend/src/apps/user/pages/OAuth2TokenRevokePage.vue:53
 #, python-format
 msgid "%(model_display_name)s successfully revoked"
 msgstr "%(model_display_name)s erfolgreich widerrufen"
 
+#: frontend/src/apps/user/pages/ApiKeyEditPage.vue:76
 #: project/presentation/bff/manage/event_forms.py:583
 #: project/presentation/bff/manage/event_organizers.py:238
 #: project/presentation/bff/manage/event_places.py:227
@@ -84,7 +88,7 @@ msgstr "%(model_display_name)s erfolgreich widerrufen"
 msgid "%(model_display_name)s successfully updated"
 msgstr "%(model_display_name)s erfolgreich aktualisiert"
 
-#: project/presentation/web/views/user_blueprint/organization_invitation/views.py:19
+#: frontend/src/apps/user/pages/OrganizationInvitationPage.vue:71
 #, python-format
 msgid "%(name)s invited you to create an organization."
 msgstr "%(name)s hat dich eingeladen, eine Organisation zu erstellen."
@@ -114,6 +118,11 @@ msgstr "%(source)s verifiziert Empfehlungsanfragen von %(target)s automatisch"
 #, python-format
 msgid "%(user_email)s is scheduled for deletion."
 msgstr "%(user_email)s ist zur Löschung vorgesehen."
+
+#: project/presentation/bff/user/oauth2_clients.py:49
+#, python-format
+msgid "'%(value)s' is not a valid choice"
+msgstr "'%(value)s' ist keine gültige Auswahl"
 
 #: project/presentation/web/templates/_macros.html:821
 msgid "(deleted)"
@@ -173,19 +182,35 @@ msgstr "Eine empfohlene Veranstaltung wurde geändert."
 msgid "A relation to this organization already exists."
 msgstr "Es besteht bereits eine Beziehung zu dieser Organisation."
 
+#: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:21
+#: frontend/src/apps/user/pages/ApiKeyEditPage.vue:30
+#: frontend/src/apps/user/pages/ApiKeyEditPage.vue:77
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:28
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:44
+#: frontend/src/apps/user/pages/ApiKeysPage.vue:50
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/bff/user/api_keys.py:154
+#: project/presentation/web/views/user_blueprint/shells.py:127
+#: project/presentation/web/views/user_blueprint/shells.py:134
+#: project/presentation/web/views/user_blueprint/shells.py:141
 msgid "API key"
 msgstr "API Schlüssel"
 
+#: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:73
+#: frontend/src/apps/user/pages/ApiKeyEditPage.vue:102
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:63
+#: frontend/src/apps/user/pages/ApiKeysPage.vue:40
+#: frontend/src/apps/user/pages/ProfilePage.vue:94
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:138
 #: project/presentation/shared/permissions.py:173
 #: project/presentation/web/templates/_managebar.html:88
-#: project/presentation/web/templates/profile.html:75
+#: project/presentation/web/views/user_blueprint/shells.py:105
+#: project/presentation/web/views/user_blueprint/shells.py:111
 msgid "API keys"
 msgstr "API Schlüssel"
 
-#: project/presentation/web/views/user_blueprint/organization_member_invitation/forms.py:8
+#: frontend/src/apps/user/pages/MemberInvitationPage.vue:82
 msgid "Accept"
 msgstr "Akzeptieren"
 
@@ -472,11 +497,11 @@ msgstr ""
 msgid "Apple calendar"
 msgstr "Apple Kalender"
 
-#: project/presentation/web/views/user_blueprint/oauth2_token/displays.py:13
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:31
 msgid "Application"
 msgstr "App"
 
-#: project/presentation/web/templates/profile.html:44
+#: frontend/src/apps/user/pages/ProfilePage.vue:64
 msgid "Applications"
 msgstr "Apps"
 
@@ -514,17 +539,17 @@ msgstr "Hintergrundfarbe"
 
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:178
 #: frontend/src/shared/customWidget.ts:165
-#: frontend/src/shared/customWidget.ts:243
+#: frontend/src/shared/customWidget.ts:244
 msgid "Background color"
 msgstr "Hintergrundfarbe"
 
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:129
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:130
 #: frontend/src/apps/manage/pages/EventEditPage.vue:475
-#: frontend/src/shared/EventWarningPills.vue:49
+#: frontend/src/shared/EventWarningPills.vue:51
 #: project/presentation/web/templates/_macros.html:231
 #: project/presentation/web/templates/_macros.html:856
-#: project/presentation/web/templates/layout.html:123
+#: project/presentation/web/templates/layout.html:122
 #: project/templates/email/referenced_event_changed_notice.txt:20
 msgid "Booked up"
 msgstr "Ausgebucht"
@@ -544,7 +569,7 @@ msgstr ""
 msgid "Calendar"
 msgstr "Kalender"
 
-#: frontend/src/shared/customWidget.ts:304
+#: frontend/src/shared/customWidget.ts:381
 msgid "Calendar type"
 msgstr "Kalendertyp"
 
@@ -564,11 +589,12 @@ msgid "Cancel"
 msgstr "Abbrechen"
 
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:170
-#: project/presentation/web/templates/profile.html:13
+#: frontend/src/apps/user/pages/AccountDeletionPage.vue:18
+#: frontend/src/apps/user/pages/AccountDeletionPage.vue:21
+#: frontend/src/apps/user/pages/ProfilePage.vue:37
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:75
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:114
-#: project/presentation/web/views/user_blueprint/user/forms.py:19
-#: project/presentation/web/views/user_blueprint/user/views.py:102
+#: project/presentation/web/views/user_blueprint/shells.py:87
 msgid "Cancel deletion"
 msgstr "Löschen abbrechen"
 
@@ -592,6 +618,10 @@ msgstr "Kategorien"
 #: project/presentation/web/templates/_macros.html:375
 msgid "Category"
 msgstr "Kategorie"
+
+#: frontend/src/apps/user/pages/ProfilePage.vue:44
+msgid "Change password"
+msgstr "Passwort ändern"
 
 #: project/presentation/web/views/manage_admin_unit/app/app_key/displays.py:9
 msgid "Checksum"
@@ -617,7 +647,7 @@ msgstr ""
 "Wähle aus, wie relevant die Veranstaltung für deine Organisation ist. Der"
 " Wert ist nicht sichtbar und dient der Sortierung."
 
-#: frontend/src/shared/ImageField.vue:109
+#: frontend/src/shared/ImageField.vue:129
 msgid "Choose image file"
 msgstr "Bild-Datei auswählen"
 
@@ -641,7 +671,7 @@ msgstr ""
 msgid "Choose why you rejected the request."
 msgstr "Wähle aus, warum du die Anfrage abgelehnt hast."
 
-#: frontend/src/shared/LocationFields.vue:69
+#: frontend/src/shared/LocationFields.vue:123
 msgid "City"
 msgstr "Stadt/Ort"
 
@@ -719,26 +749,31 @@ msgstr "Klicke auf den unten stehenden Link, um die Beziehung anzuzeigen"
 msgid "Click the link below to view the status"
 msgstr "Klicke auf den unten stehenden Link, um den Status anzuzeigen"
 
+#: frontend/src/shared/OAuth2ClientDetails.vue:23
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:14
-#: project/presentation/web/views/user_blueprint/oauth2_client/displays.py:8
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:8
 msgid "Client ID"
 msgstr "Client ID"
 
+#: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:29
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:51
-#: project/presentation/web/views/user_blueprint/oauth2_client/displays.py:19
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:19
 msgid "Client Name"
 msgstr "Client Name"
 
-#: project/presentation/web/views/user_blueprint/oauth2_client/displays.py:10
+#: frontend/src/shared/OAuth2ClientDetails.vue:27
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:10
 msgid "Client URI"
 msgstr "Client URI"
 
-#: project/presentation/web/views/user_blueprint/oauth2_client/forms.py:20
+#: frontend/src/shared/OAuth2ClientFormFields.vue:23
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:20
 msgid "Client name"
 msgstr "Client name"
 
+#: frontend/src/shared/OAuth2ClientDetails.vue:25
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:15
-#: project/presentation/web/views/user_blueprint/oauth2_client/displays.py:9
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:9
 msgid "Client secret"
 msgstr "Client secret"
 
@@ -747,8 +782,8 @@ msgstr "Client secret"
 #: frontend/src/apps/manage/components/PlanningEventDetailsModal.vue:81
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:103
 #: frontend/src/apps/widget/pages/CalendarWidget.vue:172
-#: frontend/src/shared/IcalExportModal.vue:41
-#: frontend/src/shared/ImageCropper.vue:73
+#: frontend/src/shared/IcalExportModal.vue:53
+#: frontend/src/shared/ImageCropper.vue:81
 msgid "Close"
 msgstr "Schließen"
 
@@ -760,11 +795,12 @@ msgstr "Mitveranstalter"
 msgid "Color"
 msgstr "Farbe"
 
-#: project/presentation/web/views/user_blueprint/user/forms.py:70
+#: frontend/src/apps/user/pages/AcceptTosPage.vue:73
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: project/presentation/web/views/user_blueprint/user/views.py:165
+#: frontend/src/apps/user/pages/AcceptTosPage.vue:53
+#: project/presentation/web/views/user_blueprint/shells.py:96
 msgid "Confirmation required"
 msgstr "Bestätigung erforderlich"
 
@@ -773,7 +809,7 @@ msgid "Confirmed at"
 msgstr "Bestätigt am"
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:30
-#: project/presentation/web/templates/layout.html:241
+#: project/presentation/web/templates/layout.html:240
 #: project/presentation/web/templates/layout_bs5.html:107
 #: project/presentation/web/views/manage_blueprint/views.py:28
 #: project/presentation/web/views/root.py:99
@@ -793,7 +829,7 @@ msgstr "Kopiert"
 msgid "Copy"
 msgstr "Kopieren"
 
-#: frontend/src/shared/IcalExportModal.vue:38
+#: frontend/src/shared/IcalExportModal.vue:45
 #: project/presentation/web/templates/_macros.html:1004
 msgid "Copy link"
 msgstr "Link kopieren"
@@ -802,7 +838,7 @@ msgstr "Link kopieren"
 msgid "Copy the code below and paste it into your website."
 msgstr "Kopiere den unten stehenden Code und füge ihn auf deiner Website ein."
 
-#: frontend/src/shared/ImageField.vue:137
+#: frontend/src/shared/ImageField.vue:167
 msgid "Copyright text"
 msgstr "Copyright Text"
 
@@ -813,11 +849,14 @@ msgstr "Copyright Text ist erforderlich."
 #: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:152
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:169
 #: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:202
+#: frontend/src/apps/user/pages/ApiKeyEditPage.vue:112
 #: project/presentation/web/modular/base_form.py:65
 msgid "Create"
 msgstr "Erstellen"
 
 #: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:31
+#: frontend/src/apps/user/pages/ApiKeysPage.vue:49
+#: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:44
 #: project/presentation/web/modular/base_views.py:307
 #: project/presentation/web/templates/generic/list.html:18
 #, python-format
@@ -839,9 +878,9 @@ msgid "Create export files"
 msgstr "Export-Dateien erstellen"
 
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:113
+#: frontend/src/apps/user/pages/OrganizationInvitationPage.vue:82
 #: project/presentation/web/templates/manage/admin_units.html:32
 #: project/presentation/web/views/manage_blueprint/views.py:40
-#: project/presentation/web/views/user_blueprint/organization_invitation/forms.py:9
 msgid "Create organization"
 msgstr "Organisation erstellen"
 
@@ -869,6 +908,11 @@ msgstr "Beziehung erstellen"
 #: frontend/src/apps/admin/pages/UsersPage.vue:35
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:272
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:180
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:93
+#: frontend/src/apps/user/pages/ApiKeysPage.vue:34
+#: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:34
+#: project/presentation/web/views/manage_admin_unit/api_key/displays.py:14
+#: project/presentation/web/views/manage_admin_unit/api_key/displays.py:19
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:16
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:21
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference/displays.py:25
@@ -878,13 +922,11 @@ msgstr "Beziehung erstellen"
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference/displays.py:10
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/displays.py:39
 #: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:49
-#: project/presentation/web/views/user_blueprint/api_key/displays.py:14
-#: project/presentation/web/views/user_blueprint/api_key/displays.py:19
-#: project/presentation/web/views/user_blueprint/organization_invitation/displays.py:12
 msgid "Created at"
 msgstr "Erstellt am"
 
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:68
+#: frontend/src/shared/AuditLine.vue:29
 #: project/presentation/web/templates/_macros.html:349
 #: project/presentation/web/templates/macros/display.html.j2:36
 #, python-format
@@ -893,6 +935,7 @@ msgstr "Erstellt am %(created_at)s von %(created_by)s."
 
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:72
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:141
+#: frontend/src/shared/AuditLine.vue:33
 #: project/presentation/web/templates/_macros.html:351
 #: project/presentation/web/templates/macros/display.html.j2:39
 #, python-format
@@ -902,7 +945,7 @@ msgstr "Erstellt am %(created_at)s."
 #: frontend/src/apps/public/components/EventDatesMap.vue:85
 #: frontend/src/apps/public/components/EventDatesMap.vue:86
 #: frontend/src/shared/LocationFilter.vue:88
-#: frontend/src/shared/LocationFilter.vue:132
+#: frontend/src/shared/LocationFilter.vue:133
 msgid "Current location"
 msgstr "Aktueller Standort"
 
@@ -972,12 +1015,12 @@ msgstr "Tag des Monats"
 msgid "Deactivated"
 msgstr "Deaktiviert"
 
-#: project/presentation/web/views/user_blueprint/organization_invitation/forms.py:12
-#: project/presentation/web/views/user_blueprint/organization_member_invitation/forms.py:10
+#: frontend/src/apps/user/pages/MemberInvitationPage.vue:90
+#: frontend/src/apps/user/pages/OrganizationInvitationPage.vue:85
 msgid "Decline"
 msgstr "Ablehnen"
 
-#: project/presentation/web/views/user_blueprint/user/forms.py:26
+#: frontend/src/apps/user/pages/GeneralSettingsPage.vue:54
 msgid "Default"
 msgstr "Standard"
 
@@ -986,22 +1029,28 @@ msgstr "Standard"
 #: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:39
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:125
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:203
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:82
+#: frontend/src/apps/user/pages/OAuth2ClientPage.vue:55
 #: project/presentation/web/modular/base_form.py:74
 #: project/presentation/web/modular/base_view_handler.py:204
 msgid "Delete"
 msgstr "Löschen"
 
+#: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:23
 #: project/presentation/web/modular/base_views.py:423
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr "%(model_display_name)s löschen"
 
-#: project/presentation/web/views/user_blueprint/oauth2_client/forms.py:73
+#: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:73
+#: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:82
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:73
 msgid "Delete OAuth2 client"
 msgstr "OAuth2 Client löschen"
 
-#: project/presentation/web/templates/profile.html:26
-#: project/presentation/web/views/user_blueprint/user/views.py:58
+#: frontend/src/apps/user/pages/AccountDeletionPage.vue:18
+#: frontend/src/apps/user/pages/ProfilePage.vue:51
+#: project/presentation/web/views/user_blueprint/shells.py:78
 msgid "Delete account"
 msgstr "Account löschen"
 
@@ -1074,11 +1123,11 @@ msgstr "Desktop"
 msgid "Details"
 msgstr "Details"
 
+#: frontend/src/apps/user/pages/ProfilePage.vue:88
 #: project/presentation/web/templates/developer/read.html:4
 #: project/presentation/web/templates/developer/read.html:8
-#: project/presentation/web/templates/layout.html:249
+#: project/presentation/web/templates/layout.html:248
 #: project/presentation/web/templates/layout_bs5.html:115
-#: project/presentation/web/templates/profile.html:67
 msgid "Developer"
 msgstr "Entwickler"
 
@@ -1090,8 +1139,8 @@ msgstr "Deaktiviert"
 msgid "Display"
 msgstr "Anzeige"
 
-#: frontend/src/shared/LocationFilter.vue:176
-#: frontend/src/shared/LocationFilter.vue:179
+#: frontend/src/shared/LocationFilter.vue:177
+#: frontend/src/shared/LocationFilter.vue:180
 msgid "Distance"
 msgstr "Distanz"
 
@@ -1099,6 +1148,8 @@ msgstr "Distanz"
 msgid "Do you really want to delete the widget?"
 msgstr "Möchtest du das Widget wirklich löschen?"
 
+#: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:94
+#: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:89
 #: project/presentation/web/modular/base_views.py:429
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
@@ -1109,18 +1160,18 @@ msgstr "Möchtest du '%(object_title)s' löschen?"
 msgid "Do you want to install '%(app_name)s'?"
 msgstr ""
 
-#: project/presentation/web/views/user_blueprint/organization_member/views.py:25
+#: frontend/src/apps/user/pages/MembershipLeavePage.vue:81
 #, python-format
 msgid "Do you want to leave organization %(name)s?"
 msgstr "Möchtest du die Organisation %(name)s verlassen?"
 
-#: project/presentation/web/views/user_blueprint/oauth2_token/views.py:46
+#: frontend/src/apps/user/pages/OAuth2TokenRevokePage.vue:80
 #, python-format
 msgid "Do you want to revoke '%(object_title)s'?"
 msgstr "Möchtest du '%(object_title)s' löschen"
 
 #: frontend/src/apps/manage/pages/PlanningPage.vue:162
-#: frontend/src/shared/IcalExportModal.vue:36
+#: frontend/src/shared/IcalExportModal.vue:42
 #: project/presentation/web/jinja_filters.py:66
 #: project/presentation/web/templates/home.html:38
 #: project/presentation/web/templates/macros/nav.html.j2:15
@@ -1132,7 +1183,7 @@ msgid "Docs"
 msgstr "Doku"
 
 #: frontend/src/apps/manage/pages/OrganizationExportPage.vue:52
-#: frontend/src/shared/IcalExportModal.vue:39
+#: frontend/src/shared/IcalExportModal.vue:47
 #: project/presentation/web/templates/developer/read.html:25
 #: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:41
 msgid "Download"
@@ -1178,7 +1229,7 @@ msgstr "Bearbeiten"
 msgid "Edit event"
 msgstr "Veranstaltung bearbeiten"
 
-#: frontend/src/shared/ImageCropper.vue:71
+#: frontend/src/shared/ImageCropper.vue:79
 msgid "Edit image"
 msgstr "Bild bearbeiten"
 
@@ -1197,6 +1248,7 @@ msgstr "Beziehung bearbeiten"
 #: frontend/src/apps/manage/components/ContactLines.vue:27
 #: frontend/src/apps/manage/components/EventOrganizerFormFields.vue:45
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:181
+#: frontend/src/apps/user/pages/AccountDeletionPage.vue:59
 #: project/presentation/web/templates/_macros.html:217
 #: project/presentation/web/templates/_macros.html:1010
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:18
@@ -1208,8 +1260,6 @@ msgstr "Beziehung bearbeiten"
 #: project/presentation/web/views/manage_admin_unit/organization_invitation/displays.py:8
 #: project/presentation/web/views/manage_admin_unit/organization_invitation/displays.py:14
 #: project/presentation/web/views/manage_admin_unit/organization_invitation/forms.py:36
-#: project/presentation/web/views/user_blueprint/organization_invitation/displays.py:16
-#: project/presentation/web/views/user_blueprint/user/forms.py:14
 msgid "Email"
 msgstr "Email"
 
@@ -1277,6 +1327,7 @@ msgstr ""
 "Gib die Preisinformationen in Textform ein. Z.B. unterschiedliche Preise "
 "für Erwachsene und Kinder."
 
+#: project/presentation/bff/user/api_keys.py:153
 #: project/presentation/web/modular/base_views.py:413
 #, python-format
 msgid ""
@@ -1290,13 +1341,12 @@ msgstr ""
 msgid "Entered email does not match user email"
 msgstr "Die eingegebene Email passt nicht zur Email des Nutzers"
 
-#: project/presentation/web/views/user_blueprint/user/views.py:69
-#: project/presentation/web/views/user_blueprint/user/views.py:111
+#: project/presentation/bff/user/profile.py:56
 msgid "Entered email does not match your email"
 msgstr "Die eingegebene Email entspricht nicht deiner Email"
 
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/view_handler.py:61
-#: project/presentation/web/views/user_blueprint/oauth2_client/view_handler.py:54
+#: project/presentation/bff/user/oauth2_clients.py:195
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/view_handler.py:59
 msgid "Entered name does not match OAuth2 client name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen des OAuth2 Clients"
 
@@ -1305,9 +1355,9 @@ msgid "Entered name does not match app client name"
 msgstr ""
 
 #: project/presentation/bff/admin/organizations.py:135
+#: project/presentation/bff/user/organizations.py:131
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:87
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:123
-#: project/presentation/web/views/user_blueprint/organization_member/views.py:49
 msgid "Entered name does not match organization name"
 msgstr "Der eingegebene Name entspricht nicht dem Namen der Organisation"
 
@@ -1381,10 +1431,43 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/public/pages/OrganizationPage.vue:35
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:39
 #: frontend/src/apps/public/pages/OrganizerPage.vue:35
+#: frontend/src/apps/user/pages/AcceptTosPage.vue:28
+#: frontend/src/apps/user/pages/AcceptTosPage.vue:47
+#: frontend/src/apps/user/pages/AccountDeletionPage.vue:47
+#: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:31
+#: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:64
+#: frontend/src/apps/user/pages/ApiKeyEditPage.vue:44
+#: frontend/src/apps/user/pages/ApiKeyEditPage.vue:93
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:35
+#: frontend/src/apps/user/pages/ApiKeysPage.vue:28
+#: frontend/src/apps/user/pages/GeneralSettingsPage.vue:24
+#: frontend/src/apps/user/pages/GeneralSettingsPage.vue:41
+#: frontend/src/apps/user/pages/MemberInvitationPage.vue:29
+#: frontend/src/apps/user/pages/MemberInvitationPage.vue:50
+#: frontend/src/apps/user/pages/MemberInvitationsPage.vue:23
+#: frontend/src/apps/user/pages/MembershipLeavePage.vue:26
+#: frontend/src/apps/user/pages/MembershipLeavePage.vue:55
+#: frontend/src/apps/user/pages/MembershipsPage.vue:22
+#: frontend/src/apps/user/pages/NotificationSettingsPage.vue:22
+#: frontend/src/apps/user/pages/NotificationSettingsPage.vue:42
+#: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:26
+#: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:59
+#: frontend/src/apps/user/pages/OAuth2ClientEditPage.vue:44
+#: frontend/src/apps/user/pages/OAuth2ClientEditPage.vue:57
+#: frontend/src/apps/user/pages/OAuth2ClientEditPage.vue:122
+#: frontend/src/apps/user/pages/OAuth2ClientPage.vue:28
+#: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:25
+#: frontend/src/apps/user/pages/OAuth2TokenRevokePage.vue:36
+#: frontend/src/apps/user/pages/OAuth2TokenRevokePage.vue:62
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:26
+#: frontend/src/apps/user/pages/OrganizationInvitationPage.vue:30
+#: frontend/src/apps/user/pages/OrganizationInvitationPage.vue:51
+#: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:28
+#: frontend/src/apps/user/pages/ProfilePage.vue:19
 #: frontend/src/apps/widget/pages/EventDatesWidget.vue:72
 #: frontend/src/apps/widget/pages/SearchWidget.vue:73
-#: frontend/src/shared/LocationFilter.vue:171
-#: frontend/src/shared/PlaceLookup.vue:35
+#: frontend/src/shared/LocationFilter.vue:172
+#: frontend/src/shared/PlaceLookup.vue:40
 msgid "Error"
 msgstr "Fehler"
 
@@ -1440,7 +1523,7 @@ msgstr "Veranstaltungskategorie"
 msgid "Event co organizers"
 msgstr "Mitveranstalter"
 
-#: frontend/src/shared/customWidget.ts:313
+#: frontend/src/shared/customWidget.ts:390
 msgid "Event color"
 msgstr "Eventfarbe"
 
@@ -1554,8 +1637,8 @@ msgstr "Ereignistypen"
 msgid "Event warning badge"
 msgstr "Event-Warnungszeichen"
 
-#: frontend/src/shared/EventWarningPills.vue:59
-#: project/presentation/web/templates/layout.html:114
+#: frontend/src/shared/EventWarningPills.vue:61
+#: project/presentation/web/templates/layout.html:113
 msgid "EventAttendanceMode.mixed"
 msgstr "Präsenzveranstaltung und online"
 
@@ -1563,8 +1646,8 @@ msgstr "Präsenzveranstaltung und online"
 msgid "EventAttendanceMode.offline"
 msgstr ""
 
-#: frontend/src/shared/EventWarningPills.vue:54
-#: project/presentation/web/templates/layout.html:111
+#: frontend/src/shared/EventWarningPills.vue:56
+#: project/presentation/web/templates/layout.html:110
 msgid "EventAttendanceMode.online"
 msgstr "Online"
 
@@ -1627,26 +1710,26 @@ msgid "EventReviewStatus.verified"
 msgstr "Verifiziert"
 
 #: frontend/src/shared/EventWarningPills.vue:31
-#: project/presentation/web/templates/layout.html:77
-#: project/presentation/web/templates/layout.html:92
+#: project/presentation/web/templates/layout.html:76
+#: project/presentation/web/templates/layout.html:91
 msgid "EventStatus.cancelled"
 msgstr "Abgesagt"
 
 #: frontend/src/shared/EventWarningPills.vue:36
-#: project/presentation/web/templates/layout.html:80
-#: project/presentation/web/templates/layout.html:95
+#: project/presentation/web/templates/layout.html:79
+#: project/presentation/web/templates/layout.html:94
 msgid "EventStatus.movedOnline"
 msgstr "Online verschoben"
 
 #: frontend/src/shared/EventWarningPills.vue:41
-#: project/presentation/web/templates/layout.html:83
-#: project/presentation/web/templates/layout.html:98
+#: project/presentation/web/templates/layout.html:82
+#: project/presentation/web/templates/layout.html:97
 msgid "EventStatus.postponed"
 msgstr "Verschoben"
 
 #: frontend/src/shared/EventWarningPills.vue:46
-#: project/presentation/web/templates/layout.html:86
-#: project/presentation/web/templates/layout.html:101
+#: project/presentation/web/templates/layout.html:85
+#: project/presentation/web/templates/layout.html:100
 msgid "EventStatus.rescheduled"
 msgstr "Neu angesetzt"
 
@@ -1778,7 +1861,7 @@ msgstr "Führung"
 msgid "Events"
 msgstr "Veranstaltungen"
 
-#: frontend/src/shared/customWidget.ts:195
+#: frontend/src/shared/customWidget.ts:196
 msgid "Events per page"
 msgstr "Events pro Seite"
 
@@ -1825,11 +1908,11 @@ msgstr "Serientermine nicht anzeigen"
 msgid "Expected number of participants"
 msgstr "Erwartete Teilnehmerzahl"
 
-#: project/presentation/web/views/user_blueprint/oauth2_token/displays.py:21
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:40
 msgid "Expired"
 msgstr "Abgelaufen"
 
-#: project/presentation/web/views/user_blueprint/oauth2_token/displays.py:16
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:34
 msgid "Expires"
 msgstr "Läuft ab"
 
@@ -1860,7 +1943,7 @@ msgstr "Features"
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:112
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:35
 #: frontend/src/apps/manage/pages/PlanningPage.vue:229
-#: frontend/src/shared/customWidget.ts:201
+#: frontend/src/shared/customWidget.ts:202
 msgid "Filter"
 msgstr "Filter"
 
@@ -1903,7 +1986,7 @@ msgstr "Vor- und Nachname"
 msgid "Font"
 msgstr "Schriftart"
 
-#: frontend/src/shared/customWidget.ts:240
+#: frontend/src/shared/customWidget.ts:241
 msgid "Font family"
 msgstr "Schriftart"
 
@@ -1922,8 +2005,9 @@ msgstr "Freitag"
 msgid "From"
 msgstr "Von"
 
-#: project/presentation/web/templates/profile.html:36
-#: project/presentation/web/views/user_blueprint/user/views.py:149
+#: frontend/src/apps/user/pages/GeneralSettingsPage.vue:47
+#: frontend/src/apps/user/pages/ProfilePage.vue:58
+#: project/presentation/web/views/user_blueprint/shells.py:47
 msgid "General"
 msgstr "Allgemein"
 
@@ -1931,12 +2015,13 @@ msgstr "Allgemein"
 msgid "Google calendar"
 msgstr "Google Kalender"
 
+#: frontend/src/shared/OAuth2ClientDetails.vue:29
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:16
-#: project/presentation/web/views/user_blueprint/oauth2_client/displays.py:11
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:11
 msgid "Grant types"
 msgstr "Grant types"
 
-#: frontend/src/shared/customWidget.ts:311
+#: frontend/src/shared/customWidget.ts:388
 msgid "Height"
 msgstr "Höhe"
 
@@ -2011,6 +2096,7 @@ msgstr ""
 msgid "Homepage URL"
 msgstr ""
 
+#: frontend/src/shared/TosAcceptLabel.vue:36
 #: project/presentation/web/forms/common.py:73
 #, python-format
 msgid "I read and accept %(privacy_open)sPrivacy%(privacy_close)s."
@@ -2018,6 +2104,7 @@ msgstr ""
 "Ich habe die %(privacy_open)sDatenschutzerklärung%(privacy_close)s "
 "gelesen und akzeptiere diese."
 
+#: frontend/src/shared/TosAcceptLabel.vue:33
 #: project/presentation/web/forms/common.py:63
 #, python-format
 msgid ""
@@ -2028,9 +2115,9 @@ msgstr ""
 "%(privacy_open)sDatenschutzerklärung%(privacy_close)s gelesen und "
 "akzeptiere diese."
 
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:30
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:8
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:17
-#: project/presentation/web/views/user_blueprint/oauth2_token/displays.py:12
 msgid "ID"
 msgstr "ID"
 
@@ -2172,7 +2259,7 @@ msgstr "Gib an, wann der Termin endet. Ein Termin darf maximal 180 Tage dauern."
 msgid "Indicate when the event date will start."
 msgstr "Gib an, wann der Termin beginnt."
 
-#: project/presentation/web/views/user_blueprint/user/forms.py:50
+#: frontend/src/apps/user/pages/NotificationSettingsPage.vue:67
 msgid "Information about new features and improvements."
 msgstr "Informationen über neue Features und Verbesserungen."
 
@@ -2219,12 +2306,12 @@ msgstr "Ungültige Postleitzahl(en)"
 msgid "Invalid tag(s)"
 msgstr "Ungültige Stichworte"
 
-#: project/presentation/web/views/user_blueprint/organization_member_invitation/views.py:40
+#: project/presentation/bff/user/organizations.py:220
 msgid "Invitation successfully accepted"
 msgstr "Einladung erfolgreich akzeptiert"
 
-#: project/presentation/web/views/user_blueprint/organization_invitation/views.py:36
-#: project/presentation/web/views/user_blueprint/organization_member_invitation/views.py:46
+#: project/presentation/bff/user/organizations.py:240
+#: project/presentation/bff/user/organizations.py:315
 msgid "Invitation successfully declined"
 msgstr "Einladung erfolgreich abgelehnt"
 
@@ -2240,7 +2327,7 @@ msgstr "Organisation einladen"
 msgid "Invite other organizations"
 msgstr "Andere Organisationen einladen"
 
-#: project/presentation/web/views/user_blueprint/oauth2_token/displays.py:15
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:33
 msgid "Issued"
 msgstr "Ausgestellt"
 
@@ -2274,7 +2361,7 @@ msgstr "Stichworte für den internen Gebrauch. Diese werden nicht veröffentlich
 msgid "Kid friendly"
 msgstr "Für Kinder geeignet"
 
-#: project/presentation/web/views/user_blueprint/user/forms.py:24
+#: frontend/src/apps/user/pages/GeneralSettingsPage.vue:52
 msgid "Language"
 msgstr "Sprache"
 
@@ -2283,11 +2370,11 @@ msgstr "Sprache"
 msgid "Last"
 msgstr "Letzte"
 
+#: frontend/src/apps/user/pages/ApiKeysPage.vue:60
 #: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:50
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/view_handler.py:49
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/view_handler.py:49
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/view_handler.py:51
-#: project/presentation/web/views/user_blueprint/api_key/view_handler.py:46
 msgid "Last created first"
 msgstr "Zuletzt erstellt zuerst"
 
@@ -2306,13 +2393,15 @@ msgstr "Zuletzt geändert am"
 msgid "Last modified first"
 msgstr "Zuletzt geändert zuerst"
 
-#: project/presentation/web/views/user_blueprint/organization_member/views.py:36
+#: project/presentation/bff/user/organizations.py:126
+#: project/presentation/web/views/user_blueprint/shells.py:242
 msgid "Last remaining administrator can not leave the organization."
 msgstr ""
 "Der letzte verbleibende Administrator kann die Organisation nicht "
 "verlassen."
 
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:78
+#: frontend/src/shared/AuditLine.vue:39
 #: project/presentation/web/templates/_macros.html:358
 #: project/presentation/web/templates/macros/display.html.j2:46
 #, python-format
@@ -2321,33 +2410,36 @@ msgstr "Zuletzt aktualisiert am %(updated_at)s von %(updated_by)s."
 
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:82
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:143
+#: frontend/src/shared/AuditLine.vue:43
 #: project/presentation/web/templates/_macros.html:360
 #: project/presentation/web/templates/macros/display.html.j2:49
 #, python-format
 msgid "Last updated at %(updated_at)s."
 msgstr "Zuletzt aktualisiert am %(updated_at)s."
 
-#: frontend/src/shared/LocationFields.vue:54
+#: frontend/src/shared/LocationFields.vue:75
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: frontend/src/shared/customWidget.ts:190
+#: frontend/src/shared/customWidget.ts:191
 msgid "Layout"
 msgstr "Layout"
 
-#: project/presentation/web/views/user_blueprint/organization_member/forms.py:15
-#: project/presentation/web/views/user_blueprint/organization_member/views.py:20
+#: frontend/src/apps/user/pages/MembershipLeavePage.vue:65
+#: frontend/src/apps/user/pages/MembershipLeavePage.vue:74
+#: frontend/src/apps/user/pages/MembershipsPage.vue:49
+#: project/presentation/web/views/user_blueprint/shells.py:251
 msgid "Leave organization"
 msgstr "Organisation verlassen"
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:27
-#: project/presentation/web/templates/layout.html:237
+#: project/presentation/web/templates/layout.html:236
 #: project/presentation/web/templates/layout_bs5.html:103
 #: project/presentation/web/views/root.py:91
 msgid "Legal notice"
 msgstr "Impressum"
 
-#: frontend/src/shared/ImageField.vue:153
+#: frontend/src/shared/ImageField.vue:183
 #: project/infrastructure/babel_extract.py:1
 msgid "License"
 msgstr "Lizenz"
@@ -2365,7 +2457,7 @@ msgstr ""
 #: frontend/src/apps/manage/components/ContactLines.vue:21
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:68
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:77
-#: frontend/src/shared/customWidget.ts:213
+#: frontend/src/shared/customWidget.ts:214
 #: project/presentation/web/templates/_macros.html:208
 msgid "Link"
 msgstr "Link"
@@ -2383,7 +2475,7 @@ msgstr "Linkfarbe"
 msgid "Link URL"
 msgstr "Link URL"
 
-#: frontend/src/shared/customWidget.ts:245
+#: frontend/src/shared/customWidget.ts:246
 msgid "Link color"
 msgstr "Linkfarbe"
 
@@ -2402,8 +2494,8 @@ msgstr "Zeige alle Veranstaltungen von %(admin_unit_name)s"
 #: frontend/src/apps/manage/components/EventPlaceFormFields.vue:122
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:155
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:66
-#: frontend/src/shared/LocationFilter.vue:122
 #: frontend/src/shared/LocationFilter.vue:123
+#: frontend/src/shared/LocationFilter.vue:124
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/templates/_macros.html:295
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:16
@@ -2425,7 +2517,7 @@ msgstr "Logo"
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: frontend/src/shared/LocationFields.vue:59
+#: frontend/src/shared/LocationFields.vue:91
 msgid "Longitude"
 msgstr "Längengrad"
 
@@ -2449,7 +2541,7 @@ msgstr "Verwaltung"
 msgid "Map view"
 msgstr "Kartenansicht"
 
-#: frontend/src/shared/customWidget.ts:233
+#: frontend/src/shared/customWidget.ts:234
 msgid "Max. height"
 msgstr "Max. Höhe"
 
@@ -2467,7 +2559,7 @@ msgstr "Nachricht"
 msgid "Min. expected number of participants"
 msgstr "Mind. erwartete Teilnehmerzahl"
 
-#: frontend/src/shared/customWidget.ts:226
+#: frontend/src/shared/customWidget.ts:227
 msgid "Min. height"
 msgstr "Min. Höhe"
 
@@ -2509,7 +2601,21 @@ msgstr "Weitere Filter"
 #: frontend/src/apps/manage/pages/EventEditPage.vue:221
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:54
 #: frontend/src/apps/public/pages/EventReportPage.vue:99
+#: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:86
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:87
+#: frontend/src/apps/user/pages/ApiKeysPage.vue:33
+#: frontend/src/apps/user/pages/ApiKeysPage.vue:59
+#: frontend/src/apps/user/pages/MembershipLeavePage.vue:73
+#: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:81
+#: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:33
+#: frontend/src/shared/ApiKeyFormFields.vue:15
+#: project/presentation/bff/user/api_keys.py:155
 #: project/presentation/web/templates/_macros.html:847
+#: project/presentation/web/views/manage_admin_unit/api_key/displays.py:12
+#: project/presentation/web/views/manage_admin_unit/api_key/displays.py:18
+#: project/presentation/web/views/manage_admin_unit/api_key/forms.py:18
+#: project/presentation/web/views/manage_admin_unit/api_key/forms.py:39
+#: project/presentation/web/views/manage_admin_unit/api_key/forms.py:55
 #: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:47
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:69
 #: project/presentation/web/views/manage_admin_unit/event_organizer/displays.py:15
@@ -2518,16 +2624,8 @@ msgstr "Weitere Filter"
 #: project/presentation/web/views/manage_admin_unit/event_place/displays.py:14
 #: project/presentation/web/views/manage_admin_unit/event_place/forms.py:10
 #: project/presentation/web/views/manage_admin_unit/event_place/view_handler.py:38
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:75
 #: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:54
-#: project/presentation/web/views/user_blueprint/api_key/displays.py:12
-#: project/presentation/web/views/user_blueprint/api_key/displays.py:18
-#: project/presentation/web/views/user_blueprint/api_key/forms.py:18
-#: project/presentation/web/views/user_blueprint/api_key/forms.py:39
-#: project/presentation/web/views/user_blueprint/api_key/forms.py:55
-#: project/presentation/web/views/user_blueprint/api_key/view_handler.py:43
-#: project/presentation/web/views/user_blueprint/oauth2_client/forms.py:75
-#: project/presentation/web/views/user_blueprint/organization_invitation/displays.py:11
-#: project/presentation/web/views/user_blueprint/organization_member/forms.py:10
 #: project/templates/email/referenced_event_changed_notice.txt:11
 msgid "Name"
 msgstr "Name"
@@ -2585,7 +2683,7 @@ msgstr "Neuste zuerst"
 
 #: frontend/src/apps/admin/pages/AdminHome.vue:15
 #: frontend/src/apps/admin/pages/NewsletterPage.vue:80
-#: project/presentation/web/views/user_blueprint/user/forms.py:49
+#: frontend/src/apps/user/pages/NotificationSettingsPage.vue:63
 msgid "Newsletter"
 msgstr "Newsletter"
 
@@ -2633,8 +2731,8 @@ msgstr ""
 "Es wurden keine Organisationen gefunden, die deine Organisation mit der "
 "Postleitzahl %(postal_code)s verifizieren können."
 
-#: frontend/src/shared/AppTypeahead.vue:177
-#: frontend/src/shared/LocationFilter.vue:169
+#: frontend/src/shared/AppTypeahead.vue:178
+#: frontend/src/shared/LocationFilter.vue:170
 msgid "No results"
 msgstr "Keine Ergebnisse"
 
@@ -2673,8 +2771,9 @@ msgstr "Nicht angegeben"
 msgid "Notification settings"
 msgstr "Benachrichtigungseinstellungen"
 
-#: project/presentation/web/templates/profile.html:40
-#: project/presentation/web/views/user_blueprint/user/views.py:157
+#: frontend/src/apps/user/pages/NotificationSettingsPage.vue:48
+#: frontend/src/apps/user/pages/ProfilePage.vue:61
+#: project/presentation/web/views/user_blueprint/shells.py:53
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
@@ -2693,22 +2792,44 @@ msgstr "OAuth Verbindung"
 msgid "OAuth connections"
 msgstr "OAuth Verbindungen"
 
+#: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:46
+#: frontend/src/apps/user/pages/OAuth2ClientEditPage.vue:29
+#: frontend/src/apps/user/pages/OAuth2ClientPage.vue:37
+#: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:45
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/views/manage_admin_unit/app/view_handler.py:48
+#: project/presentation/web/views/user_blueprint/shells.py:156
+#: project/presentation/web/views/user_blueprint/shells.py:172
+#: project/presentation/web/views/user_blueprint/shells.py:181
+#: project/presentation/web/views/user_blueprint/shells.py:190
 msgid "OAuth2 client"
 msgstr "OAuth2 Client"
 
+#: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:68
+#: frontend/src/apps/user/pages/OAuth2ClientEditPage.vue:131
+#: frontend/src/apps/user/pages/OAuth2ClientPage.vue:36
+#: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:35
+#: frontend/src/apps/user/pages/ProfilePage.vue:91
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:170
-#: project/presentation/web/templates/profile.html:71
+#: project/presentation/web/views/user_blueprint/shells.py:150
 msgid "OAuth2 clients"
 msgstr "OAuth2 Clients"
 
+#: frontend/src/apps/user/pages/OAuth2TokenRevokePage.vue:23
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/views/user_blueprint/shells.py:215
 msgid "OAuth2 token"
 msgstr "OAuth2 Token"
 
+#: project/presentation/bff/user/oauth2_tokens.py:96
+msgid "OAuth2 token is already revoked."
+msgstr "Das OAuth2 Token wurde bereits widerrufen."
+
+#: frontend/src/apps/user/pages/OAuth2TokenRevokePage.vue:70
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:48
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/views/user_blueprint/shells.py:199
 msgid "OAuth2 tokens"
 msgstr "OAuth2 Token"
 
@@ -2720,7 +2841,7 @@ msgstr "Oauth2 authorization code"
 msgid "Oauth2 authorization codes"
 msgstr "Oauth2 authorization codes"
 
-#: frontend/src/shared/ImageCropper.vue:72
+#: frontend/src/shared/ImageCropper.vue:80
 msgid "Okay"
 msgstr "OK"
 
@@ -2736,6 +2857,9 @@ msgstr "Suche öffnen"
 #: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:152
 #: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:94
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:127
+#: frontend/src/apps/user/pages/MemberInvitationsPage.vue:27
+#: frontend/src/apps/user/pages/MembershipsPage.vue:26
+#: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:32
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:56
 #: project/presentation/web/forms/reference.py:12
@@ -2756,9 +2880,6 @@ msgstr "Suche öffnen"
 #: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:9
 #: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:31
 #: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:44
-#: project/presentation/web/views/user_blueprint/organization_invitation/displays.py:9
-#: project/presentation/web/views/user_blueprint/organization_member/displays.py:9
-#: project/presentation/web/views/user_blueprint/organization_member_invitation/displays.py:9
 #: project/templates/email/referenced_event_changed_notice.txt:6
 msgid "Organization"
 msgstr "Organisation"
@@ -2768,6 +2889,7 @@ msgid "Organization deletion requested"
 msgstr "Löschung der Organisation beantragt"
 
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/views/user_blueprint/shells.py:304
 msgid "Organization invitation"
 msgstr "Organisationseinladung"
 
@@ -2775,12 +2897,15 @@ msgstr "Organisationseinladung"
 msgid "Organization invitation accepted"
 msgstr "Organisationseinladung akzeptiert"
 
+#: frontend/src/apps/user/pages/OrganizationInvitationPage.vue:60
+#: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:41
+#: frontend/src/apps/user/pages/ProfilePage.vue:84
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:152
 #: project/presentation/shared/permissions.py:175
 #: project/presentation/web/templates/_managebar.html:78
 #: project/presentation/web/templates/manage/admin_units.html:17
-#: project/presentation/web/templates/profile.html:62
+#: project/presentation/web/views/user_blueprint/shells.py:286
 msgid "Organization invitations"
 msgstr "Organisationseinladungen"
 
@@ -2789,13 +2914,17 @@ msgid "Organization member"
 msgstr "Mitglied"
 
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/web/views/user_blueprint/shells.py:280
 msgid "Organization member invitation"
 msgstr "Mitgliedschaftseinladung"
 
+#: frontend/src/apps/user/pages/MemberInvitationPage.vue:59
+#: frontend/src/apps/user/pages/MemberInvitationsPage.vue:35
+#: frontend/src/apps/user/pages/ProfilePage.vue:77
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:154
 #: project/presentation/web/templates/_managebar.html:62
-#: project/presentation/web/templates/profile.html:58
+#: project/presentation/web/views/user_blueprint/shells.py:262
 msgid "Organization member invitations"
 msgstr "Mitgliedschaftseinladungen"
 
@@ -2832,7 +2961,7 @@ msgstr "Organisation erfolgreich erstellt"
 msgid "Organization successfully deleted"
 msgstr "Organisation erfolgreich gelöscht"
 
-#: project/presentation/web/views/user_blueprint/organization_member/views.py:53
+#: project/presentation/bff/user/organizations.py:136
 msgid "Organization successfully left"
 msgstr "Organisation erfolgreich verlassen"
 
@@ -2858,15 +2987,17 @@ msgstr "Verifizierungsanfragen"
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:138
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:98
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:50
+#: frontend/src/apps/user/pages/MembershipLeavePage.vue:64
+#: frontend/src/apps/user/pages/MembershipsPage.vue:33
+#: frontend/src/apps/user/pages/ProfilePage.vue:68
+#: frontend/src/apps/user/pages/ProfilePage.vue:71
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/web/jinja_filters.py:61
 #: project/presentation/web/jinja_filters.py:73
 #: project/presentation/web/templates/manage/admin_units.html:3
 #: project/presentation/web/templates/manage/admin_units.html:26
-#: project/presentation/web/templates/profile.html:49
-#: project/presentation/web/templates/profile.html:54
 #: project/presentation/web/views/organization.py:25
-#: project/presentation/web/views/user_blueprint/organization_member/view_handler.py:32
+#: project/presentation/web/views/user_blueprint/shells.py:224
 msgid "Organizations"
 msgstr "Organisationen"
 
@@ -2952,18 +3083,18 @@ msgstr "Eigene Veranstaltung"
 msgid "Own events cannot be referenced"
 msgstr "Eigene Veranstaltungen können nicht empfohlen werden"
 
-#: frontend/src/shared/customWidget.ts:242
+#: frontend/src/shared/customWidget.ts:243
 msgid "Padding"
 msgstr "Abstand"
 
-#: frontend/src/shared/AppPager.vue:18 frontend/src/shared/AppPager.vue:32
+#: frontend/src/shared/AppPager.vue:20 frontend/src/shared/AppPager.vue:47
 #: project/presentation/web/templates/_macros.html:884
 #, python-format
 msgid "Page %(page)d of %(pages)d (%(total)d total)"
 msgstr "Seite %(page)d von %(pages)d (%(total)d insgesamt)"
 
 #: frontend/src/shared/customWidget.ts:161
-#: frontend/src/shared/customWidget.ts:207
+#: frontend/src/shared/customWidget.ts:208
 msgid "Pagination"
 msgstr "Seitennavigation"
 
@@ -3041,7 +3172,7 @@ msgstr ""
 msgid "Planning"
 msgstr "Planung"
 
-#: frontend/src/shared/ImageField.vue:53
+#: frontend/src/shared/ImageField.vue:61
 msgid "Please choose an image file."
 msgstr "Bitte wähle eine Bilddatei aus."
 
@@ -3053,7 +3184,8 @@ msgstr ""
 msgid "Please enter a valid time, between 00:00 and 23:59."
 msgstr "Bitte gib eine gültige Uhrzeit zwischen 00:00 und 23:59 ein."
 
-#: project/presentation/web/views/user_blueprint/api_key/views.py:30
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:55
+#: project/presentation/web/views/manage_admin_unit/api_key/views.py:30
 #, python-format
 msgid "Please note the key: %(key)s. It will only be displayed once."
 msgstr "Bitte notiere den Key: %(key)s. Er wird nur einmal angezeigt."
@@ -3063,11 +3195,11 @@ msgstr "Bitte notiere den Key: %(key)s. Er wird nur einmal angezeigt."
 #: frontend/src/apps/manage/pages/EventEditPage.vue:385
 #: frontend/src/apps/manage/pages/EventEditPage.vue:563
 #: frontend/src/apps/manage/pages/EventEditPage.vue:640
-#: frontend/src/shared/ImageField.vue:38
+#: frontend/src/shared/ImageField.vue:43
 msgid "Please select"
 msgstr "Bitte auswählen"
 
-#: frontend/src/shared/ImageField.vue:155
+#: frontend/src/shared/ImageField.vue:187
 msgid ""
 "Please select if the image should be displayed in external event "
 "calendars."
@@ -3078,7 +3210,7 @@ msgstr ""
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:222
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:55
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:154
-#: frontend/src/shared/LocationFields.vue:64
+#: frontend/src/shared/LocationFields.vue:107
 msgid "Postal code"
 msgstr "Postleitzahl"
 
@@ -3112,22 +3244,22 @@ msgid "Print"
 msgstr "Drucken"
 
 #: frontend/src/shared/customWidget.ts:162
-#: frontend/src/shared/customWidget.ts:219
+#: frontend/src/shared/customWidget.ts:220
 msgid "Print button"
 msgstr "Drucken-Button"
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:31
-#: project/presentation/web/templates/layout.html:245
+#: project/presentation/web/templates/layout.html:244
 #: project/presentation/web/templates/layout_bs5.html:111
 #: project/presentation/web/views/root.py:107
 msgid "Privacy"
 msgstr "Datenschutz"
 
+#: frontend/src/apps/user/components/ProfileBreadcrumb.vue:15
+#: frontend/src/apps/user/pages/ProfilePage.vue:41
 #: project/presentation/web/jinja_filters.py:76
 #: project/presentation/web/templates/_managebar.html:90
-#: project/presentation/web/templates/profile.html:4
-#: project/presentation/web/templates/profile.html:17
-#: project/presentation/web/views/user_blueprint/child_view_handler.py:15
+#: project/presentation/web/views/user.py:17
 msgid "Profile"
 msgstr "Profil"
 
@@ -3146,7 +3278,8 @@ msgstr "Veranstaltung veröffentlichen"
 msgid "Radius"
 msgstr "Umkreis"
 
-#: project/presentation/web/views/user_blueprint/api_key/displays.py:13
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:89
+#: project/presentation/web/views/manage_admin_unit/api_key/displays.py:13
 msgid "Rate limit"
 msgstr "Anfragelimit"
 
@@ -3183,9 +3316,11 @@ msgstr "Empfänger"
 msgid "Recurring event"
 msgstr "Serientermin"
 
+#: frontend/src/shared/OAuth2ClientDetails.vue:31
+#: frontend/src/shared/OAuth2ClientFormFields.vue:38
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:17
-#: project/presentation/web/views/user_blueprint/oauth2_client/displays.py:12
-#: project/presentation/web/views/user_blueprint/oauth2_client/forms.py:22
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:12
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:22
 msgid "Redirect URIs"
 msgstr "Redirect URIs"
 
@@ -3303,7 +3438,7 @@ msgstr "Angemeldet bleiben"
 
 #: frontend/src/apps/manage/components/EventDateDefinitionFields.vue:99
 #: frontend/src/apps/manage/components/RecurrenceRuleModal.vue:416
-#: frontend/src/shared/MultiTypeahead.vue:54
+#: frontend/src/shared/MultiTypeahead.vue:60
 msgid "Remove"
 msgstr "Entfernen"
 
@@ -3349,8 +3484,8 @@ msgstr "Veranstaltung melden"
 msgid "Request already verified"
 msgstr "Empfehlungsanfrage ist bereits verifiziert"
 
+#: frontend/src/apps/user/pages/AccountDeletionPage.vue:21
 #: project/presentation/web/views/manage_admin_unit/admin_unit/forms.py:71
-#: project/presentation/web/views/user_blueprint/user/forms.py:15
 msgid "Request deletion"
 msgstr "Löschung beantragen"
 
@@ -3389,8 +3524,8 @@ msgstr "Verifizierung für Organisation \"%(name)s\" anfragen"
 #: frontend/src/apps/admin/components/ResetTosModal.vue:43
 #: frontend/src/apps/admin/pages/SettingsPage.vue:92
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:322
-#: frontend/src/shared/AppTypeahead.vue:148
-#: frontend/src/shared/LocationFilter.vue:142
+#: frontend/src/shared/AppTypeahead.vue:149
+#: frontend/src/shared/LocationFilter.vue:143
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -3399,8 +3534,9 @@ msgstr "Zurücksetzen"
 msgid "Reset acceptance of terms of service and privacy"
 msgstr "Akzeptanz der Nutzungsbedingungen und des Datenschutzes zurücksetzen"
 
+#: frontend/src/shared/OAuth2ClientDetails.vue:33
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:18
-#: project/presentation/web/views/user_blueprint/oauth2_client/displays.py:13
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:13
 msgid "Response types"
 msgstr "Response types"
 
@@ -3434,20 +3570,20 @@ msgstr "Anfrage prüfen"
 msgid "Review status"
 msgstr "Prüfungsstatus"
 
-#: project/presentation/web/views/user_blueprint/oauth2_token/view_handler.py:64
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:64
 msgid "Revoke"
 msgstr "Widerrufen"
 
-#: project/presentation/web/views/user_blueprint/oauth2_token/views.py:40
+#: frontend/src/apps/user/pages/OAuth2TokenRevokePage.vue:25
 #, python-format
 msgid "Revoke %(model_display_name)s"
 msgstr "%(model_display_name)s widerrufen"
 
-#: project/presentation/web/views/user_blueprint/oauth2_token/forms.py:8
+#: frontend/src/apps/user/pages/OAuth2TokenRevokePage.vue:86
 msgid "Revoke OAuth2 token"
 msgstr "OAuth2 Token widerrufen"
 
-#: project/presentation/web/views/user_blueprint/oauth2_token/displays.py:24
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:42
 msgid "Revoked"
 msgstr "Widerrufen"
 
@@ -3474,9 +3610,11 @@ msgstr "Samstag"
 #: frontend/src/apps/admin/components/SettingCard.vue:99
 #: frontend/src/apps/manage/components/RecurrenceRuleModal.vue:452
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:152
-#: project/presentation/web/views/user_blueprint/oauth2_client/forms.py:31
-#: project/presentation/web/views/user_blueprint/user/forms.py:33
-#: project/presentation/web/views/user_blueprint/user/forms.py:56
+#: frontend/src/apps/user/pages/ApiKeyEditPage.vue:112
+#: frontend/src/apps/user/pages/GeneralSettingsPage.vue:60
+#: frontend/src/apps/user/pages/NotificationSettingsPage.vue:71
+#: frontend/src/apps/user/pages/OAuth2ClientEditPage.vue:147
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:31
 msgid "Save"
 msgstr "Speichern"
 
@@ -3492,8 +3630,9 @@ msgstr "Als geplant speichern"
 msgid "Save reference"
 msgstr "Empfehlung speichern"
 
+#: frontend/src/shared/OAuth2ClientDetails.vue:35
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:19
-#: project/presentation/web/views/user_blueprint/oauth2_client/displays.py:14
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:14
 msgid "Scope"
 msgstr "Scope"
 
@@ -3505,8 +3644,9 @@ msgstr "Identität verifizieren"
 msgid "Scope_profile"
 msgstr "Profil-Informationen lesen"
 
-#: project/presentation/web/views/user_blueprint/oauth2_client/forms.py:25
-#: project/presentation/web/views/user_blueprint/oauth2_token/displays.py:14
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:32
+#: frontend/src/shared/OAuth2ClientFormFields.vue:51
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:25
 msgid "Scopes"
 msgstr "Scopes"
 
@@ -3515,7 +3655,7 @@ msgstr "Scopes"
 msgid "Search"
 msgstr "Suche"
 
-#: frontend/src/shared/PlaceLookup.vue:50
+#: frontend/src/shared/PlaceLookup.vue:57
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
 
@@ -3577,17 +3717,17 @@ msgstr "An %(count)d Empfänger senden?"
 #: frontend/src/apps/admin/pages/SettingsPage.vue:65
 #: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:63
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:161
+#: frontend/src/apps/user/pages/ProfilePage.vue:55
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:157
 #: project/presentation/web/templates/_managebar.html:82
-#: project/presentation/web/templates/profile.html:32
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:146
 msgid "Settings"
 msgstr "Einstellungen"
 
 #: frontend/src/apps/admin/components/SettingCard.vue:64
+#: project/presentation/bff/user/profile.py:49
 #: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:58
-#: project/presentation/web/views/user_blueprint/user/views.py:131
 msgid "Settings successfully updated"
 msgstr "Einstellungen erfolgreich aktualisiert"
 
@@ -3646,6 +3786,7 @@ msgstr "Nur nicht empfohlene Veranstaltungen anzeigen"
 
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:154
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:206
+#: frontend/src/apps/user/pages/ApiKeysPage.vue:57
 #: project/presentation/web/modular/base_views.py:169
 msgid "Sort"
 msgstr "Sortierung"
@@ -3664,7 +3805,7 @@ msgstr "Beginn"
 msgid "Start page"
 msgstr "Startseite"
 
-#: frontend/src/shared/LocationFields.vue:49
+#: frontend/src/shared/LocationFields.vue:60
 msgid "State"
 msgstr "Bundesland"
 
@@ -3673,10 +3814,10 @@ msgstr "Bundesland"
 #: frontend/src/apps/manage/pages/EventEditPage.vue:279
 #: frontend/src/apps/manage/pages/EventEditPage.vue:294
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:60
+#: frontend/src/apps/user/pages/OAuth2TokensPage.vue:35
 #: project/presentation/web/templates/_macros.html:850
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:12
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:21
-#: project/presentation/web/views/user_blueprint/oauth2_token/displays.py:17
 #: project/templates/email/referenced_event_changed_notice.txt:14
 msgid "Status"
 msgstr "Status"
@@ -3686,7 +3827,7 @@ msgstr "Status"
 msgid "Status code"
 msgstr "Statuscode"
 
-#: frontend/src/shared/LocationFields.vue:44
+#: frontend/src/shared/LocationFields.vue:45
 msgid "Street"
 msgstr "Straße"
 
@@ -3737,7 +3878,7 @@ msgid "Target organization can no longer verify other organizations."
 msgstr "Die Zielorganisation kann keine anderen Organisationen mehr verifizieren."
 
 #: frontend/src/apps/admin/pages/SettingsPage.vue:24
-#: project/presentation/web/templates/layout.html:232
+#: project/presentation/web/templates/layout.html:231
 #: project/presentation/web/templates/layout_bs5.html:98
 #: project/presentation/web/views/root.py:79
 msgid "Terms of service"
@@ -3768,11 +3909,11 @@ msgstr "Text"
 #: frontend/src/shared/customWidget.ts:167
 #: frontend/src/shared/customWidget.ts:169
 #: frontend/src/shared/customWidget.ts:170
-#: frontend/src/shared/customWidget.ts:244
+#: frontend/src/shared/customWidget.ts:245
 msgid "Text color"
 msgstr "Textfarbe"
 
-#: project/presentation/web/views/user_blueprint/user/views.py:62
+#: frontend/src/apps/user/pages/AccountDeletionPage.vue:71
 msgid ""
 "The account is not deleted immediately. After a period of time, the "
 "account will be deleted. Until then, the deletion can be canceled."
@@ -3873,13 +4014,13 @@ msgid "The organization is scheduled for deletion."
 msgstr "Die Organisation ist zur Löschung vorgesehen."
 
 #: frontend/src/apps/admin/pages/NotFoundPage.vue:12
-#: frontend/src/apps/manage/pages/NotFoundPage.vue:9
 #: frontend/src/apps/public/pages/NotFoundPage.vue:9
+#: frontend/src/shared/NotFoundPage.vue:9
 #: project/domain/errors/not_found_error.py:7
 msgid "The requested resource was not found"
 msgstr "Die angeforderte Ressource wurde nicht gefunden"
 
-#: frontend/src/shared/ImageCropper.vue:37
+#: frontend/src/shared/ImageCropper.vue:45
 #, python-format
 msgid "The resolution is too low. At least %(width)sx%(height)spx."
 msgstr "Die Auflösung ist zu gering. Mindestens %(width)sx%(height)spx."
@@ -4000,8 +4141,9 @@ msgstr "Bis"
 msgid "Today"
 msgstr "Heute"
 
+#: frontend/src/shared/OAuth2ClientDetails.vue:37
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:20
-#: project/presentation/web/views/user_blueprint/oauth2_client/displays.py:15
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:15
 msgid "Token endpoint auth method"
 msgstr "Token endpoint auth method"
 
@@ -4035,6 +4177,8 @@ msgstr "Bis"
 #: frontend/src/apps/manage/pages/EventEditPage.vue:695
 #: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:202
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:233
+#: frontend/src/apps/user/pages/ApiKeyPage.vue:76
+#: frontend/src/apps/user/pages/OAuth2ClientPage.vue:49
 #: project/presentation/web/modular/base_form.py:69
 msgid "Update"
 msgstr "Aktualisieren"
@@ -4163,11 +4307,11 @@ msgstr "Empfehlungsanfragen automatisch verifizieren"
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:136
 #: frontend/src/apps/manage/components/PlanningEventDetailsModal.vue:78
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:198
+#: frontend/src/apps/user/pages/MemberInvitationsPage.vue:55
+#: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:63
 #: project/presentation/web/modular/base_view_handler.py:197
 #: project/presentation/web/views/flask_admin.py:145
 #: project/presentation/web/views/manage_admin_unit/event_organizer/view_handler.py:75
-#: project/presentation/web/views/user_blueprint/organization_invitation/view_handler.py:50
-#: project/presentation/web/views/user_blueprint/organization_member_invitation/view_handler.py:50
 msgid "View"
 msgstr "Anzeigen"
 
@@ -4291,7 +4435,7 @@ msgstr "Widget-Typ"
 msgid "Widgets"
 msgstr "Widgets"
 
-#: project/presentation/web/views/user_blueprint/organization_member_invitation/views.py:23
+#: frontend/src/apps/user/pages/MemberInvitationPage.vue:70
 #, python-format
 msgid "Would you like to accept the invitation from %(name)s?"
 msgstr "Möchtest du die Einladung von %(name)s akzeptieren?"
@@ -4326,7 +4470,8 @@ msgstr ""
 "Wenn du stattdessen einen einzelnen Termin löschen möchtest, musst du "
 "dazu die Veranstaltung bearbeiten."
 
-#: project/presentation/web/views/user_blueprint/user/views.py:51
+#: project/presentation/bff/user/profile.py:150
+#: project/presentation/web/views/user_blueprint/shells.py:72
 msgid ""
 "You are administrator of at least one organization. Cancel your "
 "membership to delete your account."
@@ -4353,9 +4498,14 @@ msgstr "Du wurdest eingeladen, %(admin_unit_name)s beizutreten."
 msgid "You have received an invitation"
 msgstr "Du hast eine Einladung erhalten"
 
-#: project/presentation/web/templates/profile.html:12
+#: project/presentation/bff/user/profile.py:178
+msgid "Your account is not scheduled for deletion."
+msgstr "Dein Account ist nicht zur Löschung vorgesehen."
+
+#: frontend/src/apps/user/pages/ProfilePage.vue:35
+#: project/presentation/bff/user/organizations.py:214
+#: project/presentation/bff/user/profile.py:138
 #: project/presentation/web/views/manage_blueprint/views.py:34
-#: project/presentation/web/views/user_blueprint/organization_member_invitation/views.py:34
 msgid "Your account is scheduled for deletion."
 msgstr "Dein Account ist zur Löschung vorgesehen."
 
