@@ -51,6 +51,13 @@ def test_anonymous_gets_json_401_without_accept_header(client):
     assert response.json["name"] == "Unauthorized"
 
 
+def test_user_area_is_session_only(client):
+    response = client.get("/bff/user/profile")
+
+    assert response.status_code == 401
+    assert response.json["name"] == "Unauthorized"
+
+
 def test_unauthorized_error_maps_to_401_or_403(app, seeder, utils):
     from project.domain.errors.unauthorized_error import UnauthorizedError
     from project.presentation.bff import _handle_unauthorized_error

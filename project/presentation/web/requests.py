@@ -26,6 +26,16 @@ def _content_security_policy(app) -> str:
     )
 
 
+# The terms of service confirmation page reads and writes through these BFF endpoints
+# (`bff.<blueprint name>.<view function name>`), so the gate must let them answer.
+_TOS_GATE_EXEMPT_ENDPOINTS = [
+    "static",
+    "user.accept_tos",
+    "bff.bff_user.get_accept_tos",
+    "bff.bff_user.accept_tos",
+]
+
+
 def init_requests(app):
     @app.after_request
     def check_tos_accepted(response):
@@ -34,7 +44,7 @@ def init_requests(app):
             and request.endpoint
             and not request.endpoint.startswith("api_")
             and not request.endpoint.startswith("widget_")
-            and request.endpoint not in ["static", "user.accept_tos"]
+            and request.endpoint not in _TOS_GATE_EXEMPT_ENDPOINTS
             and current_user
             and current_user.is_authenticated
             and not current_user.tos_accepted_at
