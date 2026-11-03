@@ -15,7 +15,7 @@ vi.mock("@/shared/api", () => ({
 const success = vi.hoisted(() => vi.fn());
 vi.mock("@/shared/notify", () => ({ useNotify: () => ({ success, error: vi.fn() }) }));
 
-import { setFlash } from "../flash";
+import { setFlash } from "@/shared/flash";
 import CustomWidgetsPage from "./CustomWidgetsPage.vue";
 
 const page = (items: { id: number; name: string; widget_type: string }[], over = {}) => ({

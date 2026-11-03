@@ -8,7 +8,7 @@ import EventPlaceEditPage from "./pages/EventPlaceEditPage.vue";
 import EventReferenceRequestCreatePage from "./pages/EventReferenceRequestCreatePage.vue";
 import EventReferenceRequestReviewPage from "./pages/EventReferenceRequestReviewPage.vue";
 import ManageEventsPage from "./pages/ManageEventsPage.vue";
-import NotFoundPage from "./pages/NotFoundPage.vue";
+import NotFoundPage from "@/shared/NotFoundPage.vue";
 import OrganizationCreatePage from "./pages/OrganizationCreatePage.vue";
 import OrganizationExportPage from "./pages/OrganizationExportPage.vue";
 import OrganizationRelationEditPage from "./pages/OrganizationRelationEditPage.vue";

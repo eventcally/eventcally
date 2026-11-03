@@ -18,7 +18,7 @@ import { boot } from "@/shared/boot";
 import { formatDate, formatStart } from "@/shared/format";
 import { manage, publicPages } from "@/shared/legacy";
 import { useNotify } from "@/shared/notify";
-import { takeFlash } from "../flash";
+import { takeFlash } from "@/shared/flash";
 import ManageEventSearchForm from "../components/ManageEventSearchForm.vue";
 import {
   type ManageEventFilter,

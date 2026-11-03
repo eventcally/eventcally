@@ -28,7 +28,7 @@ vi.mock("../components/CustomWidgetPreview.vue", async () => {
   };
 });
 
-import { takeFlash } from "../flash";
+import { takeFlash } from "@/shared/flash";
 import CustomWidgetEditPage from "./CustomWidgetEditPage.vue";
 
 const assign = vi.fn();
