@@ -11,22 +11,22 @@ from project.presentation.web.modular.sort_definition import (
     sort_key_or_none,
 )
 from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
-from project.presentation.web.views.manage_admin_unit.api_key.views import CreateView
-from project.presentation.web.views.manage_admin_unit.child_view_handler import (
-    ManageAdminUnitChildViewHandler,
-)
-from project.presentation.web.views.user_blueprint.api_key.displays import (
+from project.presentation.web.views.manage_admin_unit.api_key.displays import (
     ListDisplay,
     ReadDisplay,
 )
-from project.presentation.web.views.user_blueprint.api_key.forms import (
+from project.presentation.web.views.manage_admin_unit.api_key.forms import (
     CreateForm,
     DeleteForm,
     UpdateForm,
 )
-from project.presentation.web.views.user_blueprint.api_key.views import (
+from project.presentation.web.views.manage_admin_unit.api_key.views import (
+    CreateView,
     DeleteView,
     UpdateView,
+)
+from project.presentation.web.views.manage_admin_unit.child_view_handler import (
+    ManageAdminUnitChildViewHandler,
 )
 
 

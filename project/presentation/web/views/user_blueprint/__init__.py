@@ -1,16 +1,7 @@
-from project.presentation.web.modular.base_blueprint import BaseBlueprint
+from flask import Blueprint
 
-user_bp = BaseBlueprint(
-    "user",
-    __name__,
-    url_prefix="/user",
-    template_folder="templates",
-)
+# The pages of the logged-in user area. Every route is a shell for the `user` Vue entry
+# (see `shells.py`); the data and the writes go through `/bff/user`.
+user_bp = Blueprint("user", __name__, url_prefix="/user")
 
-import project.presentation.web.views.user_blueprint.api_key.view_handler
-import project.presentation.web.views.user_blueprint.oauth2_client.view_handler
-import project.presentation.web.views.user_blueprint.oauth2_token.view_handler
-import project.presentation.web.views.user_blueprint.organization_invitation.view_handler
-import project.presentation.web.views.user_blueprint.organization_member.view_handler
-import project.presentation.web.views.user_blueprint.organization_member_invitation.view_handler
-import project.presentation.web.views.user_blueprint.user.view_handler
+import project.presentation.web.views.user_blueprint.shells  # noqa: E402, F401

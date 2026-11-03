@@ -7,7 +7,7 @@ from project.application.commands.update_app_command import UpdateAppCommand
 from project.presentation.web.forms.common import WebhookForm
 from project.presentation.web.forms.widgets import MultiCheckboxField
 from project.presentation.web.modular.base_form import BaseDeleteForm
-from project.presentation.web.views.user_blueprint.oauth2_client.forms import (
+from project.presentation.web.views.manage_admin_unit.oauth2_client.forms import (
     BaseOAuth2ClientForm,
 )
 from project.shared.utils import split_by_crlf

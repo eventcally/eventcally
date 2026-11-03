@@ -102,3 +102,25 @@ def test_unknown_and_repeated_imports_are_skipped(vite_app):
         html = str(vite_entry("admin"))
 
     assert html.count('rel="modulepreload"') == 1
+
+
+def test_every_entry_resolves_to_its_source():
+    assert set(vite.ENTRIES) == {"admin", "manage", "public", "user", "widget"}
+    assert vite.ENTRIES["user"] == "src/apps/user/main.ts"
+
+
+def test_user_entry_tags(vite_app):
+    app, dist = vite_app
+    manifest = {
+        "src/apps/user/main.ts": {
+            "file": "assets/user-abc.js",
+            "name": "user",
+            "isEntry": True,
+        }
+    }
+    (dist / "manifest.json").write_text(json.dumps(manifest))
+
+    with app.test_request_context():
+        html = str(vite_entry("user"))
+
+    assert "assets/user-abc.js" in html
