@@ -11,7 +11,7 @@ updates:
     directory: /
     schedule:
       interval: weekly
-      day: monday
+      day: saturday
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
@@ -29,7 +29,7 @@ updates:
     directory: /                 # Dockerfile and Dockerfile.e2e
     schedule:
       interval: weekly
-      day: monday
+      day: saturday
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
@@ -56,7 +56,7 @@ updates:
     directory: /                 # docker-compose.yml, .debug.yml, .test.yml
     schedule:
       interval: weekly
-      day: monday
+      day: saturday
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
@@ -78,7 +78,7 @@ updates:
     directory: /                 # pyproject.toml + uv.lock
     schedule:
       interval: weekly
-      day: monday
+      day: saturday
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
@@ -114,7 +114,7 @@ updates:
     directory: /frontend
     schedule:
       interval: weekly
-      day: monday
+      day: saturday
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
@@ -137,7 +137,7 @@ updates:
     directory: /                 # @playwright/test only
     schedule:
       interval: weekly
-      day: monday
+      day: saturday
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
