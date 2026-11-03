@@ -93,6 +93,7 @@ from .get_user_organization_invitation_handler import (
 from .get_user_organization_membership_handler import (
     GetUserOrganizationMembershipHandler,
 )
+from .get_user_profile_handler import GetUserProfileHandler
 from .get_webhook_delivery_for_app_handler import GetWebhookDeliveryForAppHandler
 from .has_other_admin_handler import HasOtherAdminHandler
 from .is_event_organizer_name_taken_handler import IsEventOrganizerNameTakenHandler
