@@ -21,7 +21,7 @@
     "bootstrap": "5.3.8",
     "bootstrap-vue-next": "1.2.2",
     "cropperjs": "1.7.0",
-    "focus-trap": "8.2.3",
+    "focus-trap": "8.2.4",
     "leaflet": "1.9.4",
     "leaflet.markercluster": "1.5.3",
     "openapi-fetch": "0.17.0",
