@@ -212,21 +212,9 @@ class CountProp(BaseProp):  # pragma: no cover
 
 class RateLimitPropPropFormatter(BasePropFormatter):
     def format(self, data):
-        from project.infrastructure.extensions import limiter
-        from project.presentation.shared.rate_limit import (
-            get_limit_decorator_for_provider,
-        )
+        from project.presentation.shared.rate_limit import rate_limit_rows
 
-        rows = []
-        limit_group = get_limit_decorator_for_provider(data).limit_group
-        for limit in limit_group:
-            key = limit_group.key_function()
-            args = [key, limit.scope_for("", "")]
-            stats = limiter.limiter.get_window_stats(limit.limit, *args)
-            row = f"{limit.limit}: {stats.remaining} remaining"
-            rows.append(row)
-
-        return os.linesep.join(rows)
+        return os.linesep.join(rate_limit_rows(data))
 
 
 class RateLimitProp(BaseProp):
