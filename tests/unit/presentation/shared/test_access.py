@@ -249,8 +249,6 @@ def test_manage_queries(ctx, monkeypatch):
     bus = _QueryBus("result")
     _patch(monkeypatch, bus=bus)
 
-    assert access.admin_units_the_current_user_is_member_of() == "result"
-    assert bus.queries[-1].member_only is True
     assert access.get_admin_units_for_manage() == "result"
     assert access.get_admin_unit_for_manage(3) == "result"
     assert bus.queries[-1].id == 3

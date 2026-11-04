@@ -3,6 +3,7 @@ import pytest
 AVAILABILITY_URL = "/bff/manage/organizations/name-availability"
 FORM_URL = "/bff/manage/organizations/create-form"
 CREATE_URL = "/bff/manage/organizations"
+OVERVIEW_URL = "/bff/manage/organizations"
 
 
 def _shell(utils, invitation_id=None):
@@ -130,6 +131,80 @@ def test_name_availability_is_not_an_organization_id(client, seeder, utils):
     utils.login()
 
     assert utils.get_json(AVAILABILITY_URL + "?name=x").status_code == 200
+
+
+# overview of the current user
+
+
+def test_overview_is_401_for_anonymous(client, utils):
+    assert utils.get_json(OVERVIEW_URL).status_code == 401
+
+
+def test_overview_lists_organizations_and_invitations(client, app, seeder, utils):
+    app.config["DOCS_URL"] = "https://docs.example"
+    owner_id = seeder.create_user(email="owner@test.de")
+    other_id = seeder.create_admin_unit(owner_id, name="Gastgeber Crew")
+    user_id = seeder.create_user(email="test@test.de")
+    first_id = seeder.create_admin_unit(user_id, name="Zebra Crew")
+    second_id = seeder.create_admin_unit(user_id, name="Alpha Crew")
+    # An organization of somebody else is not listed.
+    seeder.create_admin_unit(owner_id, name="Fremde Crew")
+    invitation_id = seeder.create_invitation(other_id, "test@test.de")
+    organization_invitation_id = seeder.create_admin_unit_invitation(
+        other_id, "test@test.de", "Eingeladene Crew"
+    )
+    utils.login("test@test.de")
+
+    data = utils.get_json_ok(OVERVIEW_URL).json
+
+    assert [o["name"] for o in data["organizations"]] == ["Alpha Crew", "Zebra Crew"]
+    assert {o["id"] for o in data["organizations"]} == {first_id, second_id}
+    assert data["invitations"] == [
+        dict(
+            id=invitation_id,
+            name="Gastgeber Crew",
+            url=f"/invitations/{invitation_id}",
+        )
+    ]
+    assert data["organization_invitations"] == [
+        dict(
+            id=organization_invitation_id,
+            name="Eingeladene Crew",
+            url=f"/user/organization-invitations/{organization_invitation_id}",
+        )
+    ]
+    assert data["docs_url"] == "https://docs.example/goto/organization-create"
+    assert data["can_create"] is True
+    assert data["invite_organization_id"] in (first_id, second_id)
+
+
+def test_overview_without_organizations(client, app, seeder, utils):
+    app.config["DOCS_URL"] = None
+    seeder.create_user()
+    utils.login()
+
+    data = utils.get_json_ok(OVERVIEW_URL).json
+
+    assert data == dict(
+        invitations=[],
+        organization_invitations=[],
+        organizations=[],
+        docs_url=None,
+        can_create=True,
+        invite_organization_id=None,
+    )
+
+
+def test_overview_hides_what_is_not_allowed(client, app, seeder, utils):
+    app.config["ADMIN_UNIT_CREATE_REQUIRES_ADMIN"] = True
+    user_id = seeder.create_user()
+    seeder.create_admin_unit(user_id, can_invite_other=False)
+    utils.login()
+
+    data = utils.get_json_ok(OVERVIEW_URL).json
+
+    assert data["can_create"] is False
+    assert data["invite_organization_id"] is None
 
 
 # name availability

@@ -22,7 +22,14 @@ test.describe("Manage", () => {
       page.locator("h1", { hasText: "Organisationseinladungen" }).first()
     ).toBeAttached();
     await expect(page.locator("h1", { hasText: "Organisationen" }).first()).toBeAttached();
+    await expect(page.getByRole("button", { name: "Organisation erstellen" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Organisation einladen" })).toBeVisible();
+    await expect(page.locator("[data-test=organizations] a", { hasText: "Meine Crew" })).toBeVisible();
     await screenshot(page, "organizations");
+
+    // The organization link is the server side redirect to the events.
+    await page.locator("[data-test=organizations] a", { hasText: "Meine Crew" }).click();
+    await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/events`));
   });
 
   test("Events", async ({ page, login }) => {

@@ -243,4 +243,21 @@ describe("manage router", () => {
       "not-found",
     );
   });
+
+  it("resolves the organization list, the widgets and the deletion pages", async () => {
+    expect((await resolve("/manage/admin_units")).name).toBe("organizations");
+
+    const pages = [
+      ["widgets", "organization-widgets", undefined],
+      ["request-deletion", "organization-request-deletion", "request"],
+      ["cancel-deletion", "organization-cancel-deletion", "cancel"],
+    ] as const;
+    for (const [path, name, mode] of pages) {
+      const route = await resolve(`/manage/admin_unit/3/${path}`);
+      expect(route.name).toBe(name);
+      const props = route.matched[0].props.default as (r: typeof route) => unknown;
+      expect(props(route)).toEqual(mode ? { organizationId: 3, mode } : { organizationId: 3 });
+      expect((await resolve(`/manage/admin_unit/x/${path}`)).name).toBe("not-found");
+    }
+  });
 });

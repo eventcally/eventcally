@@ -276,6 +276,26 @@ export const routes: RouteRecordRaw[] = [
       eventId: Number(route.params.eventId),
     }),
   },
+  { path: "/manage/admin_units", name: "organizations", component: () => import("./pages/OrganizationsPage.vue") },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/widgets",
+    name: "organization-widgets",
+    component: () => import("./pages/OrganizationWidgetsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  // Two URLs (the cancel link is mailed, the request link is on the settings page), one page.
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/request-deletion",
+    name: "organization-request-deletion",
+    component: () => import("./pages/OrganizationDeletionPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId), mode: "request" }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/cancel-deletion",
+    name: "organization-cancel-deletion",
+    component: () => import("./pages/OrganizationDeletionPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId), mode: "cancel" }),
+  },
   { path: "/manage/organization/create", name: "organization-create", component: OrganizationCreatePage },
   { path: "/:rest(.*)*", name: "not-found", component: NotFoundPage },
 ];

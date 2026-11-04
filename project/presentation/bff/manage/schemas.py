@@ -1298,3 +1298,49 @@ class OrganizationInvitationCreate(OrganizationInvitationUpdate):
 class OrganizationInvitationSaved(BaseModel):
     id: int
     redirect_url: str
+
+
+class OrganizationsOverviewLink(BaseModel):
+    """An invitation or organization of the current user and the page it leads to."""
+
+    id: int
+    name: str
+    url: str
+
+
+class OrganizationsOverview(BaseModel):
+    invitations: List[OrganizationsOverviewLink]
+    organization_invitations: List[OrganizationsOverviewLink]
+    organizations: List[ManageRef]
+    docs_url: Optional[str] = None
+    # Whether the create form is open to the user (not closed, no deletion requested).
+    can_create: bool
+    # The organization the "Invite organization" button belongs to: the current one, when
+    # it may invite other organizations.
+    invite_organization_id: Optional[int] = None
+
+
+HexColor = Annotated[str, StringConstraints(pattern=r"^#[0-9a-fA-F]{6}$")]
+
+
+class WidgetSettingsForm(BaseModel):
+    id: int
+    font: str = ""
+    background_color: str
+    primary_color: str
+    link_color: str
+    # The embed instructions (script loader, the widget and the alternative iframe).
+    loader_url: str
+    iframe_url: str
+    preview_url: str
+
+
+class WidgetSettingsSave(BaseModel):
+    font: Optional[Annotated[str, StringConstraints(max_length=255)]] = None
+    background_color: Optional[HexColor] = None
+    primary_color: Optional[HexColor] = None
+    link_color: Optional[HexColor] = None
+
+
+class OrganizationDeletionAnswer(BaseModel):
+    redirect_url: str

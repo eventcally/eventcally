@@ -40,6 +40,7 @@ export const testRoutes = [
   { path: `${base}/organization_invitations`, name: "organization-invitations", component: Blank },
   { path: `${base}/organization_invitation/create`, name: "organization-invitation-create", component: Blank },
   { path: `${base}/organization_invitation/:id/update`, name: "organization-invitation-update", component: Blank },
+  { path: "/manage/organization/create", name: "organization-create", component: Blank },
 ];
 
 const mounted: { unmount: () => void }[] = [];

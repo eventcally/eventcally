@@ -289,7 +289,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** The organizations and invitations of the current user */
+        get: operations["bff_manage_get_organizations_overview"];
         put?: never;
         /** Create an organization */
         post: operations["bff_manage_create_organization"];
@@ -362,6 +363,40 @@ export interface paths {
         put?: never;
         /** Create a custom widget */
         post: operations["bff_manage_create_custom_widget"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/deletion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request the deletion of an organization after typing its name */
+        post: operations["bff_manage_request_organization_deletion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/deletion/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel the deletion of an organization after typing its name */
+        post: operations["bff_manage_cancel_organization_deletion"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1412,6 +1447,24 @@ export interface paths {
         /** List the organizations that can verify an organization */
         get: operations["bff_manage_list_verifier_organizations"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/widget-settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the widget colors and the embed instructions of an organization */
+        get: operations["bff_manage_get_widget_settings"];
+        /** Save the widget colors of an organization */
+        put: operations["bff_manage_update_widget_settings"];
         post?: never;
         delete?: never;
         options?: never;
@@ -4085,6 +4138,11 @@ export interface components {
             /** Verified */
             verified: boolean;
         };
+        /** OrganizationDeletionAnswer */
+        OrganizationDeletionAnswer: {
+            /** Redirect Url */
+            redirect_url: string;
+        };
         /** OrganizationExport */
         OrganizationExport: {
             /** @default null */
@@ -4566,6 +4624,39 @@ export interface components {
             rejection_reasons: components["schemas"]["ReviewChoice"][];
             /** Review Status */
             review_status: string;
+        };
+        /** OrganizationsOverview */
+        OrganizationsOverview: {
+            /** Can Create */
+            can_create: boolean;
+            /**
+             * Docs Url
+             * @default null
+             */
+            docs_url: string | null;
+            /** Invitations */
+            invitations: components["schemas"]["OrganizationsOverviewLink"][];
+            /**
+             * Invite Organization Id
+             * @default null
+             */
+            invite_organization_id: number | null;
+            /** Organization Invitations */
+            organization_invitations: components["schemas"]["OrganizationsOverviewLink"][];
+            /** Organizations */
+            organizations: components["schemas"]["ManageRef"][];
+        };
+        /**
+         * OrganizationsOverviewLink
+         * @description An invitation or organization of the current user and the page it leads to.
+         */
+        OrganizationsOverviewLink: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Url */
+            url: string;
         };
         /** OutgoingEventReferenceListPage */
         OutgoingEventReferenceListPage: {
@@ -5941,6 +6032,51 @@ export interface components {
             url_200: string;
             /** Url 500 */
             url_500: string;
+        };
+        /** WidgetSettingsForm */
+        WidgetSettingsForm: {
+            /** Background Color */
+            background_color: string;
+            /**
+             * Font
+             * @default
+             */
+            font: string;
+            /** Id */
+            id: number;
+            /** Iframe Url */
+            iframe_url: string;
+            /** Link Color */
+            link_color: string;
+            /** Loader Url */
+            loader_url: string;
+            /** Preview Url */
+            preview_url: string;
+            /** Primary Color */
+            primary_color: string;
+        };
+        /** WidgetSettingsSave */
+        WidgetSettingsSave: {
+            /**
+             * Background Color
+             * @default null
+             */
+            background_color: string | null;
+            /**
+             * Font
+             * @default null
+             */
+            font: string | null;
+            /**
+             * Link Color
+             * @default null
+             */
+            link_color: string | null;
+            /**
+             * Primary Color
+             * @default null
+             */
+            primary_color: string | null;
         };
     };
     responses: never;
@@ -7343,6 +7479,62 @@ export interface operations {
             };
         };
     };
+    bff_manage_get_organizations_overview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrganizationsOverview"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_create_organization: {
         parameters: {
             query?: never;
@@ -7674,6 +7866,148 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CustomWidgetCreated"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_request_organization_deletion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManageNameConfirm"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrganizationDeletionAnswer"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_cancel_organization_deletion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManageNameConfirm"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrganizationDeletionAnswer"];
                 };
             };
             /** @description Bad Request */
@@ -12565,6 +12899,135 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VerifierOrganizationListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_widget_settings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WidgetSettingsForm"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_update_widget_settings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WidgetSettingsSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageMessage"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
             /** @description Unauthorized */
