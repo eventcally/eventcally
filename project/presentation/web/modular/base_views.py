@@ -1,6 +1,6 @@
 from typing import Optional
 
-from flask import flash, redirect, render_template, request
+from flask import flash, render_template, request
 from flask.views import View
 from flask_babel import lazy_gettext
 from wtforms import SelectField
@@ -397,9 +397,6 @@ class BaseDeleteView(BaseObjectFormView):
         del kwargs["obj"]
         return self.form_class(**kwargs)
 
-    def delete_object_from_db(self, object):
-        self.handler.delete_object(object)
-
     def get_redirect_url(self, **kwargs):
         return self.handler.get_list_url(**kwargs)
 
@@ -407,8 +404,3 @@ class BaseDeleteView(BaseObjectFormView):
     def dispatch_validated_form(self, form, object, **kwargs):
         if self.can_object_be_deleted(form, object):
             return self.dispatch_validated_form_deletable(form, object, **kwargs)
-
-    def dispatch_validated_form_deletable(self, form, object, **kwargs):
-        self.delete_object_from_db(object)
-        self.flash_success_message(object, form)
-        return redirect(self.get_redirect_url())

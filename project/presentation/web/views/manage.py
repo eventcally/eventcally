@@ -16,7 +16,6 @@ from project.application.queries import (
 from project.application.queries.page_request import MAX_PER_PAGE, PageRequest
 from project.presentation.shared.access import (
     access_or_401,
-    admin_units_the_current_user_is_member_of,
     get_admin_unit_for_manage_or_404,
     get_admin_units_for_manage,
     has_access,
@@ -27,6 +26,9 @@ from project.presentation.shared.current_admin_unit import (
 )
 from project.presentation.web.boot import build_boot_data
 from project.presentation.web.views.main_blueprint import main_bp
+from project.presentation.web.views.manage_admin_unit.shell_views import (
+    render_manage_shell,
+)
 from project.presentation.web.views.utils import permission_missing
 from project.shared.paths import dump_org_path
 
@@ -97,19 +99,7 @@ def manage():
 @main_bp.route("/manage/admin_units")
 @auth_required()
 def manage_admin_units():
-    admin_units = admin_units_the_current_user_is_member_of()
-    invitations, organization_invitations = _get_invitations()
-
-    admin_units.sort(key=lambda x: x.name)
-    invitations.sort(key=lambda x: x.admin_unit.name)
-    organization_invitations.sort(key=lambda x: x.admin_unit_name)
-
-    return render_template(
-        "manage/admin_units.html",
-        invitations=invitations,
-        organization_invitations=organization_invitations,
-        admin_units=admin_units,
-    )
+    return render_manage_shell(gettext("Organizations"))
 
 
 @main_bp.route("/manage/admin_unit/<int:id>")

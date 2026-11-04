@@ -2,15 +2,20 @@ from types import SimpleNamespace
 from typing import Optional
 
 from dependency_injector.wiring import Provide, inject
-from flask import flash, url_for
+from flask import current_app, flash, url_for
 from flask_babel import gettext
+from flask_security import current_user
 
 from project.application.commands import CreateOrganizationCommand
 from project.application.message_bus import MessageBus
 from project.application.queries import (
     IsOrganizationNameTakenQuery,
     IsOrganizationShortNameTakenQuery,
+    ListManageableOrganizationsQuery,
+    ListUserMemberInvitationsQuery,
+    ListUserOrganizationInvitationsQuery,
 )
+from project.application.queries.page_request import MAX_PER_PAGE, PageRequest
 from project.application.query_bus import QueryBus
 from project.container import Application
 from project.domain.errors.unauthorized_error import UnauthorizedError
@@ -24,6 +29,7 @@ from project.presentation.bff.manage.organization_form import (
     name_errors,
 )
 from project.presentation.bff.manage.schemas import (
+    ManageRef,
     OrganizationCreated,
     OrganizationCreateForm,
     OrganizationCreateParams,
@@ -31,9 +37,12 @@ from project.presentation.bff.manage.schemas import (
     OrganizationCreateSave,
     OrganizationNameAvailability,
     OrganizationNameAvailabilityParams,
+    OrganizationsOverview,
+    OrganizationsOverviewLink,
 )
 from project.presentation.bff.routing import bff_route
 from project.presentation.shared.access import has_access
+from project.presentation.shared.current_admin_unit import get_current_admin_unit
 from project.presentation.shared.organization_create import (
     check_organization_create,
     get_embedded_relation_options,
@@ -51,6 +60,58 @@ def _gate_or_error(invitation_id: Optional[int]):
         raise UnauthorizedError()
 
     return gate
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations",
+    response=OrganizationsOverview,
+    summary="The organizations and invitations of the current user",
+)
+@inject
+def get_organizations_overview(
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    # A user is not realistically invited more often than one page holds; the cap is
+    # the query bus page limit.
+    page = PageRequest(per_page=MAX_PER_PAGE)
+    invitations = query_bus.handle(
+        ListUserMemberInvitationsQuery(user_id=current_user.id, page=page)
+    ).items
+    organization_invitations = query_bus.handle(
+        ListUserOrganizationInvitationsQuery(user_id=current_user.id, page=page)
+    ).items
+    organizations = query_bus.handle(ListManageableOrganizationsQuery(member_only=True))
+    current = get_current_admin_unit()
+    docs_url = current_app.config.get("DOCS_URL")
+
+    return OrganizationsOverview(
+        invitations=[
+            OrganizationsOverviewLink(
+                id=i.id,
+                name=i.admin_unit.name,
+                url=url_for("main.admin_unit_member_invitation", id=i.id),
+            )
+            for i in sorted(invitations, key=lambda i: i.admin_unit.name)
+        ],
+        organization_invitations=[
+            OrganizationsOverviewLink(
+                id=i.id,
+                name=i.admin_unit_name,
+                url=url_for("main.user_organization_invitation", id=i.id),
+            )
+            for i in sorted(organization_invitations, key=lambda i: i.admin_unit_name)
+        ],
+        organizations=[
+            ManageRef(id=o.id, name=o.name)
+            for o in sorted(organizations, key=lambda o: o.name)
+        ],
+        docs_url=f"{docs_url}/goto/organization-create" if docs_url else None,
+        can_create=check_organization_create(None).denial is None,
+        invite_organization_id=(
+            current.id if current and current.can_invite_other else None
+        ),
+    )
 
 
 @bff_route(

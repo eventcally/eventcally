@@ -1,4 +1,3 @@
-from project.application.commands import RequestOrganizationDeletionCommand
 from project.application.queries import GetOrganizationSettingsQuery
 from project.presentation.shared.current_admin_unit import current_admin_unit
 from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
@@ -71,12 +70,6 @@ class ViewHandler(ManageAdminUnitBaseViewHandler):
         )
 
         return result
-
-    def delete_object(self, object):
-        cmd = RequestOrganizationDeletionCommand(
-            id=object.id, actor=self.app_context_provider.get_current_actor()
-        )
-        self.message_bus.handle_command(cmd)
 
 
 handler = ViewHandler()

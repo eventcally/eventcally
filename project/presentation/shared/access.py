@@ -178,10 +178,6 @@ def can_request_event_reference(event):
     )
 
 
-def admin_units_the_current_user_is_member_of():
-    return _query_bus().handle(ListManageableOrganizationsQuery(member_only=True))
-
-
 def get_admin_units_for_manage():
     return _query_bus().handle(ListManageableOrganizationsQuery())
 

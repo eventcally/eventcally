@@ -1,5 +1,3 @@
-import pytest
-
 from tests.integration.seeder import Seeder
 from tests.integration.utils import UtilActions
 
@@ -162,113 +160,81 @@ def test_list(client, app, utils: UtilActions, seeder: Seeder):
     seeder.create_admin_unit(user_id, "Meine Crew")
     url = utils.get_url("main.manage_admin_units")
     response = utils.get_ok(url)
-    assert b"Meine Crew" in response.data
+    assert b'id="app"' in response.data
 
 
-@pytest.mark.parametrize("db_error", [True, False])
-@pytest.mark.parametrize("non_match", [True, False])
-def test_admin_unit_request_deletion(
-    client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_error, non_match
-):
-    user_id, admin_unit_id = seeder.setup_base()
+def _request_deletion(app, db, admin_unit_id, requested=True):
+    import datetime
 
-    url = utils.get_url("manage_admin_unit.request_deletion", id=admin_unit_id)
-    response = utils.get_ok(url)
+    with app.app_context():
+        from project.infrastructure.models import AdminUnit
 
-    if db_error:
-        utils.mock_db_commit(mocker)
-
-    form_name = "Meine Crew"
-
-    if non_match:
-        form_name = "wrong"
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": form_name,
-        },
-    )
-
-    if non_match:
-        utils.assert_response_error_message(
-            response, "Der eingegebene Name entspricht nicht dem Namen der Organisation"
+        admin_unit = db.session.get(AdminUnit, admin_unit_id)
+        admin_unit.deletion_requested_at = (
+            datetime.datetime.now(datetime.UTC) if requested else None
         )
-        return
-
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
-
-    utils.assert_response_redirect(response, "main.manage_admin_unit", id=admin_unit_id)
-
-    with app.app_context():
-        from project.infrastructure.models import AdminUnit
-
-        admin_unit = db.session.get(AdminUnit, admin_unit_id)
-        assert admin_unit.deletion_requested_at is not None
-
-        app.test_event_dispatcher.handle_pending_events()
-
-    assert (
-        app.test_email_service.sent_emails[0]["subject"]
-        == "Löschung der Organisation beantragt"
-    )
-
-
-@pytest.mark.parametrize("db_error", [True, False])
-@pytest.mark.parametrize("non_match", [True, False])
-def test_admin_unit_cancel_deletion(
-    client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_error, non_match
-):
-    user_id, admin_unit_id = seeder.setup_base()
-
-    with app.app_context():
-        import datetime
-
-        from project.infrastructure.models import AdminUnit
-
-        admin_unit = db.session.get(AdminUnit, admin_unit_id)
-        admin_unit.deletion_requested_at = datetime.datetime.now(datetime.UTC)
         db.session.commit()
 
-    url = utils.get_url("manage_admin_unit.cancel_deletion", id=admin_unit_id)
-    response = utils.get_ok(url)
 
-    if db_error:
-        utils.mock_db_commit(mocker)
+def test_admin_unit_request_deletion_renders_vue_shell(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_base()
 
-    form_name = "Meine Crew"
-
-    if non_match:
-        form_name = "wrong"
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": form_name,
-        },
+    response = utils.get_endpoint_ok(
+        "manage_admin_unit.request_deletion", id=admin_unit_id
     )
 
-    if non_match:
-        utils.assert_response_error_message(
-            response, "Der eingegebene Name entspricht nicht dem Namen der Organisation"
-        )
-        return
+    assert b'id="app"' in response.data
 
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
 
-    utils.assert_response_redirect(response, "main.manage_admin_unit", id=admin_unit_id)
+def test_admin_unit_request_deletion_already_requested(
+    client, seeder: Seeder, utils: UtilActions, app, db
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    _request_deletion(app, db, admin_unit_id)
 
-    with app.app_context():
-        from project.infrastructure.models import AdminUnit
+    response = utils.get_endpoint(
+        "manage_admin_unit.request_deletion", id=admin_unit_id
+    )
 
-        admin_unit = db.session.get(AdminUnit, admin_unit_id)
-        assert admin_unit.deletion_requested_at is None
+    utils.assert_response_redirect(
+        response, "manage_admin_unit.cancel_deletion", id=admin_unit_id
+    )
+
+
+def test_admin_unit_request_deletion_is_get_only(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    url = utils.get_url("manage_admin_unit.request_deletion", id=admin_unit_id)
+
+    assert utils.post_json(url, {}).status_code == 405
+
+
+def test_admin_unit_cancel_deletion_renders_vue_shell(
+    client, seeder: Seeder, utils: UtilActions, app, db
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    _request_deletion(app, db, admin_unit_id)
+
+    response = utils.get_endpoint_ok(
+        "manage_admin_unit.cancel_deletion", id=admin_unit_id
+    )
+
+    assert b'id="app"' in response.data
+
+
+def test_admin_unit_cancel_deletion_not_requested(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_base()
+
+    response = utils.get_endpoint("manage_admin_unit.cancel_deletion", id=admin_unit_id)
+
+    utils.assert_response_redirect(
+        response, "manage_admin_unit.request_deletion", id=admin_unit_id
+    )
 
 
 def test_admin_unit_cancel_deletion_permission_missing(
