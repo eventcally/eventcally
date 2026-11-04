@@ -276,6 +276,57 @@ export const routes: RouteRecordRaw[] = [
       eventId: Number(route.params.eventId),
     }),
   },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/api_keys",
+    name: "organization-api-keys",
+    component: () => import("./pages/OrganizationApiKeysPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/api_key/create",
+    name: "organization-api-key-create",
+    component: () => import("./pages/OrganizationApiKeyCreatePage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/api_key/:id(\\d+)",
+    name: "organization-api-key",
+    component: () => import("./pages/OrganizationApiKeyPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/oauth2_clients",
+    name: "organization-oauth2-clients",
+    component: () => import("./pages/OrganizationOAuth2ClientsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/oauth2_client/create",
+    name: "organization-oauth2-client-create",
+    component: () => import("./pages/OrganizationOAuth2ClientEditPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/oauth2_client/:id(\\d+)",
+    name: "organization-oauth2-client",
+    component: () => import("./pages/OrganizationOAuth2ClientPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/oauth2_client/:id(\\d+)/update",
+    name: "organization-oauth2-client-update",
+    component: () => import("./pages/OrganizationOAuth2ClientEditPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
   { path: "/manage/admin_units", name: "organizations", component: () => import("./pages/OrganizationsPage.vue") },
   {
     path: "/manage/admin_unit/:organizationId(\\d+)/widgets",

@@ -61,5 +61,21 @@ class TestDeleteView(BaseTestObjectViewMixin, BaseTestDeleteView):
         values["name"] = "Mein Client"
 
 
+class TestDeleteViewNameMismatch(BaseTestObjectViewMixin, BaseTestDeleteView):
+    endpoint_name = "manage_admin_unit.app_delete"
+
+    def test(self):
+        self._setup_default_object()
+
+        url = self.utils.get_url(self.endpoint_name, **self._get_endpoint_kwargs())
+        response = self.utils.get_ok(url)
+        response = self.utils.post_form(url, response, {"name": "Falscher Name"})
+
+        self.utils.assert_response_error_message(response)
+
+        with self.app.app_context():
+            assert self._get_object() is not None
+
+
 class TestListView(BaseTestObjectViewMixin, BaseTestListView):
     endpoint_name = "manage_admin_unit.apps"

@@ -110,6 +110,21 @@ def test_handleBaseError():
     assert result == "Something went wrong (This is the cause of the error.)"
 
 
+def test_handle_base_error_flashes_instead_of_raising(app):
+    from flask import get_flashed_messages
+
+    from project.domain.errors import BaseError
+    from project.presentation.web.views.utils import handle_base_error
+
+    @handle_base_error
+    def fails():
+        raise BaseError("Something went wrong")
+
+    with app.test_request_context():
+        assert fails() is None
+        assert get_flashed_messages() == ["Something went wrong"]
+
+
 def test_get_meta_data(seeder, app, db):
     user_id, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)

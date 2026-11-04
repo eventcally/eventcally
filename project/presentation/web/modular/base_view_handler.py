@@ -13,7 +13,7 @@ from project.application.services.abstract_app_context_provider import (
 )
 from project.container import Application
 from project.presentation.web.modular.base_blueprint import BaseBlueprint
-from project.presentation.web.modular.base_form import BaseDeleteForm, BaseListForm
+from project.presentation.web.modular.base_form import BaseDeleteForm
 from project.presentation.web.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
@@ -57,8 +57,6 @@ class BaseViewHandler:
     list_view_class = BaseListView
     list_display_class = None
     list_decorators = []
-    list_form_class = None
-    list_sort_definitions = []
     generic_prefix = ""
 
     def __init__(self, *args, **kwargs):
@@ -68,13 +66,6 @@ class BaseViewHandler:
         self.endpoints = dict()
         self.template_pathes = list()
         self.permissions = set()
-
-        if not self.list_form_class and self.list_sort_definitions:
-
-            class ListForm(BaseListForm):
-                pass
-
-            self.list_form_class = ListForm
 
     @property
     def message_bus(self) -> MessageBus:
@@ -115,7 +106,7 @@ class BaseViewHandler:
     def check_access(self, **kwargs):
         return None
 
-    def create_list_query(self, form, page_request: PageRequest, **kwargs):
+    def create_list_query(self, page_request: PageRequest, **kwargs):
         """The Query whose result is a `Page` of the list's read models."""
         raise NotImplementedError  # pragma: no cover
 
@@ -363,17 +354,10 @@ class BaseViewHandler:
             )
 
         if self.list_view_class:
-            list_form_class = self.list_view_class.form_class or self.list_form_class
-
-            if list_form_class:
-                list_form_class.sort_definitions = (
-                    list_form_class.sort_definitions or self.list_sort_definitions
-                )
 
             class ListView(self.list_view_class):
                 decorators = self.list_decorators
                 display_class = self.list_display_class
-                form_class = list_form_class
 
             self._add_view(
                 "list",

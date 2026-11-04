@@ -9,8 +9,8 @@ from project.domain.types.object_id import ObjectId
 
 
 class ApiKeyReadModel(BaseReadModel):
-    """An API key as its list, read, update and delete pages show it. Implements the
-    rate limit provider protocol `RateLimitProp` reads (key format of the ORM
+    """An API key as its list and read pages show it. Implements the rate limit
+    provider protocol of `presentation/shared/rate_limit.py` (key format of the ORM
     `RateLimitHolderMixin`)."""
 
     model_config = ConfigDict(frozen=True)

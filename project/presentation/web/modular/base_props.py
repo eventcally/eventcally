@@ -1,5 +1,3 @@
-import os
-
 from flask_babel import format_date, format_datetime
 
 from project.presentation.shared.permissions import get_organization_permission_infos
@@ -140,22 +138,6 @@ class CountProp(BaseProp):  # pragma: no cover
     def get_display_data(self, object):
         data = super().get_display_data(object)
         return len(data) if hasattr(data, "__len__") else None
-
-
-class RateLimitPropPropFormatter(BasePropFormatter):
-    def format(self, data):
-        from project.presentation.shared.rate_limit import rate_limit_rows
-
-        return os.linesep.join(rate_limit_rows(data))
-
-
-class RateLimitProp(BaseProp):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("formatter", RateLimitPropPropFormatter())
-        super().__init__(*args, **kwargs)
-
-    def get_display_data(self, object):
-        return object
 
 
 class OrganizationAppPermissionListPropFormatter(BasePropFormatter):

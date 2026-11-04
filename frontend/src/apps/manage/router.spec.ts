@@ -260,4 +260,40 @@ describe("manage router", () => {
       expect((await resolve(`/manage/admin_unit/x/${path}`)).name).toBe("not-found");
     }
   });
+
+  it("resolves the organization API key and OAuth2 client pages", async () => {
+    const lists = [
+      ["api_keys", "organization-api-keys"],
+      ["api_key/create", "organization-api-key-create"],
+      ["oauth2_clients", "organization-oauth2-clients"],
+      ["oauth2_client/create", "organization-oauth2-client-create"],
+    ];
+    for (const [path, name] of lists) {
+      const route = await resolve(`/manage/admin_unit/3/${path}`);
+      expect(route.name).toBe(name);
+      const props = route.matched[0].props.default as (r: typeof route) => unknown;
+      expect(props(route)).toEqual({ organizationId: 3 });
+      expect((await resolve(`/manage/admin_unit/x/${path}`)).name).toBe("not-found");
+    }
+
+    const objects = [
+      ["api_key/7", "organization-api-key"],
+      ["oauth2_client/7", "organization-oauth2-client"],
+      ["oauth2_client/7/update", "organization-oauth2-client-update"],
+    ];
+    for (const [path, name] of objects) {
+      const route = await resolve(`/manage/admin_unit/3/${path}`);
+      expect(route.name).toBe(name);
+      const props = route.matched[0].props.default as (r: typeof route) => unknown;
+      expect(props(route)).toEqual({ organizationId: 3, id: 7 });
+      expect((await resolve(`/manage/admin_unit/3/${path.replace("7", "x")}`)).name).toBe(
+        "not-found",
+      );
+    }
+
+    // The removed update / delete URLs of an API key resolve to nothing.
+    expect((await resolve("/manage/admin_unit/3/api_key/7/update")).name).toBe("not-found");
+    expect((await resolve("/manage/admin_unit/3/api_key/7/delete")).name).toBe("not-found");
+    expect((await resolve("/manage/admin_unit/3/oauth2_client/7/delete")).name).toBe("not-found");
+  });
 });

@@ -38,20 +38,6 @@ def _pages(app, db, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(admin=True)
     pages = {}
 
-    api_key_id, _ = seeder.insert_default_api_key(admin_unit_id=admin_unit_id)
-    _stamp(app, db, "apikey", api_key_id, user_id)
-    pages["api_key_read"] = utils.get_url(
-        "manage_admin_unit.api_key", id=admin_unit_id, api_key_id=api_key_id
-    )
-
-    client_id = seeder.insert_default_oauth2_client(admin_unit_id=admin_unit_id)
-    _stamp(app, db, "oauth2_client", client_id, user_id)
-    pages["oauth2_client_read"] = utils.get_url(
-        "manage_admin_unit.oauth2_client",
-        id=admin_unit_id,
-        oauth2_client_id=client_id,
-    )
-
     app_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
     _stamp(app, db, "oauth2_client", app_id, user_id)
     pages["app_read"] = utils.get_url(
@@ -75,8 +61,8 @@ def _pages(app, db, seeder, utils):
         app_installation_id=installation_id,
     )
 
-    # The reference and verification request pages are Vue pages: their audit comes
-    # from the BFF.
+    # The reference, verification request, API key and OAuth2 client pages are Vue
+    # pages: their audit comes from the BFF.
 
     return pages
 

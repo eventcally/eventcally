@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 19:22+0100\n"
+"POT-Creation-Date: 2026-11-04 20:41+0100\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -42,7 +42,7 @@ msgstr ""
 msgid "%(count)d event dates"
 msgstr ""
 
-#: project/presentation/shared/permissions.py:80
+#: project/presentation/shared/permissions.py:78
 #, python-format
 msgid "%(domain_label)s: %(label)s"
 msgstr ""
@@ -55,29 +55,33 @@ msgid ""
 "%(admin_unit_name)s."
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:80
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:43
-#: project/presentation/bff/manage/event_organizers.py:198
-#: project/presentation/bff/manage/event_places.py:189
-#: project/presentation/bff/manage/member_invitations.py:161
-#: project/presentation/bff/manage/organization_invitations.py:214
-#: project/presentation/bff/manage/outgoing_relations.py:212
-#: project/presentation/web/modular/base_views.py:279
+#: project/presentation/bff/manage/event_organizers.py:199
+#: project/presentation/bff/manage/event_places.py:190
+#: project/presentation/bff/manage/member_invitations.py:160
+#: project/presentation/bff/manage/oauth2_clients.py:161
+#: project/presentation/bff/manage/organization_invitations.py:213
+#: project/presentation/bff/manage/outgoing_relations.py:213
+#: project/presentation/web/modular/base_views.py:242
 #, python-format
 msgid "%(model_display_name)s successfully created"
 msgstr ""
 
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:47
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:42
-#: project/presentation/bff/manage/event_organizers.py:334
-#: project/presentation/bff/manage/event_places.py:319
-#: project/presentation/bff/manage/event_references.py:276
-#: project/presentation/bff/manage/events.py:365
-#: project/presentation/bff/manage/member_invitations.py:221
-#: project/presentation/bff/manage/members.py:194
-#: project/presentation/bff/manage/organization_invitations.py:283
-#: project/presentation/bff/manage/outgoing_relations.py:336
-#: project/presentation/bff/manage/verification_requests.py:262
-#: project/presentation/web/modular/base_views.py:393
+#: project/presentation/bff/manage/api_keys.py:217
+#: project/presentation/bff/manage/event_organizers.py:335
+#: project/presentation/bff/manage/event_places.py:320
+#: project/presentation/bff/manage/event_references.py:275
+#: project/presentation/bff/manage/events.py:366
+#: project/presentation/bff/manage/member_invitations.py:220
+#: project/presentation/bff/manage/members.py:193
+#: project/presentation/bff/manage/oauth2_clients.py:263
+#: project/presentation/bff/manage/organization_invitations.py:282
+#: project/presentation/bff/manage/outgoing_relations.py:337
+#: project/presentation/bff/manage/verification_requests.py:263
+#: project/presentation/web/modular/base_views.py:356
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr ""
@@ -88,15 +92,17 @@ msgid "%(model_display_name)s successfully revoked"
 msgstr ""
 
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:71
-#: project/presentation/bff/manage/event_forms.py:582
-#: project/presentation/bff/manage/event_organizers.py:246
-#: project/presentation/bff/manage/event_places.py:235
-#: project/presentation/bff/manage/event_references.py:248
-#: project/presentation/bff/manage/member_invitations.py:194
-#: project/presentation/bff/manage/members.py:162
-#: project/presentation/bff/manage/organization_invitations.py:256
-#: project/presentation/bff/manage/outgoing_relations.py:250
-#: project/presentation/web/modular/base_views.py:345
+#: project/presentation/bff/manage/api_keys.py:181
+#: project/presentation/bff/manage/event_forms.py:583
+#: project/presentation/bff/manage/event_organizers.py:247
+#: project/presentation/bff/manage/event_places.py:236
+#: project/presentation/bff/manage/event_references.py:247
+#: project/presentation/bff/manage/member_invitations.py:193
+#: project/presentation/bff/manage/members.py:161
+#: project/presentation/bff/manage/oauth2_clients.py:229
+#: project/presentation/bff/manage/organization_invitations.py:255
+#: project/presentation/bff/manage/outgoing_relations.py:251
+#: project/presentation/web/modular/base_views.py:308
 #, python-format
 msgid "%(model_display_name)s successfully updated"
 msgstr ""
@@ -106,7 +112,7 @@ msgstr ""
 msgid "%(name)s invited you to create an organization."
 msgstr ""
 
-#: project/presentation/shared/reference_request.py:6
+#: project/presentation/shared/reference_request.py:7
 #, python-format
 msgid "%(organization)s accepted your reference request"
 msgstr ""
@@ -132,6 +138,7 @@ msgstr ""
 msgid "%(user_email)s is scheduled for deletion."
 msgstr ""
 
+#: project/presentation/bff/manage/oauth2_clients.py:76
 #: project/presentation/bff/user/oauth2_clients.py:49
 #, python-format
 msgid "'%(value)s' is not a valid choice"
@@ -195,6 +202,10 @@ msgstr ""
 msgid "A relation to this organization already exists."
 msgstr ""
 
+#: frontend/src/apps/manage/components/ApiKeyNameModal.vue:67
+#: frontend/src/apps/manage/pages/OrganizationApiKeyCreatePage.vue:60
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:49
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:63
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:21
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:26
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:72
@@ -202,6 +213,7 @@ msgstr ""
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:44
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:47
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/bff/manage/api_keys.py:49
 #: project/presentation/bff/user/api_keys.py:154
 #: project/presentation/web/views/user_blueprint/shells.py:127
 #: project/presentation/web/views/user_blueprint/shells.py:134
@@ -209,6 +221,9 @@ msgstr ""
 msgid "API key"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationApiKeyCreatePage.vue:58
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:96
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:106
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:70
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:96
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:57
@@ -275,13 +290,13 @@ msgstr ""
 msgid "Actor is not authorized to perform this action."
 msgstr ""
 
-#: project/application/command_handlers/authorization_utils.py:75
-#: project/application/services/actor_authorization_service.py:53
+#: project/application/command_handlers/authorization_utils.py:76
+#: project/application/services/actor_authorization_service.py:54
 msgid "Actor is not permitted to perform this action on behalf of a user."
 msgstr ""
 
-#: project/application/command_handlers/authorization_utils.py:98
-#: project/application/services/actor_authorization_service.py:65
+#: project/application/command_handlers/authorization_utils.py:99
+#: project/application/services/actor_authorization_service.py:66
 msgid "Actor is not permitted to perform this platform-admin action."
 msgstr ""
 
@@ -442,13 +457,13 @@ msgstr ""
 msgid "An account already exists with this email."
 msgstr ""
 
-#: project/domain/errors/duplicate_error.py:7
+#: project/domain/errors/duplicate_error.py:8
 msgid ""
 "An entry with the entered values already exists. Duplicate entries are "
 "not allowed."
 msgstr ""
 
-#: project/presentation/web/views/utils.py:33
+#: project/presentation/web/views/utils.py:34
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
 "not allowed."
@@ -597,6 +612,7 @@ msgstr ""
 #: frontend/src/apps/admin/components/SettingCard.vue:102
 #: frontend/src/apps/admin/components/TypeToConfirmModal.vue:64
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:100
+#: frontend/src/apps/manage/components/ApiKeyNameModal.vue:69
 #: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:41
 #: frontend/src/apps/manage/components/EventOrganizerCreateModal.vue:107
 #: frontend/src/apps/manage/components/EventPlaceCreateModal.vue:100
@@ -662,7 +678,7 @@ msgstr ""
 #: frontend/src/apps/manage/components/EventReferenceRatingModal.vue:82
 #: frontend/src/apps/manage/pages/EventEditPage.vue:655
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:110
-#: project/presentation/web/forms/reference.py:19
+#: project/presentation/web/forms/reference.py:20
 msgid ""
 "Choose how relevant the event is to your organization. The value is not "
 "visible and is used for sorting."
@@ -768,29 +784,26 @@ msgstr ""
 
 #: frontend/src/shared/OAuth2ClientDetails.vue:23
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:14
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:8
 msgid "Client ID"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:52
 #: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:27
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:51
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:19
 msgid "Client Name"
 msgstr ""
 
 #: frontend/src/shared/OAuth2ClientDetails.vue:27
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:10
 msgid "Client URI"
 msgstr ""
 
 #: frontend/src/shared/OAuth2ClientFormFields.vue:23
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:20
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:13
 msgid "Client name"
 msgstr ""
 
 #: frontend/src/shared/OAuth2ClientDetails.vue:25
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:15
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:9
 msgid "Client secret"
 msgstr ""
 
@@ -868,11 +881,12 @@ msgstr ""
 
 #: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:151
 #: frontend/src/apps/manage/pages/MemberInvitationCreatePage.vue:125
+#: frontend/src/apps/manage/pages/OrganizationApiKeyCreatePage.vue:70
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:169
 #: frontend/src/apps/manage/pages/OrganizationInvitationEditPage.vue:197
 #: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:201
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:104
-#: project/presentation/web/modular/base_form.py:62
+#: project/presentation/web/modular/base_form.py:61
 msgid "Create"
 msgstr ""
 
@@ -882,13 +896,16 @@ msgstr ""
 #: frontend/src/apps/manage/pages/MemberInvitationCreatePage.vue:92
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:84
 #: frontend/src/apps/manage/pages/MembersPage.vue:92
+#: frontend/src/apps/manage/pages/OrganizationApiKeyCreatePage.vue:60
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:114
 #: frontend/src/apps/manage/pages/OrganizationInvitationsPage.vue:86
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:81
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:153
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:111
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:46
 #: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:38
-#: project/presentation/web/modular/base_views.py:273
-#: project/presentation/web/templates/generic/list.html:18
+#: project/presentation/web/modular/base_views.py:236
+#: project/presentation/web/templates/generic/list.html:17
 #, python-format
 msgid "Create %(model_display_name)s"
 msgstr ""
@@ -940,6 +957,8 @@ msgstr ""
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:272
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:78
 #: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:66
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:111
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:82
 #: frontend/src/apps/manage/pages/OrganizationInvitationsPage.vue:54
 #: frontend/src/apps/manage/pages/OutgoingEventReferencesPage.vue:49
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:73
@@ -947,8 +966,6 @@ msgstr ""
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:85
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:34
 #: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:32
-#: project/presentation/web/views/manage_admin_unit/api_key/displays.py:14
-#: project/presentation/web/views/manage_admin_unit/api_key/displays.py:19
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:16
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:21
 msgid "Created at"
@@ -1068,8 +1085,14 @@ msgstr ""
 #: frontend/src/apps/manage/pages/MembersPage.vue:71
 #: frontend/src/apps/manage/pages/MembersPage.vue:72
 #: frontend/src/apps/manage/pages/MembersPage.vue:128
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:71
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:126
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:97
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:161
 #: frontend/src/apps/manage/pages/OrganizationInvitationsPage.vue:68
 #: frontend/src/apps/manage/pages/OrganizationInvitationsPage.vue:124
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:66
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:63
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:135
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:226
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:57
@@ -1078,8 +1101,8 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:157
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:74
 #: frontend/src/apps/user/pages/OAuth2ClientPage.vue:55
-#: project/presentation/web/modular/base_form.py:71
-#: project/presentation/web/modular/base_view_handler.py:198
+#: project/presentation/web/modular/base_form.py:70
+#: project/presentation/web/modular/base_view_handler.py:189
 msgid "Delete"
 msgstr ""
 
@@ -1091,20 +1114,25 @@ msgstr ""
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:151
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:118
 #: frontend/src/apps/manage/pages/MembersPage.vue:127
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:125
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:160
 #: frontend/src/apps/manage/pages/OrganizationDeletionPage.vue:20
 #: frontend/src/apps/manage/pages/OrganizationInvitationsPage.vue:123
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:95
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:114
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:225
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:97
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:156
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:23
-#: project/presentation/web/modular/base_views.py:381
+#: project/presentation/web/modular/base_views.py:344
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:96
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:115
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:70
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:79
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:73
 msgid "Delete OAuth2 client"
 msgstr ""
 
@@ -1212,18 +1240,22 @@ msgstr ""
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:154
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:121
 #: frontend/src/apps/manage/pages/MembersPage.vue:130
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:128
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:163
 #: frontend/src/apps/manage/pages/OrganizationInvitationsPage.vue:126
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:97
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:117
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:228
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:99
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:159
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:91
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:86
-#: project/presentation/web/modular/base_views.py:387
+#: project/presentation/web/modular/base_views.py:350
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app_installation/views.py:40
+#: project/presentation/web/views/manage_admin_unit/app_installation/views.py:41
 #, python-format
 msgid "Do you want to install '%(app_name)s'?"
 msgstr ""
@@ -1290,9 +1322,12 @@ msgstr ""
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:215
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:60
 #: frontend/src/apps/manage/pages/MembersPage.vue:63
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:70
 #: frontend/src/apps/manage/pages/OrganizationInvitationsPage.vue:62
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:60
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:62
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:129
-#: project/presentation/web/modular/base_view_handler.py:194
+#: project/presentation/web/modular/base_view_handler.py:185
 #: project/presentation/web/templates/_macros.html:591
 #: project/presentation/web/templates/_macros.html:634
 #: project/presentation/web/templates/_macros.html:766
@@ -1399,8 +1434,9 @@ msgid ""
 "adults and children."
 msgstr ""
 
-#: project/presentation/bff/user/api_keys.py:152
-#: project/presentation/web/modular/base_views.py:371
+#: project/presentation/bff/manage/api_keys.py:209
+#: project/presentation/bff/user/api_keys.py:153
+#: project/presentation/web/modular/base_views.py:334
 #, python-format
 msgid ""
 "Entered %(property_name)s does not match %(model_display_name)s "
@@ -1415,8 +1451,8 @@ msgstr ""
 msgid "Entered email does not match your email"
 msgstr ""
 
+#: project/presentation/bff/manage/oauth2_clients.py:258
 #: project/presentation/bff/user/oauth2_clients.py:195
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/view_handler.py:59
 msgid "Entered name does not match OAuth2 client name"
 msgstr ""
 
@@ -1458,6 +1494,7 @@ msgstr ""
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:38
 #: frontend/src/apps/admin/pages/UserUpdatePage.vue:54
 #: frontend/src/apps/admin/pages/UsersPage.vue:53
+#: frontend/src/apps/manage/components/ApiKeyNameModal.vue:53
 #: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:26
 #: frontend/src/apps/manage/components/EventDeleteForm.vue:34
 #: frontend/src/apps/manage/components/EventDeleteForm.vue:51
@@ -1497,6 +1534,9 @@ msgstr ""
 #: frontend/src/apps/manage/pages/MemberInvitationCreatePage.vue:76
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:31
 #: frontend/src/apps/manage/pages/MembersPage.vue:31
+#: frontend/src/apps/manage/pages/OrganizationApiKeyCreatePage.vue:48
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:44
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:48
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:45
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:104
 #: frontend/src/apps/manage/pages/OrganizationDeletionPage.vue:52
@@ -1504,6 +1544,11 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OrganizationInvitationEditPage.vue:52
 #: frontend/src/apps/manage/pages/OrganizationInvitationEditPage.vue:105
 #: frontend/src/apps/manage/pages/OrganizationInvitationsPage.vue:32
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientEditPage.vue:38
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientEditPage.vue:49
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientEditPage.vue:94
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:37
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:30
 #: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:63
 #: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:125
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:66
@@ -1721,7 +1766,7 @@ msgstr ""
 msgid "Event references"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:99
+#: project/application/services/abstract_email_service.py:100
 #: project/application/services/abstract_email_service.py:106
 msgid "Event review status updated"
 msgstr ""
@@ -2075,7 +2120,6 @@ msgid "Filter label"
 msgstr ""
 
 #: frontend/src/shared/ListFilters.vue:23
-#: project/presentation/web/templates/generic/list.html:28
 msgid "Filters"
 msgstr ""
 
@@ -2133,7 +2177,6 @@ msgstr ""
 
 #: frontend/src/shared/OAuth2ClientDetails.vue:29
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:16
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:11
 msgid "Grant types"
 msgstr ""
 
@@ -2194,13 +2237,13 @@ msgid "Homepage URL"
 msgstr ""
 
 #: frontend/src/shared/TosAcceptLabel.vue:36
-#: project/presentation/web/forms/common.py:72
+#: project/presentation/web/forms/common.py:73
 #, python-format
 msgid "I read and accept %(privacy_open)sPrivacy%(privacy_close)s."
 msgstr ""
 
 #: frontend/src/shared/TosAcceptLabel.vue:33
-#: project/presentation/web/forms/common.py:62
+#: project/presentation/web/forms/common.py:63
 #, python-format
 msgid ""
 "I read and accept %(tos_open)sTerms of Service%(tos_close)s and "
@@ -2217,8 +2260,8 @@ msgstr ""
 msgid "ID of the organization"
 msgstr ""
 
-#: project/presentation/bff/manage/request_reviews.py:278
-#: project/presentation/bff/manage/request_reviews.py:379
+#: project/presentation/bff/manage/request_reviews.py:279
+#: project/presentation/bff/manage/request_reviews.py:380
 #, python-format
 msgid ""
 "If all upcoming reference requests of %(admin_unit_name)s should be "
@@ -2457,8 +2500,8 @@ msgstr ""
 msgid "Last"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:123
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:57
-#: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:50
 msgid "Last created first"
 msgstr ""
 
@@ -2687,6 +2730,13 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:150
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:202
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:69
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:109
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:130
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:81
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:122
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:167
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:98
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:121
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:176
 #: frontend/src/apps/public/pages/EventReportPage.vue:99
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:83
@@ -2697,16 +2747,10 @@ msgstr ""
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:78
 #: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:31
 #: frontend/src/shared/ApiKeyFormFields.vue:14
+#: project/presentation/bff/manage/api_keys.py:211
 #: project/presentation/bff/user/api_keys.py:155
 #: project/presentation/web/templates/_macros.html:847
-#: project/presentation/web/views/manage_admin_unit/api_key/displays.py:12
-#: project/presentation/web/views/manage_admin_unit/api_key/displays.py:18
-#: project/presentation/web/views/manage_admin_unit/api_key/forms.py:18
-#: project/presentation/web/views/manage_admin_unit/api_key/forms.py:39
-#: project/presentation/web/views/manage_admin_unit/api_key/forms.py:55
-#: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:47
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:69
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:75
 #: project/templates/email/referenced_event_changed_notice.txt:11
 msgid "Name"
 msgstr ""
@@ -2746,7 +2790,7 @@ msgstr ""
 msgid "New permissions"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:95
+#: project/application/services/abstract_email_service.py:96
 msgid "New reference automatically verified"
 msgstr ""
 
@@ -2754,7 +2798,7 @@ msgstr ""
 msgid "New reference request"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:111
+#: project/application/services/abstract_email_service.py:112
 msgid "New verification request"
 msgstr ""
 
@@ -2872,11 +2916,15 @@ msgstr ""
 msgid "OAuth connections"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientEditPage.vue:26
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:40
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:33
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:43
 #: frontend/src/apps/user/pages/OAuth2ClientEditPage.vue:29
 #: frontend/src/apps/user/pages/OAuth2ClientPage.vue:37
 #: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:39
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/bff/manage/oauth2_clients.py:48
 #: project/presentation/web/views/manage_admin_unit/app/view_handler.py:48
 #: project/presentation/web/views/user_blueprint/shells.py:156
 #: project/presentation/web/views/user_blueprint/shells.py:172
@@ -2885,6 +2933,9 @@ msgstr ""
 msgid "OAuth2 client"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientEditPage.vue:105
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:77
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:73
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:65
 #: frontend/src/apps/user/pages/OAuth2ClientEditPage.vue:119
 #: frontend/src/apps/user/pages/OAuth2ClientPage.vue:36
@@ -2964,7 +3015,7 @@ msgstr ""
 msgid "Organization"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:86
+#: project/application/services/abstract_email_service.py:87
 msgid "Organization deletion requested"
 msgstr ""
 
@@ -2976,7 +3027,7 @@ msgstr ""
 msgid "Organization invitation"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:89
+#: project/application/services/abstract_email_service.py:90
 msgid "Organization invitation accepted"
 msgstr ""
 
@@ -3100,7 +3151,7 @@ msgstr ""
 msgid "Organizations"
 msgstr ""
 
-#: project/presentation/web/views/manage_blueprint/views.py:24
+#: project/presentation/web/views/manage_blueprint/views.py:25
 msgid ""
 "Organizations cannot currently be created. The project is in a closed "
 "test phase. If you are interested, you can contact us."
@@ -3291,7 +3342,7 @@ msgstr ""
 msgid "Please choose an image file."
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:35
+#: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:36
 msgid "Please download the private key. It will only be available once."
 msgstr ""
 
@@ -3299,8 +3350,8 @@ msgstr ""
 msgid "Please enter a valid time, between 00:00 and 23:59."
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:87
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:50
-#: project/presentation/web/views/manage_admin_unit/api_key/views.py:29
 #, python-format
 msgid "Please note the key: %(key)s. It will only be displayed once."
 msgstr ""
@@ -3392,8 +3443,8 @@ msgstr ""
 msgid "Radius"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:110
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:81
-#: project/presentation/web/views/manage_admin_unit/api_key/displays.py:13
 msgid "Rate limit"
 msgstr ""
 
@@ -3406,7 +3457,7 @@ msgstr ""
 msgid "Rating"
 msgstr ""
 
-#: project/presentation/shared/permissions.py:63
+#: project/presentation/shared/permissions.py:64
 #, python-format
 msgid "Read %(entity_display_name)s"
 msgstr ""
@@ -3432,8 +3483,7 @@ msgstr ""
 #: frontend/src/shared/OAuth2ClientDetails.vue:31
 #: frontend/src/shared/OAuth2ClientFormFields.vue:38
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:17
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:12
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:22
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:15
 msgid "Redirect URIs"
 msgstr ""
 
@@ -3454,7 +3504,7 @@ msgstr ""
 msgid "Reference request already verified."
 msgstr ""
 
-#: project/presentation/shared/reference_request.py:11
+#: project/presentation/shared/reference_request.py:12
 #, python-format
 msgid ""
 "Reference request to %(organization)s successfully created. You will be "
@@ -3490,7 +3540,7 @@ msgstr ""
 msgid "Referenced by"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:102
+#: project/application/services/abstract_email_service.py:103
 msgid "Referenced event changed"
 msgstr ""
 
@@ -3506,7 +3556,6 @@ msgstr ""
 
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:106
 #: frontend/src/shared/ListFilters.vue:28
-#: project/presentation/web/modular/base_form.py:81
 msgid "Refresh"
 msgstr ""
 
@@ -3609,7 +3658,7 @@ msgstr ""
 msgid "Request reference"
 msgstr ""
 
-#: project/presentation/bff/manage/verification_requests.py:365
+#: project/presentation/bff/manage/verification_requests.py:366
 msgid ""
 "Request successfully created. You will be notified after the other "
 "organization reviewed the request."
@@ -3645,7 +3694,6 @@ msgstr ""
 
 #: frontend/src/shared/OAuth2ClientDetails.vue:33
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:18
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:13
 msgid "Response types"
 msgstr ""
 
@@ -3656,8 +3704,8 @@ msgstr ""
 
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:26
 #: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:25
-#: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/views.py:32
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:32
+#: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/views.py:31
+#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:31
 #, python-format
 msgid "Review %(model_display_name)s"
 msgstr ""
@@ -3716,11 +3764,12 @@ msgstr ""
 #: frontend/src/apps/admin/components/SettingCard.vue:99
 #: frontend/src/apps/manage/components/RecurrenceRuleModal.vue:452
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:152
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientEditPage.vue:123
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:104
 #: frontend/src/apps/user/pages/GeneralSettingsPage.vue:60
 #: frontend/src/apps/user/pages/NotificationSettingsPage.vue:66
 #: frontend/src/apps/user/pages/OAuth2ClientEditPage.vue:133
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:31
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:24
 msgid "Save"
 msgstr ""
 
@@ -3738,7 +3787,6 @@ msgstr ""
 
 #: frontend/src/shared/OAuth2ClientDetails.vue:35
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:19
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:14
 msgid "Scope"
 msgstr ""
 
@@ -3752,7 +3800,7 @@ msgstr "Read Profile information"
 
 #: frontend/src/apps/user/pages/OAuth2TokensPage.vue:32
 #: frontend/src/shared/OAuth2ClientFormFields.vue:51
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:25
+#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:18
 msgid "Scopes"
 msgstr ""
 
@@ -3887,10 +3935,10 @@ msgstr ""
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:154
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:151
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:148
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:120
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:174
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:206
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:54
-#: project/presentation/web/modular/base_views.py:134
 msgid "Sort"
 msgstr ""
 
@@ -3980,7 +4028,7 @@ msgstr ""
 msgid "Target group origin"
 msgstr "Suitable for tourists / residents"
 
-#: project/domain/services/organization_verification.py:32
+#: project/domain/services/organization_verification.py:33
 msgid "Target organization can no longer verify other organizations."
 msgstr ""
 
@@ -4054,7 +4102,7 @@ msgstr ""
 msgid "The full name of the organization"
 msgstr ""
 
-#: project/presentation/web/views/utils.py:241
+#: project/presentation/web/views/utils.py:242
 msgid ""
 "The invitation was issued to another user. Sign in with the email address"
 " the invitation was sent to."
@@ -4064,7 +4112,7 @@ msgstr ""
 msgid "The invitation will be sent to this email address."
 msgstr ""
 
-#: project/application/command_handlers/leave_organization_handler.py:28
+#: project/application/command_handlers/leave_organization_handler.py:29
 msgid "The last remaining administrator can not leave the organization."
 msgstr ""
 
@@ -4096,7 +4144,7 @@ msgid ""
 "organization will be deleted. Until then, the deletion can be canceled."
 msgstr ""
 
-#: project/presentation/bff/manage/organizations.py:235
+#: project/presentation/bff/manage/organizations.py:236
 msgid ""
 "The organization is not verified. Events are therefore not publicly "
 "visible."
@@ -4235,7 +4283,6 @@ msgstr ""
 
 #: frontend/src/shared/OAuth2ClientDetails.vue:37
 #: project/presentation/web/views/manage_admin_unit/app/displays.py:20
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/displays.py:15
 msgid "Token endpoint auth method"
 msgstr ""
 
@@ -4266,6 +4313,7 @@ msgstr ""
 msgid "Until"
 msgstr ""
 
+#: frontend/src/apps/manage/components/ApiKeyNameModal.vue:68
 #: frontend/src/apps/manage/components/MemberRolesModal.vue:76
 #: frontend/src/apps/manage/pages/EventEditPage.vue:695
 #: frontend/src/apps/manage/pages/OrganizationInvitationEditPage.vue:197
@@ -4274,13 +4322,14 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OrganizationWidgetsPage.vue:149
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:68
 #: frontend/src/apps/user/pages/OAuth2ClientPage.vue:49
-#: project/presentation/web/modular/base_form.py:66
+#: project/presentation/web/modular/base_form.py:65
 msgid "Update"
 msgstr ""
 
+#: frontend/src/apps/manage/components/ApiKeyNameModal.vue:67
 #: frontend/src/apps/manage/components/EventReferenceRatingModal.vue:63
 #: frontend/src/apps/manage/components/MemberRolesModal.vue:71
-#: project/presentation/web/modular/base_views.py:339
+#: project/presentation/web/modular/base_views.py:302
 #, python-format
 msgid "Update %(model_display_name)s"
 msgstr ""
@@ -4309,7 +4358,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:107
+#: project/application/services/abstract_email_service.py:108
 msgid "User deletion requested"
 msgstr ""
 
@@ -4340,7 +4389,7 @@ msgstr ""
 msgid "Verification request already verified."
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:114
+#: project/application/services/abstract_email_service.py:115
 msgid "Verification request review status updated"
 msgstr ""
 
@@ -4410,10 +4459,12 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:104
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:84
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:213
+#: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:88
+#: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:57
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:79
 #: frontend/src/apps/user/pages/MemberInvitationsPage.vue:45
 #: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:55
-#: project/presentation/web/modular/base_view_handler.py:191
+#: project/presentation/web/modular/base_view_handler.py:182
 #: project/presentation/web/views/flask_admin.py:145
 msgid "View"
 msgstr ""
@@ -4543,7 +4594,7 @@ msgstr ""
 msgid "Would you like to accept the invitation from %(name)s?"
 msgstr ""
 
-#: project/presentation/shared/permissions.py:67
+#: project/presentation/shared/permissions.py:68
 #, python-format
 msgid "Write %(entity_display_name)s"
 msgstr ""
@@ -4574,8 +4625,8 @@ msgid ""
 "delete a single date instead, you have to edit the event to do so."
 msgstr ""
 
-#: project/presentation/bff/user/profile.py:149
-#: project/presentation/web/views/user_blueprint/shells.py:71
+#: project/presentation/bff/user/profile.py:150
+#: project/presentation/web/views/user_blueprint/shells.py:72
 msgid ""
 "You are administrator of at least one organization. Cancel your "
 "membership to delete your account."
@@ -4602,7 +4653,7 @@ msgid "You have been invited to join %(admin_unit_name)s."
 msgstr ""
 
 #: project/application/services/abstract_email_service.py:84
-#: project/application/services/abstract_email_service.py:92
+#: project/application/services/abstract_email_service.py:93
 msgid "You have received an invitation"
 msgstr ""
 

@@ -40,6 +40,13 @@ export const testRoutes = [
   { path: `${base}/organization_invitations`, name: "organization-invitations", component: Blank },
   { path: `${base}/organization_invitation/create`, name: "organization-invitation-create", component: Blank },
   { path: `${base}/organization_invitation/:id/update`, name: "organization-invitation-update", component: Blank },
+  { path: `${base}/api_keys`, name: "organization-api-keys", component: Blank },
+  { path: `${base}/api_key/create`, name: "organization-api-key-create", component: Blank },
+  { path: `${base}/api_key/:id`, name: "organization-api-key", component: Blank },
+  { path: `${base}/oauth2_clients`, name: "organization-oauth2-clients", component: Blank },
+  { path: `${base}/oauth2_client/create`, name: "organization-oauth2-client-create", component: Blank },
+  { path: `${base}/oauth2_client/:id`, name: "organization-oauth2-client", component: Blank },
+  { path: `${base}/oauth2_client/:id/update`, name: "organization-oauth2-client-update", component: Blank },
   { path: "/manage/organization/create", name: "organization-create", component: Blank },
 ];
 

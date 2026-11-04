@@ -7,13 +7,6 @@ def _text(utils, response):
     return " ".join(utils.get_soup(response).get_text().split())
 
 
-def _first_cells(utils, response):
-    soup = utils.get_soup(response)
-    return [
-        next(row.find("td").stripped_strings) for row in soup.select("table tbody tr")
-    ]
-
-
 def _checked(soup, name):
     return sorted(
         box["value"]
@@ -35,20 +28,6 @@ def _set_webhook(app, db, oauth2_client_id):
             event_types=["app.installed"],
         )
         db.session.commit()
-
-
-def test_manage_client_list_excludes_apps(seeder, utils):
-    _, admin_unit_id = seeder.setup_base()
-    seeder.insert_default_oauth2_client(admin_unit_id=admin_unit_id)
-    seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
-
-    response = utils.get_ok(
-        utils.get_url("manage_admin_unit.oauth2_clients", id=admin_unit_id)
-    )
-    assert len(_first_cells(utils, response)) == 1
-
-    response = utils.get_ok(utils.get_url("manage_admin_unit.apps", id=admin_unit_id))
-    assert len(_first_cells(utils, response)) == 1
 
 
 def test_app_pages(app, db, seeder, utils):

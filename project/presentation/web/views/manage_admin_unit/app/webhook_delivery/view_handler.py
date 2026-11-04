@@ -29,7 +29,7 @@ class WebhookDeliveryViewHandler(AppChildViewHandler):
     list_display_class = ListDisplay
     read_display_class = ReadDisplay
 
-    def create_list_query(self, form, page_request, **kwargs):
+    def create_list_query(self, page_request, **kwargs):
         return ListAppWebhookDeliveriesQuery(app_id=g.current_app.id, page=page_request)
 
     def create_get_query(self, object_id):

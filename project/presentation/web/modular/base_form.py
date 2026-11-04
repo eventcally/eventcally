@@ -1,4 +1,3 @@
-from flask import request
 from flask_babel import lazy_gettext
 from flask_wtf import FlaskForm
 from wtforms import FormField, HiddenField, SubmitField
@@ -40,9 +39,6 @@ class BaseForm(FlaskForm):
             )
         )
 
-    def has_data(self):
-        return self.is_submitted()
-
     def get_field_by_name(self, name: str):
         for field in self.get_input_fields():
             if field.name == name:
@@ -69,17 +65,3 @@ class BaseUpdateForm(BaseForm):
 class BaseDeleteForm(BaseForm):
     confirmation_field_name = None
     submit = SubmitField(lazy_gettext("Delete"), render_kw={"class": "btn btn-danger"})
-
-
-class BaseListForm(BaseForm):
-    class Meta:
-        csrf = False
-
-    sort_definitions = None
-
-    submit = SubmitField(
-        lazy_gettext("Refresh"), render_kw={"class": "btn btn-primary"}
-    )
-
-    def is_submitted(self):  # pragma: no cover
-        return super().is_submitted() or "submit" in request.args
