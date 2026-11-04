@@ -19,6 +19,7 @@ import { formatDate, formatStart } from "@/shared/format";
 import { manage, publicPages } from "@/shared/legacy";
 import { useNotify } from "@/shared/notify";
 import { takeFlash } from "@/shared/flash";
+import EventDeleteModal from "../components/EventDeleteModal.vue";
 import ManageEventSearchForm from "../components/ManageEventSearchForm.vue";
 import {
   type ManageEventFilter,
@@ -41,6 +42,20 @@ const options = ref<Options | null>(null);
 const page = ref<Page | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
+
+const deleting = ref<number | null>(null);
+const showDelete = ref(false);
+
+function askDelete(id: number) {
+  deleting.value = id;
+  showDelete.value = true;
+}
+
+async function onDeleted(answer: { message: string }) {
+  notify.success(answer.message);
+  showDelete.value = false;
+  await search();
+}
 
 const defaults = computed(() => ({ date_from: options.value?.default_date_from ?? "" }));
 const filter = computed<ManageEventFilter | null>(() =>
@@ -199,7 +214,7 @@ onMounted(async () => {
             <BDropdownItem :href="manage.eventUpdate(organizationId, item.id)">
               {{ t("Edit") }}
             </BDropdownItem>
-            <BDropdownItem :href="manage.eventDelete(organizationId, item.id)">
+            <BDropdownItem @click="askDelete(item.id)">
               {{ t("Delete") }}
             </BDropdownItem>
             <BDropdownItem
@@ -235,6 +250,13 @@ onMounted(async () => {
       v-model:page="currentPage"
       :pages="page.pages"
       :total="page.total"
+    />
+
+    <EventDeleteModal
+      v-model="showDelete"
+      :organization-id="organizationId"
+      :event-id="deleting"
+      @deleted="onDeleted"
     />
   </div>
 </template>

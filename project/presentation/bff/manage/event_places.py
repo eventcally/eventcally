@@ -6,12 +6,15 @@ from flask_babel import gettext
 
 from project.application.commands import (
     CreateEventPlaceCommand,
+    DeleteEventPlaceCommand,
     UpdateEventPlaceCommand,
 )
 from project.application.message_bus import MessageBus
 from project.application.queries import (
+    EventPlaceSort,
     GetEventPlaceForEditQuery,
     IsEventPlaceNameTakenQuery,
+    ListEventPlacesQuery,
 )
 from project.application.query_bus import QueryBus
 from project.container import Application
@@ -27,15 +30,21 @@ from project.presentation.bff.manage.organization_form import (
 )
 from project.presentation.bff.manage.schemas import (
     EventPlaceForm,
+    EventPlaceListItem,
+    EventPlaceListPage,
     EventPlaceLocation,
     EventPlaceNameAvailability,
     EventPlaceNameAvailabilityParams,
     EventPlaceSave,
     EventPlaceSaved,
+    ManageMessage,
+    ManageNameConfirm,
+    ManageNamedListParams,
 )
 from project.presentation.bff.routing import bff_route
 from project.presentation.shared.access import has_access
 from project.presentation.shared.query_results import result_or_404
+from project.shared.utils import get_location_str, strings_are_equal_ignoring_case
 
 
 def _write_access_or_forbidden(id: int):
@@ -227,4 +236,88 @@ def update_event_place(
             "%(model_display_name)s successfully updated",
             model_display_name=gettext("Place"),
         ),
+    )
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations/<int:id>/event-places/list",
+    query=ManageNamedListParams,
+    response=EventPlaceListPage,
+    summary="List the places of an organization",
+)
+@inject
+def list_event_places(
+    id: int,
+    query: ManageNamedListParams,
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    if not has_access(SimpleNamespace(id=id), "event_places:read"):
+        raise UnauthorizedError()
+
+    page = result_or_404(
+        query_bus.handle(
+            ListEventPlacesQuery(
+                admin_unit_id=id,
+                keyword=query.keyword or None,
+                sort=EventPlaceSort(query.sort or "name"),
+                page=query.to_page_request(),
+            )
+        )
+    )
+
+    if page.is_out_of_range:
+        abort(404)
+
+    return EventPlaceListPage(
+        items=[
+            EventPlaceListItem(
+                id=p.id,
+                name=p.name,
+                location=get_location_str(p.location) or None,
+                has_coordinates=p.has_coordinates,
+                has_photo=p.has_photo,
+                number_of_events=p.number_of_events,
+                last_modified_at=p.last_modified_at,
+            )
+            for p in page.items
+        ],
+        page=page.page,
+        per_page=page.per_page,
+        total=page.total,
+        pages=page.pages,
+        can_write=has_access(SimpleNamespace(id=id), "event_places:write"),
+    )
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations/<int:id>/event-places/<int:place_id>/delete",
+    method="POST",
+    body=ManageNameConfirm,
+    response=ManageMessage,
+    summary="Delete a place after typing its name",
+)
+@inject
+def delete_event_place(
+    id: int,
+    place_id: int,
+    body: ManageNameConfirm,
+    message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    place = _place_or_404(id, place_id, query_bus)
+
+    if not strings_are_equal_ignoring_case(body.name, place.name):
+        raise FieldValidationError(
+            ["name"], gettext("Entered name does not match place name")
+        )
+
+    message_bus.handle_command(DeleteEventPlaceCommand(actor=actor(), id=place_id))
+
+    return ManageMessage(
+        message=gettext(
+            "%(model_display_name)s successfully deleted",
+            model_display_name=gettext("Place"),
+        )
     )

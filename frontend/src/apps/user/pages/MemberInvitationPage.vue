@@ -4,7 +4,7 @@ import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
-import { errorMessage } from "../apiError";
+import { errorMessage } from "@/shared/apiError";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
 
 type UserMemberInvitationItem = components["schemas"]["UserMemberInvitationItem"];

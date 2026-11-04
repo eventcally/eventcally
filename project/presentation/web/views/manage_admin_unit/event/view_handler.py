@@ -1,7 +1,4 @@
-from flask import url_for
-
 from project.application.queries import GetEventForEditQuery
-from project.presentation.shared.current_admin_unit import current_admin_unit
 from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
 from project.presentation.web.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -26,12 +23,6 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
 
     def create_get_query(self, object_id):
         return GetEventForEditQuery(id=object_id)
-
-    def get_object_title(self, object):
-        return object.name
-
-    def get_list_url(self, **kwargs):
-        return url_for("manage_admin_unit.events", id=current_admin_unit.id)
 
 
 handler = ViewHandler()

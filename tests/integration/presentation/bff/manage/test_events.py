@@ -1,3 +1,5 @@
+import pytest
+
 from project.shared.dateutils import create_berlin_date
 
 LIST_URL = "/bff/manage/organizations/{}/events"
@@ -365,3 +367,134 @@ def test_lookup_filters_by_keyword(client, seeder, utils):
 
     assert [o["name"] for o in organizers] == ["Zebra Crew"]
     assert [p["name"] for p in places] == ["Zebra Halle"]
+
+
+# delete
+
+
+def _delete_form_url(admin_unit_id, event_id):
+    return f"{LIST_URL.format(admin_unit_id)}/{event_id}/delete-form"
+
+
+def _delete_url(admin_unit_id, event_id):
+    return f"{LIST_URL.format(admin_unit_id)}/{event_id}/delete"
+
+
+def _event_exists(app, event_id):
+    with app.app_context():
+        from project.infrastructure.extensions import db
+        from project.infrastructure.models import Event
+
+        return db.session.get(Event, event_id) is not None
+
+
+@pytest.fixture
+def csrf(client, utils, seeder):
+    """Any Vue 3 shell carries the CSRF token for the writes."""
+    _, admin_unit_id = seeder.setup_base()
+    utils.get_ok(f"/manage/admin_unit/{admin_unit_id}/events")
+    return admin_unit_id
+
+
+def test_delete_form(client, seeder, utils, csrf):
+    event_id = seeder.create_event(csrf, name="Jam Session", start=FUTURE)
+
+    response = utils.get_json(_delete_form_url(csrf, event_id))
+
+    assert response.status_code == 200
+    assert response.json == {
+        "id": event_id,
+        "name": "Jam Session",
+        "has_multiple_dates": False,
+    }
+
+
+def test_delete_form_warns_about_several_dates(client, seeder, utils, csrf):
+    event_id = seeder.create_event(
+        csrf, start=FUTURE, recurrence_rule="RRULE:FREQ=DAILY;COUNT=3"
+    )
+
+    response = utils.get_json(_delete_form_url(csrf, event_id))
+
+    assert response.json["has_multiple_dates"] is True
+
+
+def test_delete_flashes_and_answers_the_list(client, app, seeder, utils, csrf):
+    event_id = seeder.create_event(csrf)
+
+    response = utils.post_json(_delete_url(csrf, event_id), {})
+
+    assert response.status_code == 200
+    assert response.json == {
+        "message": "Veranstaltung erfolgreich gelöscht",
+        "redirect_url": f"/manage/admin_unit/{csrf}/events",
+    }
+    assert not _event_exists(app, event_id)
+
+    with client.session_transaction() as session:
+        flashes = [(c, str(m)) for c, m in session["_flashes"]]
+
+    assert flashes == [("success", "Veranstaltung erfolgreich gelöscht")]
+
+
+def test_inline_delete_does_not_flash(client, app, seeder, utils, csrf):
+    event_id = seeder.create_event(csrf)
+
+    response = utils.post_json(_delete_url(csrf, event_id), {"inline": True})
+
+    assert response.status_code == 200
+    assert response.json["message"] == "Veranstaltung erfolgreich gelöscht"
+    assert not _event_exists(app, event_id)
+
+    with client.session_transaction() as session:
+        assert "_flashes" not in session
+
+
+def test_delete_db_error_is_400(client, app, seeder, utils, mocker, csrf):
+    event_id = seeder.create_event(csrf)
+    utils.mock_db_commit(mocker)
+
+    response = utils.post_json(_delete_url(csrf, event_id), {})
+
+    assert response.status_code == 400
+    assert response.json["name"] == "InfrastructureError"
+
+
+def test_delete_of_another_organization_is_404(client, app, seeder, utils, csrf):
+    other_id = seeder.create_admin_unit(
+        seeder.create_user(email="other@test.de"), name="Andere Crew", verified=True
+    )
+    # The event of a verified organization is readable, but not the user's own.
+    other_event_id = seeder.create_event(other_id, name="Foreign")
+
+    for call in (
+        lambda: utils.get_json(_delete_form_url(csrf, other_event_id)),
+        lambda: utils.post_json(_delete_url(csrf, other_event_id), {}),
+        lambda: utils.get_json(_delete_form_url(csrf, 4711)),
+    ):
+        assert call().status_code == 404
+
+    # A draft of another organization is not readable at all.
+    draft_id = seeder.create_event(other_id, name="Draft", draft=True)
+    assert utils.get_json(_delete_form_url(csrf, draft_id)).status_code == 404
+    assert utils.post_json(_delete_url(csrf, draft_id), {}).status_code == 404
+
+    assert _event_exists(app, other_event_id)
+    assert utils.get_json(_delete_form_url(other_id, other_event_id)).status_code == 403
+    assert utils.post_json(_delete_url(other_id, other_event_id), {}).status_code == 403
+
+
+def test_delete_access(client, seeder, utils):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    event_id = seeder.create_event(admin_unit_id)
+
+    assert utils.get_json(_delete_form_url(admin_unit_id, event_id)).status_code == 401
+    assert utils.post_json(_delete_url(admin_unit_id, event_id), {}).status_code == 401
+
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+    utils.get_ok("/organizations")
+
+    assert utils.get_json(_delete_form_url(admin_unit_id, event_id)).status_code == 403
+    assert utils.post_json(_delete_url(admin_unit_id, event_id), {}).status_code == 403

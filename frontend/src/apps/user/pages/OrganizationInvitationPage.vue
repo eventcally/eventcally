@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import { manage } from "@/shared/legacy";
-import { errorMessage } from "../apiError";
+import { errorMessage } from "@/shared/apiError";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
 
 type UserOrganizationInvitationItem = components["schemas"]["UserOrganizationInvitationItem"];

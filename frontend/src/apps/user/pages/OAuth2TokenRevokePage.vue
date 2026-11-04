@@ -6,7 +6,7 @@ import { useRouter } from "vue-router";
 import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import { setFlash } from "@/shared/flash";
-import { errorMessage } from "../apiError";
+import { errorMessage } from "@/shared/apiError";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
 
 type UserOAuth2Token = components["schemas"]["UserOAuth2Token"];

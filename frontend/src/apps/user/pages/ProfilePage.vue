@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import { account } from "@/shared/legacy";
-import { errorMessage } from "../apiError";
+import { errorMessage } from "@/shared/apiError";
 
 type UserProfile = components["schemas"]["UserProfile"];
 

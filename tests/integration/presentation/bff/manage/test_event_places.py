@@ -532,3 +532,244 @@ def test_update_keep_requires_copyright(client, seeder, utils, setup):
 
     assert response.status_code == 422
     assert response.json["errors"][0]["loc"] == ["photo", "copyright_text"]
+
+
+# list
+
+
+def _list_url(admin_unit_id, **params):
+    query = "&".join(f"{k}={v}" for k, v in params.items())
+    return f"{FORMS_URL.format(admin_unit_id)}/list?{query}"
+
+
+def _names(response):
+    assert response.status_code == 200, response.json
+    return [item["name"] for item in response.json["items"]]
+
+
+def _exists(app, place_id):
+    with app.app_context():
+        from project.infrastructure.extensions import db
+        from project.infrastructure.models import EventPlace
+
+        return db.session.get(EventPlace, place_id) is not None
+
+
+@pytest.fixture
+def listed_places(app, db, seeder, utils):
+    from datetime import datetime
+
+    from sqlalchemy import text
+
+    _, admin_unit_id = seeder.setup_base()
+    ids = {
+        "meine_crew": seeder.upsert_default_event_place(admin_unit_id),
+        "alpha": seeder.upsert_event_place(admin_unit_id, "Alpha Halle"),
+        "bravo": seeder.upsert_event_place(admin_unit_id, "Bravo Halle"),
+    }
+    event_ids = [seeder.create_event(admin_unit_id) for _ in range(3)]
+
+    with app.app_context():
+        for name, created_at in [
+            ("Meine Crew", datetime(2026, 1, 1)),
+            ("City", datetime(2026, 1, 2)),
+            ("Alpha Halle", datetime(2026, 3, 1)),
+            ("Bravo Halle", datetime(2026, 2, 1)),
+        ]:
+            db.session.execute(
+                text("UPDATE eventplace SET created_at = :c WHERE name = :name"),
+                {"c": created_at, "name": name},
+            )
+        db.session.execute(
+            text("UPDATE event SET event_place_id = :place_id WHERE id IN :ids"),
+            {"place_id": ids["bravo"], "ids": tuple(event_ids[:2])},
+        )
+        db.session.commit()
+
+    _shell(utils, admin_unit_id)
+    return admin_unit_id, ids
+
+
+@pytest.mark.parametrize(
+    "sort, expected",
+    [
+        (None, ["Alpha Halle", "Bravo Halle", "City", "Meine Crew"]),
+        ("name", ["Alpha Halle", "Bravo Halle", "City", "Meine Crew"]),
+        ("-last_modified_at", ["Alpha Halle", "Bravo Halle", "City", "Meine Crew"]),
+        ("-number_of_events", ["Bravo Halle", "Meine Crew", "Alpha Halle", "City"]),
+    ],
+)
+def test_list_sort(client, utils, listed_places, sort, expected):
+    admin_unit_id, _ = listed_places
+    params = {"sort": sort} if sort else {}
+
+    assert _names(utils.get_json(_list_url(admin_unit_id, **params))) == expected
+
+
+def test_list_unknown_sort_is_422(client, utils, listed_places):
+    admin_unit_id, _ = listed_places
+
+    assert utils.get_json(_list_url(admin_unit_id, sort="unknown")).status_code == 422
+
+
+def test_list_keyword(client, utils, listed_places):
+    admin_unit_id, _ = listed_places
+
+    response = utils.get_json(_list_url(admin_unit_id, keyword="halle"))
+
+    assert _names(response) == ["Alpha Halle", "Bravo Halle"]
+
+
+def test_list_items(client, app, db, seeder, utils):
+    from project.infrastructure.models import EventPlace, Location
+
+    _, admin_unit_id = seeder.setup_base()
+    _shell(utils, admin_unit_id)
+    place_id = seeder.upsert_event_place(admin_unit_id, "Mit Foto")
+    seeder.upsert_event_place(admin_unit_id, "Ohne Foto")
+    image_id = seeder.upsert_default_image()
+
+    with app.app_context():
+        place = db.session.get(EventPlace, place_id)
+        place.photo_id = image_id
+        place.location = Location(
+            street="Markt 1",
+            postalCode="38640",
+            city="Goslar",
+            latitude="51.9077888",
+            longitude="10.4333312",
+        )
+        db.session.commit()
+
+    response = utils.get_json(_list_url(admin_unit_id, keyword="foto"))
+
+    assert _names(response) == ["Mit Foto", "Ohne Foto"]
+    assert response.json["can_write"] is True
+    with_photo, without_photo = response.json["items"]
+    assert with_photo["id"] == place_id
+    assert with_photo["location"] == "Markt 1, 38640 Goslar"
+    assert with_photo["has_photo"] is True
+    assert with_photo["has_coordinates"] is True
+    assert with_photo["number_of_events"] == 0
+    assert with_photo["last_modified_at"]
+    assert without_photo["location"] is None
+    assert without_photo["has_photo"] is False
+    assert without_photo["has_coordinates"] is False
+
+
+def test_list_pages_by_fifty(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    _shell(utils, admin_unit_id)
+
+    for i in range(60):
+        seeder.upsert_event_place(admin_unit_id, "Place %02d" % i)
+
+    response = utils.get_json(_list_url(admin_unit_id, page=2))
+    names = _names(response)
+
+    assert response.json["per_page"] == 50
+    assert response.json["total"] == 61  # incl. "City"
+    assert "Place 48" not in names
+    assert "Place 49" in names
+    assert "Place 59" in names
+    assert utils.get_json(_list_url(admin_unit_id, page=3)).status_code == 404
+
+
+def test_list_only_has_own_places(client, seeder, utils, setup):
+    admin_unit_id, _ = setup
+    other_id = seeder.create_admin_unit(
+        seeder.create_user(email="other@test.de"), name="Andere Crew"
+    )
+    seeder.upsert_event_place(other_id, "Fremder Ort")
+
+    assert "Fremder Ort" not in _names(utils.get_json(_list_url(admin_unit_id)))
+    assert utils.get_json(_list_url(other_id)).status_code == 403
+
+
+def test_list_access(client, seeder, utils):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    assert utils.get_json(_list_url(admin_unit_id)).status_code == 401
+
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+
+    assert utils.get_json(_list_url(admin_unit_id)).status_code == 403
+
+
+# delete
+
+
+def _delete(utils, admin_unit_id, place_id, name):
+    return utils.post_json(
+        f"{FORMS_URL.format(admin_unit_id)}/{place_id}/delete", {"name": name}
+    )
+
+
+def test_delete(client, app, seeder, utils, setup):
+    admin_unit_id, _ = setup
+    place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
+
+    # The comparison ignores the case, like the old form.
+    response = _delete(utils, admin_unit_id, place_id, "mein ort")
+
+    assert response.status_code == 200
+    assert response.json == {"message": "Ort erfolgreich gelöscht"}
+    assert not _exists(app, place_id)
+
+
+def test_delete_name_mismatch_is_422(client, app, seeder, utils, setup):
+    admin_unit_id, _ = setup
+    place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
+
+    response = _delete(utils, admin_unit_id, place_id, "Falscher Name")
+
+    assert response.status_code == 422
+    assert response.json["errors"][0]["loc"] == ["name"]
+    assert response.json["errors"][0]["msg"] == (
+        "Der eingegebene Name entspricht nicht dem Namen des Ortes"
+    )
+    assert _exists(app, place_id)
+
+
+def test_delete_without_name_is_422(client, utils, setup):
+    admin_unit_id, place_id = setup
+
+    assert _delete(utils, admin_unit_id, place_id, "").status_code == 422
+
+
+def test_delete_db_error_is_400(client, app, seeder, utils, mocker, setup):
+    admin_unit_id, _ = setup
+    place_id = seeder.upsert_event_place(admin_unit_id, "Mein Ort")
+    utils.mock_db_commit(mocker)
+
+    response = _delete(utils, admin_unit_id, place_id, "Mein Ort")
+
+    assert response.status_code == 400
+    assert response.json["name"] == "InfrastructureError"
+
+
+def test_delete_of_another_organization_is_404(client, app, seeder, utils, setup):
+    admin_unit_id, _ = setup
+    other_id = seeder.create_admin_unit(
+        seeder.create_user(email="other@test.de"), name="Andere Crew"
+    )
+    other_place_id = seeder.upsert_event_place(other_id, "Fremd")
+
+    assert _delete(utils, admin_unit_id, other_place_id, "Fremd").status_code == 404
+    assert _exists(app, other_place_id)
+    assert _delete(utils, admin_unit_id, 4711, "x").status_code == 404
+    assert _delete(utils, other_id, other_place_id, "Fremd").status_code == 403
+
+
+def test_delete_access(client, seeder, utils):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    place_id = seeder.upsert_event_place(admin_unit_id, "Fremd")
+    assert _delete(utils, admin_unit_id, place_id, "Fremd").status_code == 401
+
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+    utils.get_ok("/organizations")
+
+    assert _delete(utils, admin_unit_id, place_id, "Fremd").status_code == 403

@@ -403,6 +403,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/event-organizers/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the organizers of an organization */
+        get: operations["bff_manage_list_event_organizers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/event-organizers/name-availability": {
         parameters: {
             query?: never;
@@ -432,6 +449,23 @@ export interface paths {
         /** Update an organizer */
         put: operations["bff_manage_update_event_organizer"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/event-organizers/{organizer_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete an organizer after typing its name */
+        post: operations["bff_manage_delete_event_organizer"];
         delete?: never;
         options?: never;
         head?: never;
@@ -473,6 +507,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/event-places/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the places of an organization */
+        get: operations["bff_manage_list_event_places"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/event-places/name-availability": {
         parameters: {
             query?: never;
@@ -502,6 +553,23 @@ export interface paths {
         /** Update a place */
         put: operations["bff_manage_update_event_place"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/event-places/{place_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete a place after typing its name */
+        post: operations["bff_manage_delete_event_place"];
         delete?: never;
         options?: never;
         head?: never;
@@ -604,6 +672,40 @@ export interface paths {
         get?: never;
         /** Update an event */
         put: operations["bff_manage_update_event"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/events/{event_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete an event */
+        post: operations["bff_manage_delete_event"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/events/{event_id}/delete-form": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get what the event delete confirmation shows */
+        get: operations["bff_manage_get_event_delete_form"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -2254,6 +2356,33 @@ export interface components {
             /** Sorts */
             sorts: components["schemas"]["PublicChoice"][];
         };
+        /**
+         * EventDeleteForm
+         * @description What the event delete confirmation shows.
+         */
+        EventDeleteForm: {
+            /** Has Multiple Dates */
+            has_multiple_dates: boolean;
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+        };
+        /** EventDeleteSave */
+        EventDeleteSave: {
+            /**
+             * Inline
+             * @default false
+             */
+            inline: boolean;
+        };
+        /** EventDeleted */
+        EventDeleted: {
+            /** Message */
+            message: string;
+            /** Redirect Url */
+            redirect_url: string;
+        };
         /** EventForm */
         EventForm: {
             /**
@@ -2497,6 +2626,63 @@ export interface components {
              */
             url: string | null;
         };
+        /** EventOrganizerListItem */
+        EventOrganizerListItem: {
+            /**
+             * Email
+             * @default null
+             */
+            email: string | null;
+            /**
+             * Has Logo
+             * @default false
+             */
+            has_logo: boolean;
+            /** Id */
+            id: number;
+            /**
+             * Last Modified At
+             * @default null
+             */
+            last_modified_at: string | null;
+            /**
+             * Location
+             * @default null
+             */
+            location: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Number Of Events
+             * @default 0
+             */
+            number_of_events: number;
+            /**
+             * Phone
+             * @default null
+             */
+            phone: string | null;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+        };
+        /** EventOrganizerListPage */
+        EventOrganizerListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["EventOrganizerListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
         /** EventOrganizerNameAvailability */
         EventOrganizerNameAvailability: {
             /**
@@ -2572,6 +2758,53 @@ export interface components {
              * @default null
              */
             url: string | null;
+        };
+        /** EventPlaceListItem */
+        EventPlaceListItem: {
+            /**
+             * Has Coordinates
+             * @default false
+             */
+            has_coordinates: boolean;
+            /**
+             * Has Photo
+             * @default false
+             */
+            has_photo: boolean;
+            /** Id */
+            id: number;
+            /**
+             * Last Modified At
+             * @default null
+             */
+            last_modified_at: string | null;
+            /**
+             * Location
+             * @default null
+             */
+            location: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Number Of Events
+             * @default 0
+             */
+            number_of_events: number;
+        };
+        /** EventPlaceListPage */
+        EventPlaceListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["EventPlaceListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
         };
         /**
          * EventPlaceLocation
@@ -3041,6 +3274,22 @@ export interface components {
             per_page: number;
             /** Total */
             total: number;
+        };
+        /**
+         * ManageMessage
+         * @description The success text of a write done in a modal (the page stays).
+         */
+        ManageMessage: {
+            /** Message */
+            message: string;
+        };
+        /**
+         * ManageNameConfirm
+         * @description Typed-name confirmation of a destructive action.
+         */
+        ManageNameConfirm: {
+            /** Name */
+            name: string;
         };
         /** ManageRef */
         ManageRef: {
@@ -6650,6 +6899,69 @@ export interface operations {
             };
         };
     };
+    bff_manage_list_event_organizers: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+                sort?: ("name" | "-last_modified_at" | "-number_of_events") | null;
+                keyword?: string | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventOrganizerListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_get_event_organizer_name_availability: {
         parameters: {
             query?: {
@@ -6793,6 +7105,78 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventOrganizerSaved"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_delete_event_organizer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                organizer_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManageNameConfirm"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageMessage"];
                 };
             };
             /** @description Bad Request */
@@ -7031,6 +7415,69 @@ export interface operations {
             };
         };
     };
+    bff_manage_list_event_places: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+                sort?: ("name" | "-last_modified_at" | "-number_of_events") | null;
+                keyword?: string | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventPlaceListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_get_event_place_name_availability: {
         parameters: {
             query?: {
@@ -7174,6 +7621,78 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventPlaceSaved"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_delete_event_place: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                place_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManageNameConfirm"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageMessage"];
                 };
             };
             /** @description Bad Request */
@@ -7664,6 +8183,137 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_delete_event: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                event_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventDeleteSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventDeleted"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_event_delete_form: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                event_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventDeleteForm"];
                 };
             };
             /** @description Unauthorized */

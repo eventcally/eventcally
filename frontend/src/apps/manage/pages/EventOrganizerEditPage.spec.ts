@@ -1,4 +1,4 @@
-import { flushPromises, mount } from "@vue/test-utils";
+import { RouterLinkStub, flushPromises, mount } from "@vue/test-utils";
 import { createBootstrap } from "bootstrap-vue-next";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { defineComponent } from "vue";
@@ -73,6 +73,7 @@ async function mountPage(
     props,
     attachTo: document.body,
     global: {
+      stubs: { RouterLink: RouterLinkStub },
       plugins: [createBootstrap(), createI18n({ legacy: false, locale: "en", messages: MESSAGES })],
     },
   });
@@ -101,7 +102,10 @@ describe("EventOrganizerEditPage", () => {
     expect(wrapper.findAll("#location-google_place")).toHaveLength(1);
     expect(wrapper.find("#location-postalCode").attributes("required")).toBeUndefined();
     expect(wrapper.find(".breadcrumb").text()).toContain("Create Event organizer");
-    expect(wrapper.find(".breadcrumb a").attributes("href")).toBe("/manage/admin_unit/5/event_organizers");
+    expect(wrapper.findComponent(RouterLinkStub).props("to")).toEqual({
+      name: "event-organizers",
+      params: { organizationId: 5 },
+    });
   });
 
   it("loads the organizer of an update with its stored logo", async () => {

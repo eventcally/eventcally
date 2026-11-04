@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 import { api } from "@/shared/api";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
 import TosAcceptLabel from "@/shared/TosAcceptLabel.vue";
-import { errorMessage } from "../apiError";
+import { errorMessage } from "@/shared/apiError";
 
 // `next` is the page the user wanted before the ToS gate sent them here; the server
 // validates it (an unsafe target falls back to the default one).

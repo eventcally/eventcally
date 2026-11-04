@@ -6,7 +6,7 @@ import { useRouter } from "vue-router";
 import { api } from "@/shared/api";
 import ApiKeyFormFields from "@/shared/ApiKeyFormFields.vue";
 import { setFlash } from "@/shared/flash";
-import { errorMessage, mapFieldErrors } from "../apiError";
+import { errorMessage, mapFieldErrors } from "@/shared/apiError";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
 
 // Create (no `id`) and update of an API key.

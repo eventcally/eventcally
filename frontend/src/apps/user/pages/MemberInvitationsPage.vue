@@ -6,7 +6,7 @@ import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AppPager from "@/shared/AppPager.vue";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
-import { usePagedList } from "../usePagedList";
+import { usePagedList } from "@/shared/usePagedList";
 
 type UserMemberInvitationPage = components["schemas"]["UserMemberInvitationPage"];
 

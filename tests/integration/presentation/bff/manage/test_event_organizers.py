@@ -71,6 +71,14 @@ def _organizer(app, organizer_id):
         )
 
 
+def _exists(app, organizer_id):
+    with app.app_context():
+        from project.infrastructure.extensions import db
+        from project.infrastructure.models import EventOrganizer
+
+        return db.session.get(EventOrganizer, organizer_id) is not None
+
+
 def _find_organizer(app, admin_unit_id, name):
     with app.app_context():
         from project.infrastructure.models import EventOrganizer
@@ -564,3 +572,234 @@ def test_update_keep_requires_copyright(client, seeder, utils, setup):
 
     assert response.status_code == 422
     assert response.json["errors"][0]["loc"] == ["logo", "copyright_text"]
+
+
+# list
+
+
+def _list_url(admin_unit_id, **params):
+    query = "&".join(f"{k}={v}" for k, v in params.items())
+    return f"{FORMS_URL.format(admin_unit_id)}/list?{query}"
+
+
+def _names(response):
+    assert response.status_code == 200, response.json
+    return [item["name"] for item in response.json["items"]]
+
+
+@pytest.fixture
+def listed_organizers(app, db, seeder, utils):
+    from datetime import datetime
+
+    from sqlalchemy import text
+
+    _, admin_unit_id = seeder.setup_base()
+    ids = {
+        "meine_crew": seeder.upsert_default_event_organizer(admin_unit_id),
+        "alpha": seeder.upsert_event_organizer(admin_unit_id, "Alpha Org"),
+        "bravo": seeder.upsert_event_organizer(admin_unit_id, "Bravo Org"),
+    }
+    event_ids = [seeder.create_event(admin_unit_id) for _ in range(3)]
+
+    with app.app_context():
+        for key, created_at in [
+            ("meine_crew", datetime(2026, 1, 1)),
+            ("alpha", datetime(2026, 3, 1)),
+            ("bravo", datetime(2026, 2, 1)),
+        ]:
+            db.session.execute(
+                text("UPDATE eventorganizer SET created_at = :c WHERE id = :id"),
+                {"c": created_at, "id": ids[key]},
+            )
+        db.session.execute(
+            text("UPDATE event SET organizer_id = :organizer_id WHERE id IN :ids"),
+            {"organizer_id": ids["bravo"], "ids": tuple(event_ids[:2])},
+        )
+        db.session.commit()
+
+    _shell(utils, admin_unit_id)
+    return admin_unit_id, ids
+
+
+@pytest.mark.parametrize(
+    "sort, expected",
+    [
+        (None, ["Alpha Org", "Bravo Org", "Meine Crew"]),
+        ("name", ["Alpha Org", "Bravo Org", "Meine Crew"]),
+        ("-last_modified_at", ["Alpha Org", "Bravo Org", "Meine Crew"]),
+        ("-number_of_events", ["Bravo Org", "Meine Crew", "Alpha Org"]),
+    ],
+)
+def test_list_sort(client, utils, listed_organizers, sort, expected):
+    admin_unit_id, _ = listed_organizers
+    params = {"sort": sort} if sort else {}
+
+    assert _names(utils.get_json(_list_url(admin_unit_id, **params))) == expected
+
+
+def test_list_unknown_sort_is_422(client, utils, listed_organizers):
+    admin_unit_id, _ = listed_organizers
+
+    assert utils.get_json(_list_url(admin_unit_id, sort="unknown")).status_code == 422
+
+
+def test_list_keyword(client, utils, listed_organizers):
+    admin_unit_id, _ = listed_organizers
+
+    response = utils.get_json(_list_url(admin_unit_id, keyword="org"))
+
+    assert _names(response) == ["Alpha Org", "Bravo Org"]
+
+
+def test_list_items(client, app, db, seeder, utils, listed_organizers):
+    from project.infrastructure.models import EventOrganizer, Location
+
+    admin_unit_id, ids = listed_organizers
+
+    with app.app_context():
+        organizer = db.session.get(EventOrganizer, ids["bravo"])
+        organizer.phone = "123"
+        organizer.email = "bravo@example.com"
+        organizer.url = "https://example.com"
+        organizer.location = Location(
+            street="Markt 1", postalCode="38640", city="Goslar"
+        )
+        db.session.commit()
+
+    response = utils.get_json(_list_url(admin_unit_id, keyword="bravo"))
+
+    assert response.status_code == 200
+    assert response.json["can_write"] is True
+    assert response.json["total"] == 1
+    item = response.json["items"][0]
+    assert item["id"] == ids["bravo"]
+    assert item["location"] == "Markt 1, 38640 Goslar"
+    assert item["phone"] == "123"
+    assert item["email"] == "bravo@example.com"
+    assert item["url"] == "https://example.com"
+    assert item["has_logo"] is False
+    assert item["number_of_events"] == 2
+    assert item["last_modified_at"]
+
+
+def test_list_pages_by_fifty(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    _shell(utils, admin_unit_id)
+
+    for i in range(60):
+        seeder.upsert_event_organizer(admin_unit_id, "Organizer %02d" % i)
+
+    response = utils.get_json(_list_url(admin_unit_id, page=2))
+    names = _names(response)
+
+    assert response.json["per_page"] == 50
+    assert response.json["total"] == 61  # incl. "Meine Crew"
+    assert response.json["pages"] == 2
+    assert "Organizer 48" not in names
+    assert "Organizer 49" in names
+    assert "Organizer 59" in names
+    assert utils.get_json(_list_url(admin_unit_id, page=3)).status_code == 404
+
+
+def test_list_only_has_own_organizers(client, seeder, utils, setup):
+    admin_unit_id, _ = setup
+    other_id = seeder.create_admin_unit(
+        seeder.create_user(email="other@test.de"), name="Andere Crew"
+    )
+    seeder.upsert_event_organizer(other_id, "Fremder Veranstalter")
+
+    assert "Fremder Veranstalter" not in _names(
+        utils.get_json(_list_url(admin_unit_id))
+    )
+    assert utils.get_json(_list_url(other_id)).status_code == 403
+
+
+def test_list_access(client, seeder, utils):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    assert utils.get_json(_list_url(admin_unit_id)).status_code == 401
+
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+
+    assert utils.get_json(_list_url(admin_unit_id)).status_code == 403
+
+
+# delete
+
+
+def _delete(utils, admin_unit_id, organizer_id, name):
+    return utils.post_json(
+        f"{FORMS_URL.format(admin_unit_id)}/{organizer_id}/delete", {"name": name}
+    )
+
+
+def test_delete(client, app, seeder, utils, setup):
+    admin_unit_id, _ = setup
+    organizer_id = seeder.upsert_event_organizer(admin_unit_id, "Mein Organisator")
+
+    # The comparison ignores the case, like the old form.
+    response = _delete(utils, admin_unit_id, organizer_id, "mein organisator")
+
+    assert response.status_code == 200
+    assert response.json == {"message": "Veranstalter erfolgreich gelöscht"}
+    assert not _exists(app, organizer_id)
+
+
+def test_delete_name_mismatch_is_422(client, app, seeder, utils, setup):
+    admin_unit_id, _ = setup
+    organizer_id = seeder.upsert_event_organizer(admin_unit_id, "Mein Organisator")
+
+    response = _delete(utils, admin_unit_id, organizer_id, "Falscher Name")
+
+    assert response.status_code == 422
+    assert response.json["errors"][0]["loc"] == ["name"]
+    assert response.json["errors"][0]["msg"] == (
+        "Der eingegebene Name entspricht nicht dem Namen des Veranstalters"
+    )
+    assert _exists(app, organizer_id)
+
+
+def test_delete_without_name_is_422(client, utils, setup):
+    admin_unit_id, organizer_id = setup
+
+    assert _delete(utils, admin_unit_id, organizer_id, "").status_code == 422
+
+
+def test_delete_db_error_is_400(client, app, seeder, utils, mocker, setup):
+    admin_unit_id, _ = setup
+    organizer_id = seeder.upsert_event_organizer(admin_unit_id, "Mein Organisator")
+    utils.mock_db_commit(mocker)
+
+    response = _delete(utils, admin_unit_id, organizer_id, "Mein Organisator")
+
+    assert response.status_code == 400
+    assert response.json["name"] == "InfrastructureError"
+
+
+def test_delete_of_another_organization_is_404(client, app, seeder, utils, setup):
+    admin_unit_id, _ = setup
+    other_id = seeder.create_admin_unit(
+        seeder.create_user(email="other@test.de"), name="Andere Crew"
+    )
+    other_organizer_id = seeder.upsert_event_organizer(other_id, "Fremd")
+
+    response = _delete(utils, admin_unit_id, other_organizer_id, "Fremd")
+
+    assert response.status_code == 404
+    assert _exists(app, other_organizer_id)
+    assert _delete(utils, admin_unit_id, 4711, "x").status_code == 404
+    assert _delete(utils, other_id, other_organizer_id, "Fremd").status_code == 403
+
+
+def test_delete_access(client, seeder, utils):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    organizer_id = seeder.upsert_event_organizer(admin_unit_id, "Fremd")
+    assert _delete(utils, admin_unit_id, organizer_id, "Fremd").status_code == 401
+
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+    utils.get_ok("/organizations")
+
+    assert _delete(utils, admin_unit_id, organizer_id, "Fremd").status_code == 403

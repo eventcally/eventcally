@@ -120,7 +120,7 @@ onMounted(load);
 <template>
   <div>
     <AppBreadcrumb
-      :items="[{ label: t('Event organizers'), href: manage.eventOrganizers(organizationId) }, { label: title }]"
+      :items="[{ label: t('Event organizers'), to: { name: 'event-organizers', params: { organizationId } } }, { label: title }]"
     />
 
     <div v-if="loadError" class="alert alert-danger" role="alert">{{ loadError }}</div>

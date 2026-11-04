@@ -64,6 +64,27 @@ export const routes: RouteRecordRaw[] = [
     }),
   },
   {
+    path: "/manage/admin_unit/:organizationId(\\d+)/event_organizers",
+    name: "event-organizers",
+    component: () => import("./pages/EventOrganizersPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/event_places",
+    name: "event-places",
+    component: () => import("./pages/EventPlacesPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/event/:id(\\d+)/delete",
+    name: "event-delete",
+    component: () => import("./pages/EventDeletePage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
     path: "/manage/admin_unit/:organizationId(\\d+)/update",
     name: "organization-settings",
     component: OrganizationSettingsPage,
