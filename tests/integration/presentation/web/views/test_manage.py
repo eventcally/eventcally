@@ -258,56 +258,6 @@ def test_admin_unit_organization_invitations(
     utils.get_ok(url)
 
 
-def test_admin_unit_organization_invitations_newest_first(
-    client, app, db, seeder: Seeder, utils: UtilActions
-):
-    from datetime import datetime
-
-    from sqlalchemy import text
-
-    _, admin_unit_id = seeder.setup_base()
-    old_id = seeder.create_admin_unit_invitation(admin_unit_id, "old@test.de")
-    new_id = seeder.create_admin_unit_invitation(admin_unit_id, "new@test.de")
-
-    with app.app_context():
-        for invitation_id, created_at in [
-            (old_id, datetime(2026, 1, 1)),
-            (new_id, datetime(2026, 2, 1)),
-        ]:
-            db.session.execute(
-                text("UPDATE adminunitinvitation SET created_at = :c WHERE id = :id"),
-                {"c": created_at, "id": invitation_id},
-            )
-
-        db.session.commit()
-
-    url = utils.get_url("manage_admin_unit.organization_invitations", id=admin_unit_id)
-    html = utils.get_ok(url).get_data(as_text=True)
-
-    assert html.index("new@test.de") < html.index("old@test.de")
-
-
-def test_admin_unit_organization_invitations_query_unauthorized(
-    client, seeder: Seeder, utils: UtilActions, mocker
-):
-    from project.application.services.actor_authorization_service import (
-        ActorAuthorizationService,
-    )
-    from project.domain.errors import UnauthorizedError
-
-    _, admin_unit_id = seeder.setup_base()
-    mocker.patch.object(
-        ActorAuthorizationService,
-        "ensure_permission_for_admin_unit",
-        side_effect=UnauthorizedError("nope"),
-    )
-
-    url = utils.get_url("manage_admin_unit.organization_invitations", id=admin_unit_id)
-    response = utils.get(url)
-
-    utils.assert_response_unauthorized(response)
-
-
 def test_admin_unit_custom_widgets(client, seeder: Seeder, utils: UtilActions):
     _, admin_unit_id = seeder.setup_base()
 

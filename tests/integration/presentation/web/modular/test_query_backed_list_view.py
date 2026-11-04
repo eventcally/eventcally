@@ -1,6 +1,6 @@
 """The opt-in query-backed path of the modular BaseListView.
 
-Uses the organization invitation manage list as the vehicle: its view handler is
+Uses the API key manage list as the vehicle: its view handler is
 patched to return a query, and the query handler factory is overridden with a fake, so the page renders
 read models from the query bus instead of paginating an ORM query.
 """
@@ -15,19 +15,18 @@ from project.application.read_models.base_read_model import BaseReadModel
 from project.application.read_models.page import Page
 from project.presentation.shared.current_admin_unit import current_admin_unit
 from project.presentation.web.modular.sort_definition import KeySortDefinition
-from project.presentation.web.views.manage_admin_unit.organization_invitation.view_handler import (
-    ViewHandler,
+from project.presentation.web.views.manage_admin_unit.api_key.view_handler import (
+    ApiKeyViewHandler as ViewHandler,
 )
 
 
-class _InvitationRow(BaseReadModel):
+class _ApiKeyRow(BaseReadModel):
     id: int
-    email: str = "invited@test.de"
-    admin_unit_name: str
+    name: str
     created_at: datetime = datetime(2026, 1, 1)
 
 
-class _ListInvitationsQuery(Query[Page[_InvitationRow]]):
+class _ListApiKeysQuery(Query[Page[_ApiKeyRow]]):
     admin_unit_id: int
     page: PageRequest = PageRequest()
 
@@ -43,12 +42,12 @@ class _FakeHandler:
 
 
 @pytest.fixture
-def query_backed_invitation_list(app, mocker):
+def query_backed_api_key_list(app, mocker):
     calls = []
 
     def create_list_query(self, form, page_request, **kwargs):
         calls.append({"form": form, "page_request": page_request, "kwargs": kwargs})
-        return _ListInvitationsQuery(
+        return _ListApiKeysQuery(
             admin_unit_id=current_admin_unit.id,
             page=page_request,
         )
@@ -73,7 +72,7 @@ def query_backed_invitation_list(app, mocker):
 
 
 def _page_with_rows(query, total, rows):
-    return Page[_InvitationRow](
+    return Page[_ApiKeyRow](
         items=rows,
         page=query.page.page,
         per_page=query.page.per_page,
@@ -81,25 +80,21 @@ def _page_with_rows(query, total, rows):
     )
 
 
-def test_renders_items_from_query_bus(
-    client, seeder, utils, query_backed_invitation_list
-):
-    calls, install = query_backed_invitation_list
+def test_renders_items_from_query_bus(client, seeder, utils, query_backed_api_key_list):
+    calls, install = query_backed_api_key_list
     _, admin_unit_id = seeder.setup_base()
     handler = install(
         lambda query: _page_with_rows(
             query,
             total=1,
-            rows=[
-                _InvitationRow(id=4711, admin_unit_name="Invitation from the query bus")
-            ],
+            rows=[_ApiKeyRow(id=4711, name="Key from the query bus")],
         )
     )
 
-    url = utils.get_url("manage_admin_unit.organization_invitations", id=admin_unit_id)
+    url = utils.get_url("manage_admin_unit.api_keys", id=admin_unit_id)
     response = utils.get_ok(url)
 
-    assert b"Invitation from the query bus" in response.data
+    assert b"Key from the query bus" in response.data
     assert len(handler.queries) == 1
     assert handler.queries[0].admin_unit_id == admin_unit_id
     # The list's own page size wins over a per_page query arg, as with paginate().
@@ -107,18 +102,18 @@ def test_renders_items_from_query_bus(
 
 
 def test_passes_page_number_and_renders_pagination(
-    client, seeder, utils, query_backed_invitation_list
+    client, seeder, utils, query_backed_api_key_list
 ):
-    _, install = query_backed_invitation_list
+    _, install = query_backed_api_key_list
     _, admin_unit_id = seeder.setup_base()
     handler = install(
         lambda query: _page_with_rows(
-            query, total=120, rows=[_InvitationRow(id=1, admin_unit_name="On page two")]
+            query, total=120, rows=[_ApiKeyRow(id=1, name="On page two")]
         )
     )
 
     url = utils.get_url(
-        "manage_admin_unit.organization_invitations",
+        "manage_admin_unit.api_keys",
         id=admin_unit_id,
         page=2,
         per_page=5,
@@ -132,15 +127,13 @@ def test_passes_page_number_and_renders_pagination(
 
 
 def test_out_of_range_page_is_not_found(
-    client, seeder, utils, query_backed_invitation_list
+    client, seeder, utils, query_backed_api_key_list
 ):
-    _, install = query_backed_invitation_list
+    _, install = query_backed_api_key_list
     _, admin_unit_id = seeder.setup_base()
     install(lambda query: _page_with_rows(query, total=3, rows=[]))
 
-    url = utils.get_url(
-        "manage_admin_unit.organization_invitations", id=admin_unit_id, page=2
-    )
+    url = utils.get_url("manage_admin_unit.api_keys", id=admin_unit_id, page=2)
     response = utils.get(url)
 
     utils.assert_response_notFound(response)
@@ -148,15 +141,13 @@ def test_out_of_range_page_is_not_found(
 
 @pytest.mark.parametrize("page", ["0", "-1", "abc"])
 def test_invalid_page_arg_is_not_found(
-    client, seeder, utils, query_backed_invitation_list, page
+    client, seeder, utils, query_backed_api_key_list, page
 ):
-    _, install = query_backed_invitation_list
+    _, install = query_backed_api_key_list
     _, admin_unit_id = seeder.setup_base()
     handler = install(lambda query: _page_with_rows(query, total=0, rows=[]))
 
-    url = utils.get_url(
-        "manage_admin_unit.organization_invitations", id=admin_unit_id, page=page
-    )
+    url = utils.get_url("manage_admin_unit.api_keys", id=admin_unit_id, page=page)
     response = utils.get(url)
 
     utils.assert_response_notFound(response)

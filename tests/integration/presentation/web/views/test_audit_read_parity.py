@@ -38,14 +38,6 @@ def _pages(app, db, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(admin=True)
     pages = {}
 
-    invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
-    _stamp(app, db, "adminunitinvitation", invitation_id, user_id)
-    pages["organization_invitation_update"] = utils.get_url(
-        "manage_admin_unit.organization_invitation_update",
-        id=admin_unit_id,
-        organization_invitation_id=invitation_id,
-    )
-
     api_key_id, _ = seeder.insert_default_api_key(admin_unit_id=admin_unit_id)
     _stamp(app, db, "apikey", api_key_id, user_id)
     pages["api_key_read"] = utils.get_url(

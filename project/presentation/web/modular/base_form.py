@@ -57,9 +57,6 @@ class BaseForm(FlaskForm):
 
         return None  # pragma: no cover
 
-    def move_field_to_top(self, key: str):
-        self._fields.move_to_end(key, False)
-
 
 class BaseCreateForm(BaseForm):
     submit = SubmitField(lazy_gettext("Create"))

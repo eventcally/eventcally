@@ -3,6 +3,7 @@ from typing import Annotated, Any, Dict, List, Literal, Optional
 
 from pydantic import (
     BaseModel,
+    EmailStr,
     Field,
     StringConstraints,
     field_validator,
@@ -1200,3 +1201,100 @@ class VerifierOrganizationListPage(ManageListPage):
 
 class VerificationRequestCreate(BaseModel):
     target_id: int
+
+
+# Members and invitations
+
+
+class MemberRole(BaseModel):
+    name: str
+    # Translated.
+    title: str
+
+
+class MemberListItem(BaseModel):
+    id: int
+    email: str
+    roles: List[MemberRole]
+    # The own membership cannot be removed here, `leave_url` is the page that does.
+    is_current_user: bool = False
+    leave_url: Optional[str] = None
+
+
+class MemberListPage(ManageListPage):
+    items: List[MemberListItem]
+    role_choices: List[MemberRole]
+    # Whether the "create" button (it leads to the invitation form) is offered.
+    can_invite: bool
+
+
+class MemberRolesSave(BaseModel):
+    roles: List[str] = []
+
+
+class MemberInvitationListItem(BaseModel):
+    id: int
+    email: str
+    # The role names, for the roles modal.
+    roles: List[str]
+
+
+class MemberInvitationListPage(ManageListPage):
+    items: List[MemberInvitationListItem]
+    role_choices: List[MemberRole]
+
+
+class MemberInvitationForm(BaseModel):
+    role_choices: List[MemberRole]
+    list_url: str
+
+
+class MemberInvitationCreate(BaseModel):
+    email: Annotated[EmailStr, Field(max_length=255)]
+    roles: List[str] = []
+
+
+class MemberInvitationSaved(BaseModel):
+    id: int
+    redirect_url: str
+
+
+class OrganizationInvitationListItem(BaseModel):
+    id: int
+    email: str
+    admin_unit_name: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+
+class OrganizationInvitationListPage(ManageListPage):
+    items: List[OrganizationInvitationListItem]
+
+
+class OrganizationInvitationForm(BaseModel):
+    # `None` and empty fields when creating.
+    id: Optional[int] = None
+    email: str = ""
+    admin_unit_name: str = ""
+    relation_verify: bool = False
+    relation_auto_verify_event_reference_requests: bool = False
+    # Without it the `relation_verify` switch is not offered.
+    can_verify_other: bool
+    audit: Optional[ManageAudit] = None
+    list_url: str
+
+
+class OrganizationInvitationUpdate(BaseModel):
+    admin_unit_name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
+    ]
+    relation_verify: bool = False
+    relation_auto_verify_event_reference_requests: bool = False
+
+
+class OrganizationInvitationCreate(OrganizationInvitationUpdate):
+    email: Annotated[EmailStr, Field(max_length=255)]
+
+
+class OrganizationInvitationSaved(BaseModel):
+    id: int
+    redirect_url: str

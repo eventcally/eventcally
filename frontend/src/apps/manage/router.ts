@@ -133,6 +133,45 @@ export const routes: RouteRecordRaw[] = [
     props: (route) => ({ organizationId: Number(route.params.organizationId) }),
   },
   {
+    path: "/manage/admin_unit/:organizationId(\\d+)/organization_members",
+    name: "organization-members",
+    component: () => import("./pages/MembersPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/organization_member_invitations",
+    name: "organization-member-invitations",
+    component: () => import("./pages/MemberInvitationsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/organization_member_invitation/create",
+    name: "organization-member-invitation-create",
+    component: () => import("./pages/MemberInvitationCreatePage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/organization_invitations",
+    name: "organization-invitations",
+    component: () => import("./pages/OrganizationInvitationsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/organization_invitation/create",
+    name: "organization-invitation-create",
+    component: () => import("./pages/OrganizationInvitationEditPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/organization_invitation/:id(\\d+)/update",
+    name: "organization-invitation-update",
+    component: () => import("./pages/OrganizationInvitationEditPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
     path: "/manage/admin_unit/:organizationId(\\d+)/incoming_organization_verification_requests",
     name: "incoming-verification-requests",
     component: () => import("./pages/IncomingVerificationRequestsPage.vue"),
