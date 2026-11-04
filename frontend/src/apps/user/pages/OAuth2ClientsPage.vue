@@ -6,8 +6,8 @@ import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AppPager from "@/shared/AppPager.vue";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
-import { useFlashNotice } from "../useFlashNotice";
-import { usePagedList } from "../usePagedList";
+import { useFlashNotice } from "@/shared/useFlashNotice";
+import { usePagedList } from "@/shared/usePagedList";
 
 type UserOAuth2ClientPage = components["schemas"]["UserOAuth2ClientPage"];
 

@@ -1,10 +1,15 @@
 from types import SimpleNamespace
 
 from dependency_injector.wiring import Provide, inject
+from flask import abort, flash, url_for
+from flask_babel import gettext
 
+from project.application.commands import DeleteEventCommand
+from project.application.message_bus import MessageBus
 from project.application.queries import (
     EventSearchCriteria,
     EventSearchSort,
+    GetEventForEditQuery,
     GetEventOrganizerRefQuery,
     GetEventPlaceRefQuery,
     ListAllEventCategoriesQuery,
@@ -20,7 +25,11 @@ from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_status import EventStatus
 from project.presentation.bff.manage import bff_manage_bp
+from project.presentation.bff.manage.organization_form import actor
 from project.presentation.bff.manage.schemas import (
+    EventDeleted,
+    EventDeleteForm,
+    EventDeleteSave,
     ManageChoice,
     ManageEventListItem,
     ManageEventListOptions,
@@ -38,6 +47,7 @@ from project.presentation.shared.access import (
     get_admin_unit_for_manage,
     has_access,
 )
+from project.presentation.shared.query_results import result_or_404
 from project.presentation.shared.search_options import distance_choices
 from project.shared.dateutils import form_input_to_date, get_today
 from project.shared.utils import (
@@ -296,4 +306,70 @@ def lookup_event_places(
     )
     return ManageRefList(
         items=[ManageRef(id=p.id, name=get_place_str(p)) for p in page.items]
+    )
+
+
+def _event_for_delete_or_404(id: int, event_id: int, query_bus: QueryBus):
+    if not has_access(SimpleNamespace(id=id), "events:write"):
+        raise UnauthorizedError()
+
+    try:
+        event = result_or_404(query_bus.handle(GetEventForEditQuery(id=event_id)))
+    except UnauthorizedError:
+        # An event the actor may not read (e.g. a draft of another organization).
+        abort(404)
+
+    # Do not reveal the events of other organizations.
+    if event.admin_unit_id != id:
+        abort(404)
+
+    return event
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations/<int:id>/events/<int:event_id>/delete-form",
+    response=EventDeleteForm,
+    summary="Get what the event delete confirmation shows",
+)
+@inject
+def get_event_delete_form(
+    id: int,
+    event_id: int,
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    event = _event_for_delete_or_404(id, event_id, query_bus)
+    return EventDeleteForm(
+        id=event.id, name=event.name, has_multiple_dates=event.has_multiple_dates()
+    )
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations/<int:id>/events/<int:event_id>/delete",
+    method="POST",
+    body=EventDeleteSave,
+    response=EventDeleted,
+    summary="Delete an event",
+)
+@inject
+def delete_event(
+    id: int,
+    event_id: int,
+    body: EventDeleteSave,
+    message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    _event_for_delete_or_404(id, event_id, query_bus)
+    message_bus.handle_command(DeleteEventCommand(actor=actor(), id=event_id))
+    message = gettext(
+        "%(model_display_name)s successfully deleted",
+        model_display_name=gettext("Event"),
+    )
+
+    if not body.inline:
+        flash(message, "success")
+
+    return EventDeleted(
+        message=message, redirect_url=url_for("manage_admin_unit.events", id=id)
     )

@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { api } from "@/shared/api";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
 import NameConfirmationForm from "@/shared/NameConfirmationForm.vue";
-import { errorMessage, mapFieldErrors } from "../apiError";
+import { errorMessage, mapFieldErrors } from "@/shared/apiError";
 
 const props = defineProps<{ mode: "request" | "cancel" }>();
 

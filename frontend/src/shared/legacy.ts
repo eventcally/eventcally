@@ -19,6 +19,7 @@ export const publicPages = {
   organization: (id: number) => `/organizations/${id}`,
   organizationEventDates: (id: number) => `/eventdates?admin_unit_id=${id}`,
   event: (id: number) => `/event/${id}`,
+  organizer: (id: number) => `/organizers/${id}`,
   eventDate: (id: number) => `/eventdate/${id}`,
   eventDates: (organizerId: number) => `/eventdates?organizer_id=${organizerId}`,
   eventActions: (id: number) => `/event/${id}/actions`,
@@ -33,9 +34,6 @@ export const manage = {
   requestDeletion: (id: number) => `/manage/admin_unit/${id}/request-deletion`,
   cancelDeletion: (id: number) => `/manage/admin_unit/${id}/cancel-deletion`,
   events: (organizationId: number) => `/manage/admin_unit/${organizationId}/events`,
-  eventOrganizers: (organizationId: number) =>
-    `/manage/admin_unit/${organizationId}/event_organizers`,
-  eventPlaces: (organizationId: number) => `/manage/admin_unit/${organizationId}/event_places`,
   eventCreate: (organizationId: number) => `/manage/admin_unit/${organizationId}/event/create`,
   eventUpdate: (organizationId: number, id: number) =>
     `/manage/admin_unit/${organizationId}/event/${id}/update`,
@@ -43,8 +41,6 @@ export const manage = {
     `/manage/admin_unit/${organizationId}/event_place/${id}/update`,
   eventOrganizerUpdate: (organizationId: number, id: number) =>
     `/manage/admin_unit/${organizationId}/event_organizer/${id}/update`,
-  eventDelete: (organizationId: number, id: number) =>
-    `/manage/admin_unit/${organizationId}/event/${id}/delete`,
   eventReferenceRequestCreate: (organizationId: number, eventId: number) =>
     `/manage/admin_unit/${organizationId}/outgoing_event_reference_request/create_for_event/${eventId}`,
   outgoingOrganizationRelations: (organizationId: number) =>

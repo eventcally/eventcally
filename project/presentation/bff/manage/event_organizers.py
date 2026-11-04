@@ -6,12 +6,15 @@ from flask_babel import gettext
 
 from project.application.commands import (
     CreateEventOrganizerCommand,
+    DeleteEventOrganizerCommand,
     UpdateEventOrganizerCommand,
 )
 from project.application.message_bus import MessageBus
 from project.application.queries import (
+    EventOrganizerSort,
     GetEventOrganizerForEditQuery,
     IsEventOrganizerNameTakenQuery,
+    ListEventOrganizersQuery,
 )
 from project.application.query_bus import QueryBus
 from project.container import Application
@@ -27,15 +30,21 @@ from project.presentation.bff.manage.organization_form import (
 )
 from project.presentation.bff.manage.schemas import (
     EventOrganizerForm,
+    EventOrganizerListItem,
+    EventOrganizerListPage,
     EventOrganizerNameAvailability,
     EventOrganizerNameAvailabilityParams,
     EventOrganizerSave,
     EventOrganizerSaved,
     EventPlaceLocation,
+    ManageMessage,
+    ManageNameConfirm,
+    ManageNamedListParams,
 )
 from project.presentation.bff.routing import bff_route
 from project.presentation.shared.access import has_access
 from project.presentation.shared.query_results import result_or_404
+from project.shared.utils import get_location_str, strings_are_equal_ignoring_case
 
 
 def _write_access_or_forbidden(id: int):
@@ -238,4 +247,92 @@ def update_event_organizer(
             "%(model_display_name)s successfully updated",
             model_display_name=gettext("Event organizer"),
         ),
+    )
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations/<int:id>/event-organizers/list",
+    query=ManageNamedListParams,
+    response=EventOrganizerListPage,
+    summary="List the organizers of an organization",
+)
+@inject
+def list_event_organizers(
+    id: int,
+    query: ManageNamedListParams,
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    if not has_access(SimpleNamespace(id=id), "event_organizers:read"):
+        raise UnauthorizedError()
+
+    page = result_or_404(
+        query_bus.handle(
+            ListEventOrganizersQuery(
+                admin_unit_id=id,
+                keyword=query.keyword or None,
+                sort=EventOrganizerSort(query.sort or "name"),
+                page=query.to_page_request(),
+            )
+        )
+    )
+
+    if page.is_out_of_range:
+        abort(404)
+
+    return EventOrganizerListPage(
+        items=[
+            EventOrganizerListItem(
+                id=o.id,
+                name=o.name,
+                location=get_location_str(o.location) or None,
+                phone=o.phone,
+                email=o.email,
+                url=o.url,
+                has_logo=o.has_logo,
+                number_of_events=o.number_of_events,
+                last_modified_at=o.last_modified_at,
+            )
+            for o in page.items
+        ],
+        page=page.page,
+        per_page=page.per_page,
+        total=page.total,
+        pages=page.pages,
+        can_write=has_access(SimpleNamespace(id=id), "event_organizers:write"),
+    )
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations/<int:id>/event-organizers/<int:organizer_id>/delete",
+    method="POST",
+    body=ManageNameConfirm,
+    response=ManageMessage,
+    summary="Delete an organizer after typing its name",
+)
+@inject
+def delete_event_organizer(
+    id: int,
+    organizer_id: int,
+    body: ManageNameConfirm,
+    message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    organizer = _organizer_or_404(id, organizer_id, query_bus)
+
+    if not strings_are_equal_ignoring_case(body.name, organizer.name):
+        raise FieldValidationError(
+            ["name"], gettext("Entered name does not match organizer name")
+        )
+
+    message_bus.handle_command(
+        DeleteEventOrganizerCommand(actor=actor(), id=organizer_id)
+    )
+
+    return ManageMessage(
+        message=gettext(
+            "%(model_display_name)s successfully deleted",
+            model_display_name=gettext("Event organizer"),
+        )
     )

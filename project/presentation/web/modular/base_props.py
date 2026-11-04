@@ -4,11 +4,7 @@ from flask_babel import format_date, format_datetime
 from markupsafe import Markup
 
 from project.presentation.shared.permissions import get_organization_permission_infos
-from project.shared.utils import (
-    get_localized_enum_name,
-    get_location_str,
-    getattr_keypath,
-)
+from project.shared.utils import get_localized_enum_name, getattr_keypath
 
 
 class BasePropFormatter:
@@ -34,11 +30,6 @@ class DatePropFormatter(BasePropFormatter):
 class StringPropFormatter(BasePropFormatter):
     def format(self, data):
         return data if data is not None else ""
-
-
-class LocationPropFormatter(BasePropFormatter):
-    def format(self, data):
-        return get_location_str(data)
 
 
 class EventPropFormatter(BasePropFormatter):
@@ -160,12 +151,6 @@ class StringProp(BaseProp):
 
 class IntProp(StringProp):
     pass
-
-
-class LocationProp(BaseProp):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("formatter", LocationPropFormatter())
-        super().__init__(*args, **kwargs)
 
 
 class EventProp(BaseProp):

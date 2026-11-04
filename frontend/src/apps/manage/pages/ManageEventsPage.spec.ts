@@ -7,7 +7,10 @@ import { createMemoryHistory, createRouter } from "vue-router";
 vi.mock("@/shared/boot", () => ({ boot: { locale: "en", csrfToken: "x", loginUrl: "/login" } }));
 
 const GET = vi.fn();
-vi.mock("@/shared/api", () => ({ api: { GET: (...a: unknown[]) => GET(...a) } }));
+const POST = vi.fn();
+vi.mock("@/shared/api", () => ({
+  api: { GET: (...a: unknown[]) => GET(...a), POST: (...a: unknown[]) => POST(...a) },
+}));
 
 const success = vi.hoisted(() => vi.fn());
 vi.mock("@/shared/notify", () => ({ useNotify: () => ({ success, error: vi.fn() }) }));
@@ -73,7 +76,13 @@ async function mountPage(url = "/manage/admin_unit/3/events") {
       plugins: [
         router,
         createBootstrap(),
-        createI18n({ legacy: false, locale: "en", messages: { en: {} } }),
+        createI18n({
+          legacy: false,
+          locale: "en",
+          messages: {
+            en: { "Do you want to delete '%(object_title)s'?": "Do you want to delete '{object_title}'?" },
+          },
+        }),
       ],
     },
   });
@@ -88,6 +97,7 @@ describe("ManageEventsPage", () => {
   beforeEach(() => {
     document.body.innerHTML = "";
     success.mockReset();
+    POST.mockReset();
     GET.mockReset().mockImplementation((path: string) =>
       Promise.resolve(path.endsWith("/options") ? { data: options } : listPage()),
     );
@@ -184,6 +194,40 @@ describe("ManageEventsPage", () => {
     const { wrapper } = await mountPage();
 
     expect(wrapper.find(".alert-danger").text()).toBe("Kaputt");
+  });
+
+  it("deletes an event from its row in a modal and searches again", async () => {
+    GET.mockImplementation((path: string) =>
+      Promise.resolve(
+        path.endsWith("/options")
+          ? { data: options }
+          : path.endsWith("/delete-form")
+            ? { data: { id: 11, name: "Jam Session", has_multiple_dates: false } }
+            : listPage(),
+      ),
+    );
+    POST.mockResolvedValue({
+      data: { message: "Event successfully deleted", redirect_url: "/manage/admin_unit/3/events" },
+    });
+    const { wrapper } = await mountPage();
+
+    await wrapper.find(".event-actions button").trigger("click");
+    const remove = [...document.querySelectorAll<HTMLElement>(".dropdown-item")].find(
+      (i) => i.textContent?.trim() === "Delete",
+    );
+    remove?.click();
+    await flushPromises();
+
+    expect(document.body.textContent).toContain("Do you want to delete 'Jam Session'?");
+    document.querySelector<HTMLButtonElement>("#submit")!.click();
+    await flushPromises();
+
+    expect(POST).toHaveBeenCalledWith("/bff/manage/organizations/{id}/events/{event_id}/delete", {
+      params: { path: { id: 3, event_id: 11 } },
+      body: { inline: true },
+    });
+    expect(success).toHaveBeenCalledWith("Event successfully deleted");
+    expect(listCalls()).toHaveLength(2);
   });
 
   it("shows the flash message of a legacy action", async () => {

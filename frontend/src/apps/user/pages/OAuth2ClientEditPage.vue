@@ -6,7 +6,7 @@ import { useRouter } from "vue-router";
 import { api } from "@/shared/api";
 import { setFlash } from "@/shared/flash";
 import OAuth2ClientFormFields from "@/shared/OAuth2ClientFormFields.vue";
-import { errorMessage, mapFieldErrors } from "../apiError";
+import { errorMessage, mapFieldErrors } from "@/shared/apiError";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
 
 // Create (no `id`) and update of an OAuth2 client.

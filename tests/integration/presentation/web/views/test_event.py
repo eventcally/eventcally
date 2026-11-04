@@ -201,9 +201,8 @@ def test_actions_withReferenceLink(seeder: Seeder, utils: UtilActions):
     assert b"Veranstaltung empfehlen" in response.data
 
 
-@pytest.mark.parametrize("db_error", [True, False])
-def test_delete(client, seeder: Seeder, utils: UtilActions, app, mocker, db_error):
-    user_id, admin_unit_id = seeder.setup_base()
+def test_delete_renders_shell(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base()
     event_id = seeder.create_event(admin_unit_id)
 
     url = utils.get_url(
@@ -211,32 +210,40 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, mocker, db_erro
     )
     response = utils.get_ok(url)
 
-    if db_error:
-        utils.mock_db_commit(mocker)
+    assert b'<div id="app"' in response.data
 
-    response = utils.post_form(
-        url,
-        response,
-        {},
+
+def test_delete_is_a_shell_without_post(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    url = utils.get_url(
+        "manage_admin_unit.event_delete", id=admin_unit_id, event_id=event_id
     )
+    utils.get_ok(url)
 
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
+    assert utils.post_form_data(url, data={}).status_code == 405
 
-    utils.assert_response_redirect(
-        response, "manage_admin_unit.events", id=admin_unit_id
+
+def test_delete_unknown_event(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base()
+
+    url = utils.get_url(
+        "manage_admin_unit.event_delete", id=admin_unit_id, event_id=4711
     )
+    utils.assert_response_notFound(utils.get(url))
 
-    with app.app_context():
-        from project.infrastructure.models import Event
 
-        event = (
-            Event.query.filter(Event.admin_unit_id == admin_unit_id)
-            .filter(Event.name == "Name")
-            .first()
-        )
-        assert event is None
+def test_delete_event_of_other_organization(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base()
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Other crew")
+    event_id = seeder.create_event(other_admin_unit_id)
+
+    url = utils.get_url(
+        "manage_admin_unit.event_delete", id=admin_unit_id, event_id=event_id
+    )
+    utils.get_unauthorized(url)
 
 
 def test_report(seeder: Seeder, utils: UtilActions):

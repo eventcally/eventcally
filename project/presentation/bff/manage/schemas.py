@@ -9,6 +9,7 @@ from pydantic import (
     model_validator,
 )
 
+from project.application.queries.page_request import MAX_PER_PAGE
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_reference_request_rejection_reason import (
@@ -927,4 +928,84 @@ class OrganizationVerificationRequestReject(BaseModel):
 
 
 class RequestReviewed(BaseModel):
+    redirect_url: str
+
+
+# Lists, deletes and the event delete confirm (the "merge pages" slices)
+
+
+class ManageNameConfirm(BaseModel):
+    """Typed-name confirmation of a destructive action."""
+
+    name: str = Field(min_length=1)
+
+
+class ManageMessage(BaseModel):
+    """The success text of a write done in a modal (the page stays)."""
+
+    message: str
+
+
+class ManageListPage(BaseModel):
+    page: int
+    per_page: int
+    total: int
+    pages: int
+    can_write: bool
+
+
+class ManageNamedListParams(PageParams):
+    """Paging, search and sort of the organizer / place lists (50 rows like before)."""
+
+    per_page: int = Field(default=50, ge=1, le=MAX_PER_PAGE)
+    # The values of `EventOrganizerSort` / `EventPlaceSort`.
+    sort: Optional[Literal["name", "-last_modified_at", "-number_of_events"]] = None
+    keyword: Optional[str] = Field(default=None, max_length=255)
+
+
+class EventOrganizerListItem(BaseModel):
+    id: int
+    name: str
+    location: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    url: Optional[str] = None
+    has_logo: bool = False
+    number_of_events: int = 0
+    last_modified_at: Optional[datetime] = None
+
+
+class EventOrganizerListPage(ManageListPage):
+    items: List[EventOrganizerListItem]
+
+
+class EventPlaceListItem(BaseModel):
+    id: int
+    name: str
+    location: Optional[str] = None
+    has_coordinates: bool = False
+    has_photo: bool = False
+    number_of_events: int = 0
+    last_modified_at: Optional[datetime] = None
+
+
+class EventPlaceListPage(ManageListPage):
+    items: List[EventPlaceListItem]
+
+
+class EventDeleteForm(BaseModel):
+    """What the event delete confirmation shows."""
+
+    id: int
+    name: str
+    has_multiple_dates: bool
+
+
+class EventDeleteSave(BaseModel):
+    # Deleted from the event list (a modal): no flash.
+    inline: bool = False
+
+
+class EventDeleted(BaseModel):
+    message: str
     redirect_url: str

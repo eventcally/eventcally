@@ -26,14 +26,25 @@ test.describe("Event place", () => {
     await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/event_places`));
   });
 
-  test("deletes", async ({ page, login }) => {
+  test("deletes in a modal of the list", async ({ page, login }) => {
     await login();
     const adminUnitId = createAdminUnit();
-    const eventPlaceId = createEventPlace(adminUnitId);
-    await page.goto(`/manage/admin_unit/${adminUnitId}/event_place/${eventPlaceId}/delete`);
+    createEventPlace(adminUnitId);
+    await page.goto(`/manage/admin_unit/${adminUnitId}/event_places`);
+    await expect(page.getByRole("button", { name: "Mein Platz" })).toBeVisible();
+    await expect(page.locator(".b-overlay")).toHaveCount(0);
+    await screenshot(page, "list");
+
+    await page.getByRole("button", { name: "Mein Platz" }).click();
+    await page.locator(".dropdown-menu.show button.dropdown-item", { hasText: "Löschen" }).click();
+    await page.locator("#name").fill("Falscher Name");
+    await page.locator("#submit").click();
+    await expect(page.locator(".modal [data-test=field-error]")).toBeVisible();
+
     await page.locator("#name").fill("Mein Platz");
     await screenshot(page, "delete");
     await page.locator("#submit").click();
-    await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/event_places`));
+    await expect(page.getByText("Ort erfolgreich gelöscht")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Mein Platz" })).toHaveCount(0);
   });
 });

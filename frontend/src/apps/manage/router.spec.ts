@@ -103,6 +103,26 @@ describe("manage router", () => {
     expect((await resolve("/manage/admin_unit/x/event_place/create")).name).toBe("not-found");
   });
 
+  it("resolves the organizer and place lists and the event delete page", async () => {
+    const organizers = await resolve("/manage/admin_unit/3/event_organizers?keyword=x");
+    expect(organizers.name).toBe("event-organizers");
+    expect(organizers.matched[0].props.default).toBeTypeOf("function");
+    const orgProps = organizers.matched[0].props.default as (r: typeof organizers) => unknown;
+    expect(orgProps(organizers)).toEqual({ organizationId: 3 });
+
+    const places = await resolve("/manage/admin_unit/3/event_places");
+    expect(places.name).toBe("event-places");
+    const placeProps = places.matched[0].props.default as (r: typeof places) => unknown;
+    expect(placeProps(places)).toEqual({ organizationId: 3 });
+
+    const remove = await resolve("/manage/admin_unit/3/event/9/delete");
+    expect(remove.name).toBe("event-delete");
+    const removeProps = remove.matched[0].props.default as (r: typeof remove) => unknown;
+    expect(removeProps(remove)).toEqual({ organizationId: 3, id: 9 });
+    expect((await resolve("/manage/admin_unit/3/event/x/delete")).name).toBe("not-found");
+    expect((await resolve("/manage/admin_unit/x/event_places")).name).toBe("not-found");
+  });
+
   it("does not take other organization paths", async () => {
     expect((await resolve("/manage/admin_unit/x/custom-widgets")).name).toBe("not-found");
     expect((await resolve("/manage/admin_unit/3/custom-widgets/x/update")).name).toBe("not-found");

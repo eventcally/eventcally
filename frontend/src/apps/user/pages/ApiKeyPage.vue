@@ -6,9 +6,9 @@ import { api } from "@/shared/api";
 import AuditLine from "@/shared/AuditLine.vue";
 import { boot } from "@/shared/boot";
 import { formatDate } from "@/shared/format";
-import { errorMessage } from "../apiError";
+import { errorMessage } from "@/shared/apiError";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
-import { useFlashNotice } from "../useFlashNotice";
+import { useFlashNotice } from "@/shared/useFlashNotice";
 
 type UserApiKeyDetail = components["schemas"]["UserApiKeyDetail"];
 

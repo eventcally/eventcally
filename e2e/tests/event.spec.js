@@ -149,14 +149,30 @@ test.describe("Event", () => {
     await screenshot(page, "report-submitted");
   });
 
-  test("deletes", async ({ page, login }) => {
+  test("deletes on its page", async ({ page, login }) => {
     await login();
     const adminUnitId = createAdminUnit();
     const eventId = createEvent(adminUnitId);
 
     await page.goto(`/manage/admin_unit/${adminUnitId}/event/${eventId}/delete`);
+    await expect(page.locator("#submit")).toBeVisible();
     await screenshot(page, "delete");
     await page.locator("#submit").click();
     await expect(page).toHaveURL(new RegExp(`/manage/admin_unit/${adminUnitId}/events`));
+    await shouldContain(page.locator("div.alert"), "Veranstaltung erfolgreich gelöscht");
+  });
+
+  test("deletes in a modal of the list", async ({ page, login }) => {
+    await login();
+    const adminUnitId = createAdminUnit();
+    createEvent(adminUnitId);
+
+    await page.goto(`/manage/admin_unit/${adminUnitId}/events`);
+    await page.getByRole("button", { name: "Name" }).first().click();
+    await page.locator(".dropdown-menu.show button.dropdown-item", { hasText: "Löschen" }).click();
+    await screenshot(page, "delete-modal");
+    await page.locator(".modal #submit").click();
+    await expect(page.getByText("Veranstaltung erfolgreich gelöscht")).toBeVisible();
+    await expect(page.getByText("Keine Veranstaltungen gefunden")).toBeVisible();
   });
 });

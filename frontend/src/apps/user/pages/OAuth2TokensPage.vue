@@ -8,8 +8,8 @@ import AppPager from "@/shared/AppPager.vue";
 import { boot } from "@/shared/boot";
 import { formatDateTime } from "@/shared/format";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
-import { useFlashNotice } from "../useFlashNotice";
-import { usePagedList } from "../usePagedList";
+import { useFlashNotice } from "@/shared/useFlashNotice";
+import { usePagedList } from "@/shared/usePagedList";
 
 type UserOAuth2TokenPage = components["schemas"]["UserOAuth2TokenPage"];
 

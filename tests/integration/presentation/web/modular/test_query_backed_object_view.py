@@ -21,7 +21,6 @@ from project.application.read_models.event_organizer_read_models import (
     EventOrganizerEditReadModel,
 )
 from project.presentation.web.views.manage_admin_unit.event_organizer.view_handler import (
-    ViewHandler,
     handler,
 )
 
@@ -85,36 +84,20 @@ def test_update_renders_read_model_from_query_bus(seeder, utils, fake_object):
     assert [query.id for query in fake.queries] == [4711]
 
 
-@pytest.mark.parametrize("endpoint", ["update", "delete"])
-def test_missing_object_is_not_found(seeder, utils, fake_object, endpoint):
+def test_missing_object_is_not_found(seeder, utils, fake_object):
     _, admin_unit_id = seeder.setup_base()
     fake_object(None)
 
-    utils.assert_response_notFound(utils.get(_url(utils, endpoint, admin_unit_id)))
+    utils.assert_response_notFound(utils.get(_url(utils, "update", admin_unit_id)))
 
 
-@pytest.mark.parametrize("endpoint", ["update", "delete"])
-def test_object_of_other_organization_is_unauthorized(
-    seeder, utils, fake_object, endpoint
-):
+def test_object_of_other_organization_is_unauthorized(seeder, utils, fake_object):
     _, admin_unit_id = seeder.setup_base()
     fake_object(
         EventOrganizerEditReadModel(id=4711, admin_unit_id=admin_unit_id + 1, name="X")
     )
 
-    utils.get_unauthorized(_url(utils, endpoint, admin_unit_id))
-
-
-def test_delete_instruction_uses_object_title(seeder, utils, fake_object, mocker):
-    _, admin_unit_id = seeder.setup_base()
-    fake_object(
-        EventOrganizerEditReadModel(id=4711, admin_unit_id=admin_unit_id, name="X")
-    )
-    mocker.patch.object(ViewHandler, "get_object_title", return_value="Title marker")
-
-    response = utils.get_ok(_url(utils, "delete", admin_unit_id))
-
-    utils.assert_response_contains(response, "Title marker")
+    utils.get_unauthorized(_url(utils, "update", admin_unit_id))
 
 
 def test_handler_without_model_keeps_names_and_permissions(app):
@@ -124,7 +107,6 @@ def test_handler_without_model_keeps_names_and_permissions(app):
     assert handler.endpoints == {
         "create": "event_organizer_create",
         "update": "event_organizer_update",
-        "delete": "event_organizer_delete",
         "list": "event_organizers",
     }
 

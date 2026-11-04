@@ -5,9 +5,9 @@ import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AuditLine from "@/shared/AuditLine.vue";
 import OAuth2ClientDetails from "@/shared/OAuth2ClientDetails.vue";
-import { errorMessage } from "../apiError";
+import { errorMessage } from "@/shared/apiError";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
-import { useFlashNotice } from "../useFlashNotice";
+import { useFlashNotice } from "@/shared/useFlashNotice";
 
 type UserOAuth2ClientDetail = components["schemas"]["UserOAuth2ClientDetail"];
 

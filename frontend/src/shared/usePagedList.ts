@@ -1,6 +1,6 @@
 import { computed, ref, watch, type Ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { errorMessage } from "./apiError";
+import { errorMessage } from "@/shared/apiError";
 
 interface PagedAnswer<T> {
   data?: T;
