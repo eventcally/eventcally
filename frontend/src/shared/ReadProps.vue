@@ -18,7 +18,7 @@ const visible = () => props.rows.filter((row) => !(row.hideWhenEmpty && empty(ro
 <template>
   <dl class="row">
     <template v-for="row in visible()" :key="row.label">
-      <dt class="col-sm-3">{{ row.label }}</dt>
+      <dt class="col-sm-3 fw-bold">{{ row.label }}</dt>
       <dd class="col-sm-9">
         <ul v-if="row.list?.length" class="list-unstyled mb-0">
           <li v-for="entry in row.list" :key="entry">{{ entry }}</li>

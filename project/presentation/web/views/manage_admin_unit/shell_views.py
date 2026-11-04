@@ -35,6 +35,8 @@ class ShellViewMixin:
         if response:  # pragma: no cover
             return response
 
+        title_kwargs = {}
+
         # The create views have no object (they are object views by inheritance only).
         if isinstance(self, (BaseReadView, BaseObjectFormView)):
             object = self.get_object_from_kwargs(**kwargs)
@@ -43,10 +45,16 @@ class ShellViewMixin:
             if response:  # pragma: no cover
                 return response
 
-        return render_manage_shell(self.get_title())
+            title_kwargs["object"] = object
+
+        return render_manage_shell(self.get_title(**title_kwargs))
 
 
 class ListShellView(ShellViewMixin, BaseListView):
+    pass
+
+
+class ReadShellView(ShellViewMixin, BaseReadView):
     pass
 
 

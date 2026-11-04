@@ -1009,3 +1009,107 @@ class EventDeleteSave(BaseModel):
 class EventDeleted(BaseModel):
     message: str
     redirect_url: str
+
+
+class ManagePagedListParams(PageParams):
+    """Paging of the reference lists (50 rows like before)."""
+
+    per_page: int = Field(default=50, ge=1, le=MAX_PER_PAGE)
+
+
+class ManageAudit(BaseModel):
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    created_by_label: Optional[str] = None
+    updated_by_label: Optional[str] = None
+
+
+class ManageDeleteSave(BaseModel):
+    # Deleted from a list (a modal): no flash.
+    inline: bool = False
+
+
+class ManageDeleted(BaseModel):
+    message: str
+    redirect_url: str
+
+
+class ManageIntChoice(BaseModel):
+    value: int
+    label: str
+
+
+class EventReferenceListItem(BaseModel):
+    id: int
+    event_id: int
+    event_name: str
+    organization_id: int
+    organization_name: str
+    rating: Optional[int] = None
+    created_at: Optional[datetime] = None
+
+
+class IncomingEventReferenceListPage(ManageListPage):
+    items: List[EventReferenceListItem]
+    rating_choices: List[ManageIntChoice]
+
+
+class OutgoingEventReferenceListPage(ManageListPage):
+    items: List[EventReferenceListItem]
+
+
+class IncomingEventReferenceRead(BaseModel):
+    id: int
+    event_id: int
+    event_name: str
+    rating: Optional[int] = None
+    rating_text: Optional[str] = None
+    rating_choices: List[ManageIntChoice]
+    audit: Optional[ManageAudit] = None
+    can_write: bool
+
+
+class IncomingEventReferenceRating(BaseModel):
+    rating: int
+
+    @field_validator("rating")
+    @classmethod
+    def _known_rating(cls, value: int) -> int:
+        if value not in [choice for choice, _ in event_rating_choices]:
+            raise ValueError("Unknown rating")
+
+        return value
+
+
+class EventReferenceRequestListParams(ManagePagedListParams):
+    # `EventReferenceRequestReviewStatus` value; -1 (the old "All") and empty: no filter.
+    review_status: Optional[int] = None
+
+
+class EventReferenceRequestListItem(BaseModel):
+    id: int
+    event_id: int
+    event_name: str
+    organization_id: int
+    organization_name: str
+    review_status: int
+    review_status_label: str
+    created_at: Optional[datetime] = None
+    can_review: bool = False
+
+
+class EventReferenceRequestListPage(ManageListPage):
+    items: List[EventReferenceRequestListItem]
+    review_status_choices: List[ManageIntChoice]
+
+
+class OutgoingEventReferenceRequestRead(BaseModel):
+    id: int
+    event_id: int
+    event_name: str
+    review_status: int
+    review_status_label: str
+    rejection_reason_label: Optional[str] = None
+    organization_id: int
+    organization_name: str
+    audit: Optional[ManageAudit] = None

@@ -15,7 +15,9 @@ def test_read(seeder, utils):
         id=admin_unit_id,
         event_reference_id=reference_id,
     )
-    utils.get_ok(url)
+    # A shell: the Vue page reads through the BFF.
+    response = utils.get_ok(url)
+    assert b'id="app"' in response.data
 
 
 @pytest.mark.parametrize("db_error", [True, False])
@@ -98,91 +100,45 @@ def test_create_401_without_other_organization_to_reference_from(
     assert response.status_code == 401
 
 
-@pytest.mark.parametrize("db_error", [True, False])
-def test_update(client, seeder, utils, app, db, mocker, db_error):
+def test_read_of_another_organization_is_401(seeder, utils):
     user_id, admin_unit_id = seeder.setup_base()
-    (
-        other_user_id,
-        other_admin_unit_id,
-        event_id,
-        reference_id,
-    ) = seeder.create_any_reference(admin_unit_id)
+    _, _, _, reference_id = seeder.create_any_reference(admin_unit_id)
+    second_admin_unit_id = seeder.create_admin_unit(user_id, "Zweite Crew")
 
-    url = utils.get_url(
-        "manage_admin_unit.incoming_event_reference_update",
-        id=admin_unit_id,
-        event_reference_id=reference_id,
-    )
-    response = utils.get_ok(url)
-
-    if db_error:
-        utils.mock_db_commit(mocker)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "rating": 70,
-        },
+    utils.get_unauthorized(
+        utils.get_url(
+            "manage_admin_unit.incoming_event_reference",
+            id=second_admin_unit_id,
+            event_reference_id=reference_id,
+        )
     )
 
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
 
-    utils.assert_response_redirect(
-        response,
-        "manage_admin_unit.incoming_event_reference",
-        id=admin_unit_id,
-        event_reference_id=reference_id,
+def test_read_unknown_is_404(seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+
+    response = utils.get(
+        utils.get_url(
+            "manage_admin_unit.incoming_event_reference",
+            id=admin_unit_id,
+            event_reference_id=4711,
+        )
     )
 
-    with app.app_context():
-        from project.infrastructure.models import EventReference
-
-        reference = db.session.get(EventReference, reference_id)
-        assert reference.rating == 70
+    utils.assert_response_notFound(response)
 
 
-@pytest.mark.parametrize("db_error", [True, False])
-def test_delete(client, seeder, utils, app, db, mocker, db_error):
-    user_id, admin_unit_id = seeder.setup_base()
-    (
-        other_user_id,
-        other_admin_unit_id,
-        event_id,
-        reference_id,
-    ) = seeder.create_any_reference(admin_unit_id)
+@pytest.mark.parametrize("action", ["update", "delete"])
+def test_update_and_delete_pages_are_gone(seeder, utils, action):
+    # The rating edit and the delete are modals of the Vue pages.
+    _, admin_unit_id = seeder.setup_base()
+    _, _, _, reference_id = seeder.create_any_reference(admin_unit_id)
 
-    url = utils.get_url(
-        "manage_admin_unit.incoming_event_reference_delete",
-        id=admin_unit_id,
-        event_reference_id=reference_id,
-    )
-    response = utils.get_ok(url)
-
-    if db_error:
-        utils.mock_db_commit(mocker)
-
-    response = utils.post_form(
-        url,
-        response,
-        {},
+    response = utils.get(
+        f"/manage/admin_unit/{admin_unit_id}/incoming_event_reference/{reference_id}/{action}"
     )
 
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
-
-    utils.assert_response_redirect(
-        response, "manage_admin_unit.incoming_event_references", id=admin_unit_id
-    )
-
-    with app.app_context():
-        from project.infrastructure.models import EventReference
-
-        reference = db.session.get(EventReference, reference_id)
-        assert reference is None
+    utils.assert_response_notFound(response)
 
 
 def test_admin_unit_references_incoming(client, seeder, utils):

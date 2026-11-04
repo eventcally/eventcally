@@ -167,4 +167,32 @@ describe("manage router", () => {
       (await resolve("/manage/admin_unit/3/outgoing_organization_relation/x/update")).name,
     ).toBe("not-found");
   });
+
+  it("resolves the reference and reference request pages", async () => {
+    const lists = [
+      ["incoming_event_references", "incoming-event-references"],
+      ["outgoing_event_references", "outgoing-event-references"],
+      ["incoming_event_reference_requests", "incoming-event-reference-requests"],
+      ["outgoing_event_reference_requests", "outgoing-event-reference-requests"],
+    ];
+    for (const [path, name] of lists) {
+      const route = await resolve(`/manage/admin_unit/3/${path}`);
+      expect(route.name).toBe(name);
+      const props = route.matched[0].props.default as (r: typeof route) => unknown;
+      expect(props(route)).toEqual({ organizationId: 3 });
+      expect((await resolve(`/manage/admin_unit/x/${path}`)).name).toBe("not-found");
+    }
+
+    const reads = [
+      ["incoming_event_reference", "incoming-event-reference"],
+      ["outgoing_event_reference_request", "outgoing-event-reference-request"],
+    ];
+    for (const [path, name] of reads) {
+      const route = await resolve(`/manage/admin_unit/3/${path}/7`);
+      expect(route.name).toBe(name);
+      const props = route.matched[0].props.default as (r: typeof route) => unknown;
+      expect(props(route)).toEqual({ organizationId: 3, id: 7 });
+      expect((await resolve(`/manage/admin_unit/3/${path}/x`)).name).toBe("not-found");
+    }
+  });
 });

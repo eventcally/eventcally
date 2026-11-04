@@ -816,6 +816,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/incoming-event-reference-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the reference requests to an organization */
+        get: operations["bff_manage_list_incoming_event_reference_requests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/incoming-event-reference-requests/{request_id}/reject": {
         parameters: {
             query?: never;
@@ -867,6 +884,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/incoming-event-references": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the references other organizations' events got from this organization */
+        get: operations["bff_manage_list_incoming_event_references"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/incoming-event-references/{reference_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get an incoming event reference */
+        get: operations["bff_manage_get_incoming_event_reference"];
+        /** Update the rating of an incoming event reference */
+        put: operations["bff_manage_update_incoming_event_reference"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/incoming-event-references/{reference_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete an incoming event reference */
+        post: operations["bff_manage_delete_incoming_event_reference"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/incoming-verification-requests/{request_id}/approve": {
         parameters: {
             query?: never;
@@ -910,6 +979,57 @@ export interface paths {
         };
         /** Get an incoming verification request to review */
         get: operations["bff_manage_get_incoming_verification_request_review"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/outgoing-event-reference-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the reference requests of an organization's events */
+        get: operations["bff_manage_list_outgoing_event_reference_requests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/outgoing-event-reference-requests/{request_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get an outgoing event reference request */
+        get: operations["bff_manage_get_outgoing_event_reference_request"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/outgoing-event-references": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the references of this organization's events */
+        get: operations["bff_manage_list_outgoing_event_references"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2895,6 +3015,29 @@ export interface components {
             /** Id */
             id: number;
         };
+        /** EventReferenceListItem */
+        EventReferenceListItem: {
+            /**
+             * Created At
+             * @default null
+             */
+            created_at: string | null;
+            /** Event Id */
+            event_id: number;
+            /** Event Name */
+            event_name: string;
+            /** Id */
+            id: number;
+            /** Organization Id */
+            organization_id: number;
+            /** Organization Name */
+            organization_name: string;
+            /**
+             * Rating
+             * @default null
+             */
+            rating: number | null;
+        };
         /** EventReferenceRequestCreate */
         EventReferenceRequestCreate: {
             /**
@@ -2908,6 +3051,50 @@ export interface components {
             event: components["schemas"]["ManageRef"];
             /** List Url */
             list_url: string;
+        };
+        /** EventReferenceRequestListItem */
+        EventReferenceRequestListItem: {
+            /**
+             * Can Review
+             * @default false
+             */
+            can_review: boolean;
+            /**
+             * Created At
+             * @default null
+             */
+            created_at: string | null;
+            /** Event Id */
+            event_id: number;
+            /** Event Name */
+            event_name: string;
+            /** Id */
+            id: number;
+            /** Organization Id */
+            organization_id: number;
+            /** Organization Name */
+            organization_name: string;
+            /** Review Status */
+            review_status: number;
+            /** Review Status Label */
+            review_status_label: string;
+        };
+        /** EventReferenceRequestListPage */
+        EventReferenceRequestListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["EventReferenceRequestListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Review Status Choices */
+            review_status_choices: components["schemas"]["ManageIntChoice"][];
+            /** Total */
+            total: number;
         };
         /** EventReferenceRequestReject */
         EventReferenceRequestReject: {
@@ -3159,6 +3346,76 @@ export interface components {
             /** Msg */
             msg: string;
         };
+        /** IncomingEventReferenceListPage */
+        IncomingEventReferenceListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["EventReferenceListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Rating Choices */
+            rating_choices: components["schemas"]["ManageIntChoice"][];
+            /** Total */
+            total: number;
+        };
+        /** IncomingEventReferenceRating */
+        IncomingEventReferenceRating: {
+            /** Rating */
+            rating: number;
+        };
+        /** IncomingEventReferenceRead */
+        IncomingEventReferenceRead: {
+            /** @default null */
+            audit: components["schemas"]["ManageAudit"] | null;
+            /** Can Write */
+            can_write: boolean;
+            /** Event Id */
+            event_id: number;
+            /** Event Name */
+            event_name: string;
+            /** Id */
+            id: number;
+            /**
+             * Rating
+             * @default null
+             */
+            rating: number | null;
+            /** Rating Choices */
+            rating_choices: components["schemas"]["ManageIntChoice"][];
+            /**
+             * Rating Text
+             * @default null
+             */
+            rating_text: string | null;
+        };
+        /** ManageAudit */
+        ManageAudit: {
+            /**
+             * Created At
+             * @default null
+             */
+            created_at: string | null;
+            /**
+             * Created By Label
+             * @default null
+             */
+            created_by_label: string | null;
+            /**
+             * Updated At
+             * @default null
+             */
+            updated_at: string | null;
+            /**
+             * Updated By Label
+             * @default null
+             */
+            updated_by_label: string | null;
+        };
         /** ManageChoice */
         ManageChoice: {
             /** Label */
@@ -3167,6 +3424,21 @@ export interface components {
             name: string;
             /** Value */
             value: number;
+        };
+        /** ManageDeleteSave */
+        ManageDeleteSave: {
+            /**
+             * Inline
+             * @default false
+             */
+            inline: boolean;
+        };
+        /** ManageDeleted */
+        ManageDeleted: {
+            /** Message */
+            message: string;
+            /** Redirect Url */
+            redirect_url: string;
         };
         /** ManageEventListItem */
         ManageEventListItem: {
@@ -3274,6 +3546,13 @@ export interface components {
             per_page: number;
             /** Total */
             total: number;
+        };
+        /** ManageIntChoice */
+        ManageIntChoice: {
+            /** Label */
+            label: string;
+            /** Value */
+            value: number;
         };
         /**
          * ManageMessage
@@ -3721,6 +4000,45 @@ export interface components {
             rejection_reasons: components["schemas"]["ReviewChoice"][];
             /** Review Status */
             review_status: string;
+        };
+        /** OutgoingEventReferenceListPage */
+        OutgoingEventReferenceListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["EventReferenceListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** OutgoingEventReferenceRequestRead */
+        OutgoingEventReferenceRequestRead: {
+            /** @default null */
+            audit: components["schemas"]["ManageAudit"] | null;
+            /** Event Id */
+            event_id: number;
+            /** Event Name */
+            event_name: string;
+            /** Id */
+            id: number;
+            /** Organization Id */
+            organization_id: number;
+            /** Organization Name */
+            organization_name: string;
+            /**
+             * Rejection Reason Label
+             * @default null
+             */
+            rejection_reason_label: string | null;
+            /** Review Status */
+            review_status: number;
+            /** Review Status Label */
+            review_status_label: string;
         };
         /** PlaceAddress */
         PlaceAddress: {
@@ -8789,6 +9107,68 @@ export interface operations {
             };
         };
     };
+    bff_manage_list_incoming_event_reference_requests: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+                review_status?: number | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventReferenceRequestListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_reject_incoming_event_reference_request: {
         parameters: {
             query?: never;
@@ -8943,6 +9323,270 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RequestReviewed"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_incoming_event_references: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncomingEventReferenceListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_incoming_event_reference: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                reference_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncomingEventReferenceRead"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_update_incoming_event_reference: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                reference_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IncomingEventReferenceRating"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageMessage"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_delete_incoming_event_reference: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                reference_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManageDeleteSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageDeleted"];
                 };
             };
             /** @description Bad Request */
@@ -9155,6 +9799,188 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrganizationVerificationRequestReview"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_outgoing_event_reference_requests: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+                review_status?: number | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventReferenceRequestListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_outgoing_event_reference_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                request_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutgoingEventReferenceRequestRead"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_outgoing_event_references: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutgoingEventReferenceListPage"];
                 };
             };
             /** @description Unauthorized */

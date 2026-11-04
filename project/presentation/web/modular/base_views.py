@@ -397,9 +397,6 @@ class BaseDeleteView(BaseObjectFormView):
         if not form:  # pragma: no cover
             return True
 
-        if not hasattr(form, "confirmation_field_name"):
-            return True
-
         confirmation_field_name = getattr(form, "confirmation_field_name")
         confirmation_field = form.get_field_by_name(confirmation_field_name)
         if not confirmation_field:  # pragma: no cover

@@ -20,6 +20,13 @@ export const testRoutes = [
   { path: `${base}/events`, name: "manage-events", component: Blank },
   { path: `${base}/event/:id/update`, name: "event-update", component: Blank },
   { path: `${base}/event/:id/delete`, name: "event-delete", component: Blank },
+  { path: `${base}/incoming_event_references`, name: "incoming-event-references", component: Blank },
+  { path: `${base}/incoming_event_reference/:id`, name: "incoming-event-reference", component: Blank },
+  { path: `${base}/outgoing_event_references`, name: "outgoing-event-references", component: Blank },
+  { path: `${base}/incoming_event_reference_requests`, name: "incoming-event-reference-requests", component: Blank },
+  { path: `${base}/outgoing_event_reference_requests`, name: "outgoing-event-reference-requests", component: Blank },
+  { path: `${base}/outgoing_event_reference_request/:id`, name: "outgoing-event-reference-request", component: Blank },
+  { path: `${base}/incoming_event_reference_request/:id/review`, name: "event-reference-request-review", component: Blank },
 ];
 
 const mounted: { unmount: () => void }[] = [];
