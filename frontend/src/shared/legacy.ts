@@ -17,6 +17,7 @@ export const publicPages = {
   contact: "/contact",
   privacy: "/privacy",
   organization: (id: number) => `/organizations/${id}`,
+  eventDatesSearch: "/eventdates",
   organizationEventDates: (id: number) => `/eventdates?admin_unit_id=${id}`,
   event: (id: number) => `/event/${id}`,
   organizer: (id: number) => `/organizers/${id}`,
@@ -45,10 +46,6 @@ export const manage = {
     `/manage/admin_unit/${organizationId}/outgoing_event_reference_request/create_for_event/${eventId}`,
   outgoingOrganizationRelations: (organizationId: number) =>
     `/manage/admin_unit/${organizationId}/outgoing_organization_relations`,
-  outgoingEventReferenceRequests: (organizationId: number) =>
-    `/manage/admin_unit/${organizationId}/outgoing_event_reference_requests`,
-  incomingEventReferenceRequests: (organizationId: number) =>
-    `/manage/admin_unit/${organizationId}/incoming_event_reference_requests`,
   incomingVerificationRequests: (organizationId: number) =>
     `/manage/admin_unit/${organizationId}/incoming_organization_verification_requests`,
   customWidgets: (organizationId: number) => `/manage/admin_unit/${organizationId}/custom-widgets`,

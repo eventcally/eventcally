@@ -1,14 +1,8 @@
-from flask import url_for
-from flask_babel import gettext, lazy_gettext
+from flask_babel import lazy_gettext
 
-from project.application.queries import ListOutgoingEventReferencesQuery
-from project.presentation.shared.current_admin_unit import current_admin_unit
 from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
 from project.presentation.web.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
-)
-from project.presentation.web.views.manage_admin_unit.outgoing_event_reference.displays import (
-    ListDisplay,
 )
 from project.presentation.web.views.manage_admin_unit.outgoing_event_reference.views import (
     ListView,
@@ -16,6 +10,8 @@ from project.presentation.web.views.manage_admin_unit.outgoing_event_reference.v
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
+    """A shell: the list is a Vue page (`/bff/manage`)."""
+
     model_name = "event_reference"
     model_name_plural = "event_references"
     display_name = "Event reference"
@@ -24,35 +20,11 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     read_view_class = None
     update_view_class = None
     delete_view_class = None
-    list_display_class = ListDisplay
     list_view_class = ListView
     generic_prefix = "outgoing_"
 
     def get_model_display_name_plural(self):
         return lazy_gettext("Outgoing references")
-
-    def create_list_query(self, form, page_request, **kwargs):
-        return ListOutgoingEventReferencesQuery(
-            admin_unit_id=current_admin_unit.id, page=page_request
-        )
-
-    def get_list_per_page(self):
-        return 50
-
-    def get_additional_list_actions(self, object):
-        result = super().get_additional_list_actions(object)
-
-        view_event_action = self._create_action(
-            url_for(
-                "main.event",
-                event_id=object.event.id,
-            ),
-            gettext("View event"),
-        )
-        if view_event_action:
-            result.append(view_event_action)
-
-        return result
 
 
 handler = ViewHandler()

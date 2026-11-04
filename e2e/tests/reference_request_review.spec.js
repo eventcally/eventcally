@@ -22,7 +22,7 @@ test.describe("Reference request review", () => {
     await page.locator("[data-test=reject-confirm]").click();
     await expect(page).toHaveURL(new RegExp(listUrl));
     await shouldContain(page.locator("div.alert"), "Empfehlungsanfrage erfolgreich aktualisiert");
-    await shouldContain(page.locator("main .badge-pill"), "Abgelehnt");
+    await shouldContain(page.locator("main .badge"), "Abgelehnt");
 
     // Accept
     await page.goto(reviewUrl);

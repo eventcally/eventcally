@@ -1,30 +1,15 @@
 from flask_babel import lazy_gettext
 
-from project.application.queries import (
-    GetOutgoingEventReferenceRequestQuery,
-    ListOutgoingEventReferenceRequestsQuery,
-)
-from project.domain.models.enums.event_reference_request_review_status import (
-    EventReferenceRequestReviewStatus,
-)
+from project.application.queries import GetOutgoingEventReferenceRequestQuery
 from project.presentation.shared.access import admin_unit_owner_access_or_401
-from project.presentation.shared.current_admin_unit import current_admin_unit
-from project.presentation.web.modular.filters import (
-    KeyEnumFilter,
-    enum_filter_value_or_none,
-)
-from project.presentation.web.modular.sort_definition import KeySortDefinition
 from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
 from project.presentation.web.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
-from project.presentation.web.views.manage_admin_unit.outgoing_event_reference_request.displays import (
-    ListDisplay,
-    ReadDisplay,
-)
 from project.presentation.web.views.manage_admin_unit.outgoing_event_reference_request.views import (
     CreateView,
     ListView,
+    ReadView,
 )
 
 
@@ -35,21 +20,10 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     display_name = "Event reference request"
     display_name_plural = "Event reference requests"
     create_view_class = None
-    read_display_class = ReadDisplay
+    read_view_class = ReadView
     update_view_class = None
     delete_view_class = None
-    list_display_class = ListDisplay
     list_view_class = ListView
-    list_filters = [
-        KeyEnumFilter(
-            "review_status",
-            EventReferenceRequestReviewStatus,
-            label=lazy_gettext("Review status"),
-        ),
-    ]
-    list_sort_definitions = [
-        KeySortDefinition("-created_at", label=lazy_gettext("Last created first")),
-    ]
     generic_prefix = "outgoing_"
 
     def check_object_access(self, object):
@@ -58,24 +32,12 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     def get_model_display_name_plural(self):
         return lazy_gettext("Outgoing reference requests")
 
-    def create_list_query(self, form, page_request, **kwargs):
-        return ListOutgoingEventReferenceRequestsQuery(
-            admin_unit_id=current_admin_unit.id,
-            review_status=enum_filter_value_or_none(
-                EventReferenceRequestReviewStatus, form.review_status.data
-            ),
-            page=page_request,
-        )
-
     def create_get_query(self, object_id):
         return GetOutgoingEventReferenceRequestQuery(id=object_id)
 
     def get_object_title(self, object):
         # Parity with the ORM `CustomModel.__str__`.
         return f"{self.get_model_display_name()} {object.id}"
-
-    def get_list_per_page(self):
-        return 50
 
     def _add_views(
         self,

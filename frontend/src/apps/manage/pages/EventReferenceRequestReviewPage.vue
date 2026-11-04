@@ -5,7 +5,6 @@ import { useI18n } from "vue-i18n";
 import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
-import { manage } from "@/shared/legacy";
 import ReviewDecisionBar from "../components/ReviewDecisionBar.vue";
 import ReviewEventCards from "../components/ReviewEventCards.vue";
 
@@ -81,7 +80,7 @@ onMounted(load);
   <div>
     <AppBreadcrumb
       :items="[
-        { label: t('Incoming reference requests'), href: manage.incomingEventReferenceRequests(organizationId) },
+        { label: t('Incoming reference requests'), to: { name: 'incoming-event-reference-requests', params: { organizationId } } },
         { label: title },
       ]"
     />

@@ -85,6 +85,48 @@ export const routes: RouteRecordRaw[] = [
     }),
   },
   {
+    path: "/manage/admin_unit/:organizationId(\\d+)/incoming_event_references",
+    name: "incoming-event-references",
+    component: () => import("./pages/IncomingEventReferencesPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/incoming_event_reference/:id(\\d+)",
+    name: "incoming-event-reference",
+    component: () => import("./pages/IncomingEventReferencePage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/outgoing_event_references",
+    name: "outgoing-event-references",
+    component: () => import("./pages/OutgoingEventReferencesPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/incoming_event_reference_requests",
+    name: "incoming-event-reference-requests",
+    component: () => import("./pages/IncomingEventReferenceRequestsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/outgoing_event_reference_requests",
+    name: "outgoing-event-reference-requests",
+    component: () => import("./pages/OutgoingEventReferenceRequestsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/outgoing_event_reference_request/:id(\\d+)",
+    name: "outgoing-event-reference-request",
+    component: () => import("./pages/OutgoingEventReferenceRequestPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
     path: "/manage/admin_unit/:organizationId(\\d+)/update",
     name: "organization-settings",
     component: OrganizationSettingsPage,

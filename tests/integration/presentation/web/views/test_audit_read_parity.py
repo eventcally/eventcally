@@ -95,23 +95,7 @@ def _pages(app, db, seeder, utils):
         app_installation_id=installation_id,
     )
 
-    event_id = seeder.create_event(other_admin_unit_id)
-    reference_id = seeder.create_reference(event_id, admin_unit_id)
-    _stamp(app, db, "eventreference", reference_id, user_id)
-    pages["incoming_reference_read"] = utils.get_url(
-        "manage_admin_unit.incoming_event_reference",
-        id=admin_unit_id,
-        event_reference_id=reference_id,
-    )
-
-    own_event_id = seeder.create_event(admin_unit_id)
-    request_id = seeder.create_reference_request(own_event_id, other_admin_unit_id)
-    _stamp(app, db, "eventreferencerequest", request_id, user_id)
-    pages["outgoing_reference_request_read"] = utils.get_url(
-        "manage_admin_unit.outgoing_event_reference_request",
-        id=admin_unit_id,
-        event_reference_request_id=request_id,
-    )
+    # The reference pages are Vue pages: their audit comes from the BFF.
 
     return pages
 

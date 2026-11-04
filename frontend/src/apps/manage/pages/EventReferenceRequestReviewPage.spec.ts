@@ -12,6 +12,10 @@ vi.mock("@/shared/api", () => ({
 }));
 
 import EventReferenceRequestReviewPage from "./EventReferenceRequestReviewPage.vue";
+import { createMemoryHistory, createRouter } from "vue-router";
+import { testRoutes } from "../testing";
+
+const newRouter = () => createRouter({ history: createMemoryHistory(), routes: testRoutes });
 
 const assign = vi.fn();
 const BASE = "/bff/manage/organizations/{id}/incoming-event-reference-requests/{request_id}";
@@ -57,6 +61,7 @@ async function mountPage() {
     global: {
       plugins: [
         createBootstrap(),
+        newRouter(),
         createI18n({
           legacy: false,
           locale: "en",

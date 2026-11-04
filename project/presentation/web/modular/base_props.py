@@ -32,11 +32,6 @@ class StringPropFormatter(BasePropFormatter):
         return data if data is not None else ""
 
 
-class EventPropFormatter(BasePropFormatter):
-    def format(self, data):
-        return data.name
-
-
 class EnumPropFormatter(BasePropFormatter):
     enum_name = None
 
@@ -151,12 +146,6 @@ class StringProp(BaseProp):
 
 class IntProp(StringProp):
     pass
-
-
-class EventProp(BaseProp):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("formatter", EventPropFormatter())
-        super().__init__(*args, **kwargs)
 
 
 class EnumProp(BaseProp):

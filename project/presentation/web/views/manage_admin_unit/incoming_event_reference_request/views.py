@@ -5,7 +5,8 @@ from project.domain.models.enums.event_reference_request_review_status import (
     EventReferenceRequestReviewStatus,
 )
 from project.presentation.web.boot import build_boot_data
-from project.presentation.web.modular.base_views import BaseListView, BaseUpdateView
+from project.presentation.web.modular.base_views import BaseUpdateView
+from project.presentation.web.views.manage_admin_unit.shell_views import ListShellView
 from project.presentation.web.views.utils import flash_message
 
 
@@ -18,11 +19,8 @@ def _render_shell(title):
     )
 
 
-class ListView(BaseListView):
-    def get_instruction(self, **kwargs):
-        return lazy_gettext(
-            "Here you will find requests from other organizations asking you to recommend one of their events.",
-        )
+class ListView(ListShellView):
+    """A shell: the Vue page lists through `/bff/manage`."""
 
 
 class ReviewView(BaseUpdateView):

@@ -7,7 +7,6 @@ import { api } from "@/shared/api";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
 import AppTypeahead from "@/shared/AppTypeahead.vue";
 import { toFieldErrors } from "@/shared/fieldErrors";
-import { manage } from "@/shared/legacy";
 
 type RequestForm = components["schemas"]["EventReferenceRequestForm"];
 type Ref = { id: number; name: string };
@@ -114,7 +113,7 @@ onMounted(load);
       :items="[
         {
           label: t('Outgoing reference requests'),
-          href: manage.outgoingEventReferenceRequests(organizationId),
+          to: { name: 'outgoing-event-reference-requests', params: { organizationId } },
         },
         { label: title },
       ]"
