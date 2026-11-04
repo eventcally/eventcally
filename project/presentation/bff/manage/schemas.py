@@ -1344,3 +1344,87 @@ class WidgetSettingsSave(BaseModel):
 
 class OrganizationDeletionAnswer(BaseModel):
     redirect_url: str
+
+
+# Organization API keys and OAuth2 clients
+
+
+class ApiKeyListParams(PageParams):
+    # The values of `ApiKeySort` (a plain literal keeps the OpenAPI parameter inline).
+    sort: Optional[Literal["name", "-created_at"]] = None
+
+
+class ApiKeyListItem(BaseModel):
+    id: int
+    name: str
+    created_at: Optional[datetime] = None
+
+
+class ApiKeyListPage(ManageListPage):
+    items: List[ApiKeyListItem]
+
+
+class ApiKeySave(BaseModel):
+    name: str = Field(min_length=1)
+
+
+class ApiKeyCreated(BaseModel):
+    id: int
+    # Only part of this answer, the read page never shows it again.
+    key: str
+
+
+class ApiKeyRead(BaseModel):
+    id: int
+    name: str
+    created_at: Optional[datetime] = None
+    rate_limits: List[str]
+    audit: Optional[ManageAudit] = None
+    can_write: bool
+
+
+class ManageNameDeleteSave(BaseModel):
+    """Typed-name confirmation; `inline` from a list (a modal) skips the flash."""
+
+    name: str = Field(min_length=1)
+    inline: bool = False
+
+
+class OAuth2ClientListItem(BaseModel):
+    id: int
+    client_name: Optional[str] = None
+
+
+class OAuth2ClientListPage(ManageListPage):
+    items: List[OAuth2ClientListItem]
+
+
+class OAuth2ClientForm(BaseModel):
+    scopes: List[str]
+
+
+class OAuth2ClientSave(BaseModel):
+    client_name: str = Field(min_length=1)
+    redirect_uris: List[str] = []
+    scopes: List[str] = []
+
+
+class OAuth2ClientSaved(BaseModel):
+    id: int
+    redirect_url: str
+
+
+class OAuth2ClientRead(BaseModel):
+    id: int
+    client_id: str
+    client_secret: Optional[str] = None
+    client_name: Optional[str] = None
+    client_uri: Optional[str] = None
+    scope: str
+    scopes: List[str]
+    redirect_uris: List[str]
+    grant_types: List[str]
+    response_types: List[str]
+    token_endpoint_auth_method: List[str]
+    audit: Optional[ManageAudit] = None
+    can_write: bool

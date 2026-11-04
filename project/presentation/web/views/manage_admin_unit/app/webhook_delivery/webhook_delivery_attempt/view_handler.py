@@ -33,7 +33,7 @@ class WebhookDeliveryAttemptViewHandler(WebhookDeliveryChildViewHandler):
     list_display_class = ListDisplay
     read_display_class = ReadDisplay
 
-    def create_list_query(self, form, page_request, **kwargs):
+    def create_list_query(self, page_request, **kwargs):
         return ListAppWebhookDeliveryAttemptsQuery(
             webhook_delivery_id=g.current_webhook_delivery.id, page=page_request
         )

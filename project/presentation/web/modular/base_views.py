@@ -1,9 +1,8 @@
 from typing import Optional
 
-from flask import flash, render_template, request
+from flask import flash, render_template
 from flask.views import View
 from flask_babel import lazy_gettext
-from wtforms import SelectField
 
 from project.application.message_bus import MessageBus
 from project.application.query_bus import QueryBus
@@ -96,7 +95,6 @@ class BaseListView(BaseView):
     display_class = None
     list_context_name = None
     template_file_name = "list.html"
-    form_class = None
     permission_action = PermissionAction.read
 
     def __init__(self, *args, **kwargs):
@@ -107,36 +105,6 @@ class BaseListView(BaseView):
 
     def create_display(self, **kwargs):
         return self.display_class(**kwargs)
-
-    def create_form(self, **kwargs):
-        if not self.form_class:
-            return None
-
-        class ListForm(self.form_class):
-            pass
-
-        if self.form_class.sort_definitions:
-            field = self.create_sort_field(self.form_class.sort_definitions)
-            setattr(ListForm, "sort", field)
-
-        form = ListForm(**kwargs)
-        return form
-
-    def create_sort_field(self, definitions):
-        choices = list()
-
-        for definition in definitions:
-            choices.append((definition.key, definition.label))
-
-        default = choices[0][0]
-
-        field = SelectField(
-            lazy_gettext("Sort"),
-            render_kw={"formrow": True},
-            choices=choices,
-            default=default,
-        )
-        return field
 
     def get_title(self, **kwargs):
         return self.handler.get_model_display_name_plural()
@@ -155,12 +123,8 @@ class BaseListView(BaseView):
         if response:  # pragma: no cover
             return response
 
-        form = self.create_form(formdata=request.args)
-
         page_request = page_request_from_request_args(per_page=self.get_list_per_page())
-        list_query = self.handler.create_list_query(
-            form=form, page_request=page_request, **kwargs
-        )
+        list_query = self.handler.create_list_query(page_request=page_request, **kwargs)
 
         paginate = self.query_bus.handle(list_query)
         abort_if_page_out_of_range(paginate)
@@ -170,7 +134,7 @@ class BaseListView(BaseView):
         display = self.create_display()
 
         return self.render_template(
-            display=display, form=form, objects=objects, pagination=pagination
+            display=display, objects=objects, pagination=pagination
         )
 
 

@@ -31,7 +31,7 @@ class AppInstallationViewHandler(ManageAdminUnitChildViewHandler):
     read_display_class = ReadDisplay
     list_display_class = ListDisplay
 
-    def create_list_query(self, form, page_request, **kwargs):
+    def create_list_query(self, page_request, **kwargs):
         return ListAppInstallationsQuery(
             admin_unit_id=current_admin_unit.id, page=page_request
         )

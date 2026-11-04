@@ -2,94 +2,67 @@ from tests.integration.seeder import Seeder
 from tests.integration.utils import UtilActions
 
 
-def test_list(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base(True)
-    seeder.insert_default_api_key(admin_unit_id=admin_unit_id)
+def test_list_is_a_shell(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base(True)
 
-    url = utils.get_url("manage_admin_unit.api_keys", id=admin_unit_id)
-    utils.get_ok(url)
+    response = utils.get_endpoint_ok("manage_admin_unit.api_keys", id=admin_unit_id)
+
+    utils.assert_response_contains(response, 'id="boot"')
 
 
-def test_create(client, app, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base(True)
+def test_create_is_a_shell(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base(True)
 
+    response = utils.get_endpoint_ok(
+        "manage_admin_unit.api_key_create", id=admin_unit_id
+    )
+
+    utils.assert_response_contains(response, 'id="boot"')
+    # Writing goes through the BFF.
     url = utils.get_url("manage_admin_unit.api_key_create", id=admin_unit_id)
-    response = utils.get_ok(url)
-
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Mein API Key",
-        },
-    )
-
-    with app.app_context():
-        from project.infrastructure.models import ApiKey
-
-        api_key = ApiKey.query.filter(ApiKey.admin_unit_id == admin_unit_id).first()
-        assert api_key is not None
-
-    # limit
-    response = utils.get_ok(url)
-    response = utils.post_form(
-        url,
-        response,
-        {
-            "name": "Mein API Key 2",
-        },
-    )
-    utils.assert_response_error_message(
-        response, "Die maximale Anzahl an API-Schlüsseln wurde erreicht."
-    )
+    assert utils.post_json(url, {}).status_code == 405
 
 
-def test_read(client, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base(True)
+def test_read_is_a_shell(client, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base(True)
     api_key_id, _ = seeder.insert_default_api_key(admin_unit_id=admin_unit_id)
 
-    url = utils.get_url(
+    response = utils.get_endpoint_ok(
         "manage_admin_unit.api_key", id=admin_unit_id, api_key_id=api_key_id
     )
-    utils.get_ok(url)
+
+    utils.assert_response_contains(response, 'id="boot"')
 
 
-def test_update(client, seeder: Seeder, utils: UtilActions, app, db):
+def test_read_of_a_foreign_or_unknown_key(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(True)
     api_key_id, _ = seeder.insert_default_api_key(admin_unit_id=admin_unit_id)
+    other_admin_unit_id = seeder.create_admin_unit(user_id, "Other crew")
 
-    url = utils.get_url(
-        "manage_admin_unit.api_key_update", id=admin_unit_id, api_key_id=api_key_id
+    utils.get_unauthorized(
+        utils.get_url(
+            "manage_admin_unit.api_key",
+            id=other_admin_unit_id,
+            api_key_id=api_key_id,
+        )
     )
-    response = utils.get_ok(url)
+    utils.assert_response_notFound(
+        utils.get(
+            utils.get_url(
+                "manage_admin_unit.api_key", id=admin_unit_id, api_key_id=4711
+            )
+        )
+    )
 
-    response = utils.post_form(url, response, {"name": "Neuer Name"})
 
-    with app.app_context():
-        from project.infrastructure.models import ApiKey
-
-        assert db.session.get(ApiKey, api_key_id).name == "Neuer Name"
-
-
-def test_delete(client, seeder: Seeder, utils: UtilActions, app, db):
-    user_id, admin_unit_id = seeder.setup_base(True)
+def test_update_and_delete_pages_are_gone(client, seeder: Seeder, utils: UtilActions):
+    """Renaming and deleting are modals of the read page / list."""
+    _, admin_unit_id = seeder.setup_base(True)
     api_key_id, _ = seeder.insert_default_api_key(admin_unit_id=admin_unit_id)
 
-    url = utils.get_url(
-        "manage_admin_unit.api_key_delete", id=admin_unit_id, api_key_id=api_key_id
-    )
-    response = utils.get_ok(url)
-
-    response = utils.post_form(url, response, {"name": "Falscher Name"})
-    utils.assert_response_error_message(response)
-
-    response = utils.get_ok(url)
-    response = utils.post_form(url, response, {"name": "Mein API Key"})
-    utils.assert_response_redirect(
-        response, "manage_admin_unit.api_keys", id=admin_unit_id
-    )
-
-    with app.app_context():
-        from project.infrastructure.models import ApiKey
-
-        assert db.session.get(ApiKey, api_key_id) is None
+    for action in ("update", "delete"):
+        utils.assert_response_notFound(
+            utils.get(
+                f"/manage/admin_unit/{admin_unit_id}/api_key/{api_key_id}/{action}"
+            )
+        )

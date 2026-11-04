@@ -1,29 +1,9 @@
-from flask_babel import lazy_gettext
-
-from project.application.queries import (
-    ApiKeySort,
-    GetApiKeyQuery,
-    ListOrganizationApiKeysQuery,
-)
-from project.presentation.shared.current_admin_unit import current_admin_unit
-from project.presentation.web.modular.sort_definition import (
-    KeySortDefinition,
-    sort_key_or_none,
-)
+from project.application.queries import GetApiKeyQuery
 from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
-from project.presentation.web.views.manage_admin_unit.api_key.displays import (
-    ListDisplay,
-    ReadDisplay,
-)
-from project.presentation.web.views.manage_admin_unit.api_key.forms import (
-    CreateForm,
-    DeleteForm,
-    UpdateForm,
-)
 from project.presentation.web.views.manage_admin_unit.api_key.views import (
     CreateView,
-    DeleteView,
-    UpdateView,
+    ListView,
+    ReadView,
 )
 from project.presentation.web.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -31,32 +11,18 @@ from project.presentation.web.views.manage_admin_unit.child_view_handler import 
 
 
 class ApiKeyViewHandler(ManageAdminUnitChildViewHandler):
+    """Shells: the list, the create form and the read page are Vue pages
+    (`/bff/manage`); renaming and deleting are modals of the read page / list."""
+
     model_name = "api_key"
     model_name_plural = "api_keys"
     display_name = "API key"
     display_name_plural = "API keys"
     create_view_class = CreateView
-    create_form_class = CreateForm
-    update_view_class = UpdateView
-    update_form_class = UpdateForm
-    delete_view_class = DeleteView
-    delete_form_class = DeleteForm
-    read_display_class = ReadDisplay
-    list_display_class = ListDisplay
-    list_sort_definitions = [
-        KeySortDefinition(ApiKeySort.name.value, label=lazy_gettext("Name")),
-        KeySortDefinition(
-            ApiKeySort.created_at_desc.value,
-            label=lazy_gettext("Last created first"),
-        ),
-    ]
-
-    def create_list_query(self, form, page_request, **kwargs):
-        return ListOrganizationApiKeysQuery(
-            admin_unit_id=current_admin_unit.id,
-            sort=sort_key_or_none(ApiKeySort, form.sort.data),
-            page=page_request,
-        )
+    read_view_class = ReadView
+    update_view_class = None
+    delete_view_class = None
+    list_view_class = ListView
 
     def create_get_query(self, object_id):
         return GetApiKeyQuery(id=object_id)
