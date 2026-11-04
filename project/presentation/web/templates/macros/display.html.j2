@@ -1,9 +1,7 @@
 {% macro render_prop_display_value(display, prop, object) -%}
 {% set display_value = display.get_prop_display_value(prop, object) %}
 {% set link = display.get_prop_link(prop, object) %}
-{% if display_value is boolean %}
-{% if display_value %}<i class="fa fa-fw fa-check-circle"></i>{% endif %}
-{% elif link %}
+{% if link %}
 <a href="{{ link }}">{{ display_value }}</a>
 {% else %}
 {{ display_value }}
@@ -14,10 +12,8 @@
 {% if display %}
 <dl class="row">
     {% for prop in display.get_ordered_props() %}
-    {% if display.should_display_prop(prop, object) %}
     <dt class="col-sm-3">{{ display.get_prop_label(prop) }}</dt>
     <dd class="col-sm-9">{{ render_prop_display_value(display, prop, object) }}</dd>
-    {% endif %}
     {% endfor %}
 </dl>
 

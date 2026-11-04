@@ -4,86 +4,33 @@ from tests.integration.seeder import Seeder
 from tests.integration.utils import UtilActions
 
 
-@pytest.mark.parametrize("db_error", [True, False])
-def test_create(client, app, utils: UtilActions, seeder: Seeder, mocker, db_error):
-    (
-        verifier_user_id,
-        verifier_admin_unit_id,
-        unverified_user_id,
-        unverified_admin_unit_id,
-    ) = seeder.setup_admin_unit_missing_verification_scenario()
-
-    url = utils.get_url(
-        "main.manage_organization_requests_outgoing_create",
-        id=unverified_admin_unit_id,
-        target_id=verifier_admin_unit_id,
-    )
-    response = utils.get_ok(url)
-
-    if db_error:
-        utils.mock_db_commit(mocker)
-
-    response = utils.post_form(
-        url,
-        response,
-        {},
-    )
-
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
-
-    utils.assert_response_redirect(
-        response,
-        "manage_admin_unit.outgoing_organization_verification_requests",
-        id=unverified_admin_unit_id,
-    )
-
-    with app.app_context():
-        app.test_event_dispatcher.handle_pending_events()
-
-    assert len(app.test_email_service.sent_emails) == 1
-    assert app.test_email_service.sent_emails[0]["recipient"] == "test@test.de"
-
-    with app.app_context():
-        from project.infrastructure.models import (
-            AdminUnitVerificationRequest,
-            AdminUnitVerificationRequestReviewStatus,
-        )
-
-        verification_request = (
-            AdminUnitVerificationRequest.query.filter(
-                AdminUnitVerificationRequest.source_admin_unit_id
-                == unverified_admin_unit_id
-            )
-            .filter(
-                AdminUnitVerificationRequest.target_admin_unit_id
-                == verifier_admin_unit_id
-            )
-            .first()
-        )
-        assert verification_request is not None
-        assert (
-            verification_request.review_status
-            == AdminUnitVerificationRequestReviewStatus.inbox
-        )
-
-
 def test_admin_unit_verification_requests_incoming(
     client, utils: UtilActions, seeder: Seeder
 ):
     user_id, admin_unit_id = seeder.setup_base()
     seeder.create_incoming_admin_unit_verification_request(admin_unit_id)
 
-    utils.get_endpoint_ok(
-        "manage_admin_unit.incoming_organization_verification_requests",
-        id=admin_unit_id,
-        review_status=-1,
-    )
-    utils.get_endpoint_ok(
+    # The list is a Vue page; it reads the filter from the query string.
+    response = utils.get_endpoint_ok(
         "manage_admin_unit.incoming_organization_verification_requests",
         id=admin_unit_id,
         review_status=1,
+    )
+    assert b'id="app"' in response.data
+
+
+def test_incoming_list_requires_permission(client, seeder, utils: UtilActions):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+
+    response = utils.get_endpoint(
+        "manage_admin_unit.incoming_organization_verification_requests",
+        id=admin_unit_id,
+    )
+    utils.assert_response_permission_missing(
+        response, "main.manage_admin_unit", id=admin_unit_id
     )
 
 
@@ -95,34 +42,61 @@ def test_verification_requests_outgoing(client, seeder: Seeder, utils: UtilActio
         unverified_admin_unit_id,
     ) = seeder.setup_admin_unit_missing_verification_scenario()
 
-    response = utils.get_endpoint(
+    # No redirect to a selection any more: the Vue list opens the request dialog.
+    response = utils.get_endpoint_ok(
         "manage_admin_unit.outgoing_organization_verification_requests",
         id=unverified_admin_unit_id,
     )
-    utils.assert_response_redirect(
-        response,
-        "main.manage_organization_verification_requests_outgoing_create_select",
-        id=unverified_admin_unit_id,
-    )
+    assert b'id="app"' in response.data
 
-    response = utils.get_endpoint_ok(
-        "main.manage_organization_verification_requests_outgoing_create_select",
-        id=unverified_admin_unit_id,
-    )
-    utils.assert_response_contains(response, "Stadtmarketing")
-    utils.assert_response_contains(response, "Please give us a call")
-
-    seeder.create_admin_unit_verification_request(
+    request_id = seeder.create_admin_unit_verification_request(
         unverified_admin_unit_id, verifier_admin_unit_id
     )
     response = utils.get_endpoint_ok(
-        "manage_admin_unit.outgoing_organization_verification_requests",
+        "manage_admin_unit.outgoing_organization_verification_request",
         id=unverified_admin_unit_id,
+        organization_verification_request_id=request_id,
+    )
+    assert b'id="app"' in response.data
+
+
+def test_read_of_another_organization_is_unauthorized(
+    client, seeder: Seeder, utils: UtilActions
+):
+    (
+        verifier_user_id,
+        verifier_admin_unit_id,
+        unverified_user_id,
+        unverified_admin_unit_id,
+    ) = seeder.setup_admin_unit_missing_verification_scenario()
+    request_id = seeder.create_admin_unit_verification_request(
+        unverified_admin_unit_id, verifier_admin_unit_id
+    )
+    second_admin_unit_id = seeder.create_admin_unit(
+        unverified_user_id, "Zweite Crew", verified=True
     )
 
+    response = utils.get(
+        utils.get_url(
+            "manage_admin_unit.outgoing_organization_verification_request",
+            id=second_admin_unit_id,
+            organization_verification_request_id=request_id,
+        )
+    )
 
-@pytest.mark.parametrize("db_error", [True, False])
-def test_delete(client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_error):
+    utils.assert_response_unauthorized(response)
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "admin_unit/{id}/outgoing_organization_verification_request/{rid}/delete",
+        "admin_unit/{id}/verification_requests/outgoing/create/select",
+        "admin_unit/{id}/verification_requests/outgoing/create/target/{rid}",
+    ],
+)
+def test_removed_pages_are_gone(client, seeder: Seeder, utils: UtilActions, path):
+    # Withdrawing and requesting are modals of the Vue pages (`/bff/manage`).
     (
         verifier_user_id,
         verifier_admin_unit_id,
@@ -133,66 +107,8 @@ def test_delete(client, seeder: Seeder, utils: UtilActions, app, db, mocker, db_
         unverified_admin_unit_id, verifier_admin_unit_id
     )
 
-    url = utils.get_url(
-        "manage_admin_unit.outgoing_organization_verification_request_delete",
-        id=unverified_admin_unit_id,
-        organization_verification_request_id=request_id,
-    )
-    response = utils.get_ok(url)
-
-    if db_error:
-        utils.mock_db_commit(mocker)
-
-    response = utils.post_form(
-        url,
-        response,
-        {},
+    response = utils.get(
+        "/manage/" + path.format(id=unverified_admin_unit_id, rid=request_id)
     )
 
-    if db_error:
-        utils.assert_response_db_error(response)
-        return
-
-    utils.assert_response_redirect(
-        response,
-        "manage_admin_unit.outgoing_organization_verification_requests",
-        id=unverified_admin_unit_id,
-    )
-
-    with app.app_context():
-        from project.infrastructure.models import AdminUnitVerificationRequest
-
-        request = db.session.get(AdminUnitVerificationRequest, request_id)
-        assert request is None
-
-
-def test_create_outside_allowed_postal_codes_redirects_to_select(
-    client, app, db, utils: UtilActions, seeder: Seeder
-):
-    (
-        verifier_user_id,
-        verifier_admin_unit_id,
-        unverified_user_id,
-        unverified_admin_unit_id,
-    ) = seeder.setup_admin_unit_missing_verification_scenario()
-
-    with app.app_context():
-        from project.infrastructure.models import AdminUnit
-
-        db.session.get(
-            AdminUnit, verifier_admin_unit_id
-        ).incoming_verification_requests_postal_codes = ["99999"]
-        db.session.commit()
-
-    url = utils.get_url(
-        "main.manage_organization_requests_outgoing_create",
-        id=unverified_admin_unit_id,
-        target_id=verifier_admin_unit_id,
-    )
-    response = utils.get(url)
-
-    utils.assert_response_redirect(
-        response,
-        "main.manage_organization_verification_requests_outgoing_create_select",
-        id=unverified_admin_unit_id,
-    )
+    utils.assert_response_notFound(response)

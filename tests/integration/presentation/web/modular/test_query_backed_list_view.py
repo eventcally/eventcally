@@ -14,7 +14,6 @@ from project.application.queries import PageRequest, Query
 from project.application.read_models.base_read_model import BaseReadModel
 from project.application.read_models.page import Page
 from project.presentation.shared.current_admin_unit import current_admin_unit
-from project.presentation.web.modular.search_definition import KeySearchDefinition
 from project.presentation.web.modular.sort_definition import KeySortDefinition
 from project.presentation.web.views.manage_admin_unit.organization_invitation.view_handler import (
     ViewHandler,
@@ -171,44 +170,6 @@ def test_key_sort_definition():
     assert (ascending.key, ascending.label, ascending.desc) == ("name", "Name", False)
     assert descending.key == "-number_of_events"
     assert descending.desc is True
-
-
-def test_key_search_definition():
-    definition = KeySearchDefinition("name", label="Name")
-
-    assert (definition.key, definition.label) == ("name", "Name")
-
-
-def test_key_boolean_filter():
-    from project.presentation.web.modular.filters import BooleanFilter, KeyBooleanFilter
-
-    definition = KeyBooleanFilter("verify", label="Verify")
-
-    assert isinstance(definition, BooleanFilter)
-    assert (definition.key, definition.label) == ("verify", "Verify")
-    assert [value for value, _ in definition.options] == ["", "1", "0"]
-
-
-def test_key_enum_filter_keeps_msgids_of_the_named_enum(app):
-    from project.domain.models.enums.organization_verification_request_review_status import (
-        OrganizationVerificationRequestReviewStatus,
-    )
-    from project.presentation.web.modular.filters import EnumFilter, KeyEnumFilter
-
-    definition = KeyEnumFilter(
-        "review_status",
-        OrganizationVerificationRequestReviewStatus,
-        enum_name="AdminUnitVerificationRequestReviewStatus",
-        label="Status",
-    )
-
-    assert isinstance(definition, EnumFilter)
-    assert definition.key == "review_status"
-    assert [value for value, _ in definition.options] == [-1, 1, 2, 3]
-
-    with app.test_request_context(headers={"Accept-Language": "de"}):
-        labels = [str(label) for _, label in definition.options]
-        assert "AdminUnitVerificationRequestReviewStatus.inbox" not in labels
 
 
 def test_sort_key_or_none():

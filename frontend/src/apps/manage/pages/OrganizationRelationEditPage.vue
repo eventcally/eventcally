@@ -7,7 +7,6 @@ import { api } from "@/shared/api";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
 import AppTypeahead from "@/shared/AppTypeahead.vue";
 import { toFieldErrors } from "@/shared/fieldErrors";
-import { manage } from "@/shared/legacy";
 
 type RelationForm = components["schemas"]["OrganizationRelationForm"];
 type Ref = { id: number; name: string };
@@ -136,7 +135,7 @@ onMounted(load);
       :items="[
         {
           label: t('Outgoing organization relations'),
-          href: manage.outgoingOrganizationRelations(organizationId),
+          to: { name: 'outgoing-organization-relations', params: { organizationId } },
         },
         { label: title },
       ]"

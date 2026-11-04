@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import type { RouteLocationRaw } from "vue-router";
 
-defineProps<{ items: { label: string; to?: RouteLocationRaw; href?: string }[] }>();
+// `docsUrl`: the "Docs" button on the right of the bar (the old `render_breadcrumb`).
+defineProps<{
+  items: { label: string; to?: RouteLocationRaw; href?: string }[];
+  docsUrl?: string | null;
+}>();
+
+const { t } = useI18n();
 </script>
 
 <template>
@@ -19,6 +26,16 @@ defineProps<{ items: { label: string; to?: RouteLocationRaw; href?: string }[] }
         <!-- A server-rendered page (a full page load, no router). -->
         <a v-else-if="item.href" :href="item.href">{{ item.label }}</a>
         <template v-else>{{ item.label }}</template>
+      </li>
+      <li v-if="docsUrl" class="ms-auto align-self-center">
+        <a
+          class="btn btn-outline-info btn-sm"
+          :href="docsUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          role="button"
+          ><i class="fa fa-fw fa-info-circle"></i> {{ t("Docs") }}</a
+        >
       </li>
     </ol>
   </nav>

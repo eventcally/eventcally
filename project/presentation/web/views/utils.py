@@ -11,11 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from project.application.queries import GetSettingsQuery
 from project.domain.errors import BaseError
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
-from project.presentation.shared.access import (
-    get_admin_unit_for_manage_or_404,
-    has_access,
-)
-from project.presentation.shared.current_admin_unit import set_current_admin_unit
+from project.presentation.shared.access import has_access
 from project.presentation.shared.urls import url_for_image
 from project.shared.dateutils import berlin_tz, round_to_next_day
 from project.shared.utils import get_place_str, strings_are_equal_ignoring_case
@@ -256,27 +252,6 @@ def get_invitation_access_result(email: str):
         return current_app.login_manager.unauthorized()
 
     return None
-
-
-def manage_required(permission=None):
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(id, *args, **kwargs):
-            admin_unit = get_admin_unit_for_manage_or_404(id)
-
-            if permission and not has_access(
-                admin_unit, permission
-            ):  # pragma: no cover
-                return permission_missing(
-                    url_for("main.manage_admin_unit", id=admin_unit.id)
-                )
-
-            set_current_admin_unit(admin_unit)
-            return f(id, *args, **kwargs)
-
-        return decorated_function
-
-    return decorator
 
 
 def manage_permission_required(permission):

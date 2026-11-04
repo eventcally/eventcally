@@ -6,7 +6,12 @@ from project.domain.models.enums.organization_verification_request_review_status
 )
 from project.presentation.web.boot import build_boot_data
 from project.presentation.web.modular.base_views import BaseUpdateView
+from project.presentation.web.views.manage_admin_unit.shell_views import ListShellView
 from project.presentation.web.views.utils import flash_message
+
+
+class ListView(ListShellView):
+    """A shell: the Vue page lists through `/bff/manage`."""
 
 
 def _render_shell(title):
