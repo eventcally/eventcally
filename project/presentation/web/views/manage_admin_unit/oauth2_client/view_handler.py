@@ -9,19 +9,17 @@ from project.presentation.web.views.manage_admin_unit import manage_admin_unit_b
 from project.presentation.web.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
-from project.presentation.web.views.manage_admin_unit.oauth2_client.views import (
-    CreateView,
-)
-from project.presentation.web.views.user_blueprint.oauth2_client.displays import (
+from project.presentation.web.views.manage_admin_unit.oauth2_client.displays import (
     ListDisplay,
     ReadDisplay,
 )
-from project.presentation.web.views.user_blueprint.oauth2_client.forms import (
+from project.presentation.web.views.manage_admin_unit.oauth2_client.forms import (
     CreateOAuth2ClientForm,
     DeleteOAuth2ClientForm,
     UpdateOAuth2ClientForm,
 )
-from project.presentation.web.views.user_blueprint.oauth2_client.views import (
+from project.presentation.web.views.manage_admin_unit.oauth2_client.views import (
+    CreateView,
     DeleteView,
     UpdateView,
 )

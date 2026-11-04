@@ -4,6 +4,11 @@ export const legacy = {
   flaskAdmin: "/admin/flask-admin/",
 };
 
+// Server-rendered pages the user area links to (account pages the SPA does not own).
+export const account = {
+  changePassword: "/change",
+};
+
 // Public server-rendered pages the admin links to.
 export const publicPages = {
   home: "/",
@@ -21,6 +26,8 @@ export const publicPages = {
 
 // Jinja manage area the admin links to.
 export const manage = {
+  organizationCreate: (invitationId: number) =>
+    `/manage/organization/create?invitation_id=${invitationId}`,
   organization: (id: number) => `/manage/admin_unit/${id}`,
   settings: (id: number) => `/manage/admin_unit/${id}/update`,
   requestDeletion: (id: number) => `/manage/admin_unit/${id}/request-deletion`,

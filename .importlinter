@@ -83,6 +83,17 @@ forbidden_modules =
     project.presentation.api
 allow_indirect_imports = True
 
+[importlinter:contract:bff-user-is-its-own-area]
+name = The BFF user area imports no other BFF area
+type = forbidden
+source_modules =
+    project.presentation.bff.user
+forbidden_modules =
+    project.presentation.bff.manage
+    project.presentation.bff.admin
+    project.presentation.bff.public
+allow_indirect_imports = True
+
 [importlinter:contract:web-and-api-do-not-import-bff]
 name = The web and API channels do not import the BFF channel
 type = forbidden

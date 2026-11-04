@@ -8,12 +8,12 @@ test.describe("OAuth2 token", () => {
     await page.goto("/user/oauth2_tokens");
     await screenshot(page, "list");
 
-    await page.locator(".dropdown-toggle.btn-link").click();
-    await page.locator("a[href$=revoke]").click({ force: true });
+    await page.locator("a[href$=revoke]").first().click();
 
     await screenshot(page, "revoke");
     await page.locator("#submit").click();
 
     await expect(page).toHaveURL(/\/user\/oauth2_tokens/);
+    await expect(page.locator("a[href$=revoke]")).toHaveCount(0);
   });
 });

@@ -85,44 +85,6 @@ def test_manage_invitation_of_other_organization(seeder, utils):
     )
 
 
-def test_user_list_and_negotiate(seeder, utils):
-    owner_id = seeder.create_user()
-    admin_unit_id = seeder.create_admin_unit(owner_id, "Meine Crew")
-    other_admin_unit_id = seeder.create_admin_unit(owner_id, "Andere Crew")
-    seeder.create_user("New@Member.de")
-    utils.login("New@Member.de")
-    invitation_id = seeder.create_invitation(admin_unit_id, "new@member.de")
-    seeder.create_invitation(other_admin_unit_id, "someone@else.de")
-
-    response = utils.get_ok(utils.get_url("user.organization_member_invitations"))
-    text = _text(utils, response)
-    assert "Meine Crew" in text
-    assert "Andere Crew" not in text
-
-    response = utils.get_ok(
-        utils.get_url(
-            "user.organization_member_invitation_negotiate",
-            organization_member_invitation_id=invitation_id,
-        )
-    )
-    assert "Meine Crew" in _text(utils, response)
-
-
-def test_user_cannot_negotiate_foreign_invitation(seeder, utils):
-    owner_id = seeder.create_user()
-    admin_unit_id = seeder.create_admin_unit(owner_id, "Meine Crew")
-    seeder.create_user("new@member.de")
-    utils.login("new@member.de")
-    invitation_id = seeder.create_invitation(admin_unit_id, "someone@else.de")
-
-    utils.get_unauthorized(
-        utils.get_url(
-            "user.organization_member_invitation_negotiate",
-            organization_member_invitation_id=invitation_id,
-        )
-    )
-
-
 def test_invitation_link_of_unknown_invitation(seeder, utils):
     seeder.setup_base()
 

@@ -19,7 +19,7 @@ import {
   type WidgetType,
 } from "@/shared/customWidget";
 import { manage } from "@/shared/legacy";
-import { setFlash } from "../flash";
+import { setFlash } from "@/shared/flash";
 import CustomWidgetPreview from "../components/CustomWidgetPreview.vue";
 import CustomWidgetSettingsForm from "../components/CustomWidgetSettingsForm.vue";
 

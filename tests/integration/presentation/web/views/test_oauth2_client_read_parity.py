@@ -37,41 +37,6 @@ def _set_webhook(app, db, oauth2_client_id):
         db.session.commit()
 
 
-def test_user_client_pages(seeder, utils):
-    user_id, _ = seeder.setup_base()
-    client_id = seeder.insert_default_oauth2_client(user_id)
-    other_user_id = seeder.create_user("other@test.de")
-    seeder.insert_default_oauth2_client(other_user_id)
-
-    response = utils.get_ok(utils.get_url("user.oauth2_clients"))
-    assert _first_cells(utils, response) == ["Mein Client"]
-
-    response = utils.get_ok(
-        utils.get_url("user.oauth2_client", oauth2_client_id=client_id)
-    )
-    text = _text(utils, response)
-    assert "authorization_code, refresh_token, client_credentials" in text
-    assert "client_secret_basic, client_secret_post, none" in text
-    assert "Mein Client" in text
-
-    response = utils.get_ok(
-        utils.get_url("user.oauth2_client_update", oauth2_client_id=client_id)
-    )
-    soup = utils.get_soup(response)
-    assert soup.find("input", attrs={"name": "client_name"})["value"] == "Mein Client"
-    assert (
-        soup.find("textarea", attrs={"name": "redirect_uris"})
-        .text.strip()
-        .endswith("/oauth2-redirect.html")
-    )
-    assert "openid" in _checked(soup, "scope")
-
-    response = utils.get_ok(
-        utils.get_url("user.oauth2_client_delete", oauth2_client_id=client_id)
-    )
-    assert "Möchtest du 'Mein Client' löschen?" in _text(utils, response)
-
-
 def test_manage_client_list_excludes_apps(seeder, utils):
     _, admin_unit_id = seeder.setup_base()
     seeder.insert_default_oauth2_client(admin_unit_id=admin_unit_id)

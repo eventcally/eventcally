@@ -21,7 +21,7 @@ vi.mock("@/shared/ImageCropper.vue", () => ({
   default: defineComponent({ name: "ImageCropper", render: () => null }),
 }));
 
-import { setFlash, takeFlash } from "../flash";
+import { setFlash, takeFlash } from "@/shared/flash";
 import OrganizationSettingsPage from "./OrganizationSettingsPage.vue";
 
 const reload = vi.fn();

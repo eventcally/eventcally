@@ -120,6 +120,7 @@ def _register_sub_blueprints():
     from project.presentation.bff.manage import bff_manage_bp
     from project.presentation.bff.public import bff_public_bp
     from project.presentation.bff.routing import set_parent
+    from project.presentation.bff.user import bff_user_bp
 
     set_parent(bff_admin_bp, bff_bp)
     bff_bp.register_blueprint(bff_admin_bp)
@@ -127,6 +128,8 @@ def _register_sub_blueprints():
     bff_bp.register_blueprint(bff_manage_bp)
     set_parent(bff_public_bp, bff_bp)
     bff_bp.register_blueprint(bff_public_bp)
+    set_parent(bff_user_bp, bff_bp)
+    bff_bp.register_blueprint(bff_user_bp)
 
 
 _register_sub_blueprints()

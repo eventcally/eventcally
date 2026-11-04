@@ -11,6 +11,7 @@ ENTRIES = {
     "admin": "src/apps/admin/main.ts",
     "manage": "src/apps/manage/main.ts",
     "public": "src/apps/public/main.ts",
+    "user": "src/apps/user/main.ts",
     "widget": "src/apps/widget/main.ts",
 }
 

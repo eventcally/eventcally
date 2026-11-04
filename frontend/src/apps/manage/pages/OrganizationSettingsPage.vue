@@ -17,7 +17,7 @@ import { toFieldErrors } from "@/shared/fieldErrors";
 import { manage } from "@/shared/legacy";
 import { useNotify } from "@/shared/notify";
 import OrganizationFormFields from "../components/OrganizationFormFields.vue";
-import { setFlash, takeFlash } from "../flash";
+import { setFlash, takeFlash } from "@/shared/flash";
 import {
   emptyOrganizationForm,
   ORGANIZATION_FORM_FIELDS,

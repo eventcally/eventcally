@@ -14,6 +14,7 @@ test.describe("OAuth2 Client", () => {
     await page.locator("#redirect_uris").fill("/oauth2-redirect.html");
     await screenshot(page, "create");
     await page.locator("#submit").click();
+    await expect(page).toHaveURL(/\/user\/oauth2_client\/\d+$/);
   });
 
   test("updates", async ({ page, login }) => {
@@ -24,6 +25,7 @@ test.describe("OAuth2 Client", () => {
     await page.goto(`/user/oauth2_client/${result.oauth2_client_id}/update`);
     await screenshot(page, "update");
     await page.locator("#submit").click();
+    await expect(page).toHaveURL(new RegExp(`/user/oauth2_client/${result.oauth2_client_id}$`));
   });
 
   test("deletes", async ({ page, login }) => {

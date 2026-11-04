@@ -1,18 +1,20 @@
 from dependency_injector.wiring import Provide, inject
-from flask import abort, redirect, render_template, url_for
+from flask import abort, redirect, url_for
+from flask_babel import gettext
 from flask_security import auth_required
 
 from project.application.queries import GetOrganizationInvitationRecipientQuery
 from project.application.query_bus import QueryBus
 from project.container import Application
 from project.presentation.web.views.main_blueprint import main_bp
+from project.presentation.web.views.user_blueprint.shells import render_user_shell
 from project.presentation.web.views.utils import get_invitation_access_result
 
 
 @main_bp.route("/profile")
 @auth_required()
 def profile():
-    return render_template("profile.html")
+    return render_user_shell(gettext("Profile"))
 
 
 @main_bp.route("/user/organization-invitations/<int:id>")

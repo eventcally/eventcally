@@ -8,7 +8,7 @@ import { api } from "@/shared/api";
 import AppPager from "@/shared/AppPager.vue";
 import { manage } from "@/shared/legacy";
 import { useNotify } from "@/shared/notify";
-import { takeFlash } from "../flash";
+import { takeFlash } from "@/shared/flash";
 import CustomWidgetDeleteModal from "../components/CustomWidgetDeleteModal.vue";
 import CustomWidgetInstallModal from "../components/CustomWidgetInstallModal.vue";
 

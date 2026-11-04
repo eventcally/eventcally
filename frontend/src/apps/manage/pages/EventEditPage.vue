@@ -22,7 +22,7 @@ import MultiTypeahead from "@/shared/MultiTypeahead.vue";
 import EventDateDefinitionFields from "../components/EventDateDefinitionFields.vue";
 import EventOrganizerCreateModal from "../components/EventOrganizerCreateModal.vue";
 import EventPlaceCreateModal from "../components/EventPlaceCreateModal.vue";
-import LabeledField from "../components/LabeledField.vue";
+import LabeledField from "@/shared/LabeledField.vue";
 import {
   eventFormFields,
   eventFormValue,

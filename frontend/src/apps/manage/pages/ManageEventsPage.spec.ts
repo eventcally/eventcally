@@ -12,7 +12,7 @@ vi.mock("@/shared/api", () => ({ api: { GET: (...a: unknown[]) => GET(...a) } })
 const success = vi.hoisted(() => vi.fn());
 vi.mock("@/shared/notify", () => ({ useNotify: () => ({ success, error: vi.fn() }) }));
 
-import { setFlash } from "../flash";
+import { setFlash } from "@/shared/flash";
 import ManageEventsPage from "./ManageEventsPage.vue";
 
 const options = {

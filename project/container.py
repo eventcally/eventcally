@@ -116,6 +116,9 @@ from project.infrastructure.read_repositories.sql_alchemy_site_settings_read_rep
 from project.infrastructure.read_repositories.sql_alchemy_user_admin_read_repository import (
     SqlAlchemyUserAdminReadRepository,
 )
+from project.infrastructure.read_repositories.sql_alchemy_user_profile_read_repository import (
+    SqlAlchemyUserProfileReadRepository,
+)
 from project.infrastructure.read_repositories.sql_alchemy_webhook_delivery_read_repository import (
     SqlAlchemyWebhookDeliveryReadRepository,
 )
@@ -238,6 +241,10 @@ class ReadRepos(containers.DeclarativeContainer):
     uow_user_admin_read_repo = providers.Factory(
         SqlAlchemyUserAdminReadRepository,
         session=infrastructure.session_factory,
+    )
+    user_profile_read_repo = providers.Factory(
+        SqlAlchemyUserProfileReadRepository,
+        session=infrastructure.read_session,
     )
     access_read_repo = providers.Factory(
         SqlAlchemyAccessReadRepository,
@@ -1117,6 +1124,11 @@ class Cqrs(containers.DeclarativeContainer):
                 queries.GetUserForAdminQuery: providers.Factory(
                     query_handlers.GetUserForAdminHandler,
                     repo=read_repos.user_admin_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetUserProfileQuery: providers.Factory(
+                    query_handlers.GetUserProfileHandler,
+                    repo=read_repos.user_profile_read_repo,
                     authz=actor_authorization_service,
                 ),
                 queries.ListRolesQuery: providers.Factory(
