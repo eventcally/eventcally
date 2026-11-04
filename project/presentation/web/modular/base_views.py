@@ -331,12 +331,7 @@ class BaseUpdateView(BaseObjectFormView):
     permission_action = PermissionAction.write
 
     def get_redirect_url(self, **kwargs):
-        result = self.handler.get_read_url(**kwargs)
-
-        if not result:
-            result = self.handler.get_list_url(**kwargs)
-
-        return result
+        return self.handler.get_read_url(**kwargs)
 
     def get_title(self, **kwargs):
         return lazy_gettext(

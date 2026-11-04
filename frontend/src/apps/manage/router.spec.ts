@@ -218,4 +218,29 @@ describe("manage router", () => {
       (await resolve("/manage/admin_unit/3/outgoing_organization_verification_request/x")).name,
     ).toBe("not-found");
   });
+
+  it("resolves the member and invitation pages", async () => {
+    const lists = [
+      ["organization_members", "organization-members"],
+      ["organization_member_invitations", "organization-member-invitations"],
+      ["organization_member_invitation/create", "organization-member-invitation-create"],
+      ["organization_invitations", "organization-invitations"],
+      ["organization_invitation/create", "organization-invitation-create"],
+    ];
+    for (const [path, name] of lists) {
+      const route = await resolve(`/manage/admin_unit/3/${path}`);
+      expect(route.name).toBe(name);
+      const props = route.matched[0].props.default as (r: typeof route) => unknown;
+      expect(props(route)).toEqual({ organizationId: 3 });
+      expect((await resolve(`/manage/admin_unit/x/${path}`)).name).toBe("not-found");
+    }
+
+    const update = await resolve("/manage/admin_unit/3/organization_invitation/7/update");
+    expect(update.name).toBe("organization-invitation-update");
+    const props = update.matched[0].props.default as (r: typeof update) => unknown;
+    expect(props(update)).toEqual({ organizationId: 3, id: 7 });
+    expect((await resolve("/manage/admin_unit/3/organization_invitation/x/update")).name).toBe(
+      "not-found",
+    );
+  });
 });

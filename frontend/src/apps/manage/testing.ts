@@ -34,6 +34,12 @@ export const testRoutes = [
   { path: `${base}/incoming_organization_verification_request/:id/review`, name: "verification-request-review", component: Blank },
   { path: `${base}/outgoing_organization_verification_requests`, name: "outgoing-verification-requests", component: Blank },
   { path: `${base}/outgoing_organization_verification_request/:id`, name: "outgoing-verification-request", component: Blank },
+  { path: `${base}/organization_members`, name: "organization-members", component: Blank },
+  { path: `${base}/organization_member_invitations`, name: "organization-member-invitations", component: Blank },
+  { path: `${base}/organization_member_invitation/create`, name: "organization-member-invitation-create", component: Blank },
+  { path: `${base}/organization_invitations`, name: "organization-invitations", component: Blank },
+  { path: `${base}/organization_invitation/create`, name: "organization-invitation-create", component: Blank },
+  { path: `${base}/organization_invitation/:id/update`, name: "organization-invitation-update", component: Blank },
 ];
 
 const mounted: { unmount: () => void }[] = [];
