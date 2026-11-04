@@ -6,6 +6,7 @@ from flask_babel import gettext
 
 from project.application.commands import (
     CreateOrganizationRelationCommand,
+    DeleteOrganizationRelationCommand,
     UpdateOrganizationRelationCommand,
 )
 from project.application.message_bus import MessageBus
@@ -14,6 +15,8 @@ from project.application.queries import (
     GetOrganizationQuery,
     GetOutgoingOrganizationRelationByTargetQuery,
     GetOutgoingOrganizationRelationQuery,
+    ListOutgoingOrganizationRelationsQuery,
+    OrganizationRelationSort,
     PageRequest,
     SearchOrganizationsQuery,
 )
@@ -26,12 +29,16 @@ from project.presentation.bff.manage import bff_manage_bp
 from project.presentation.bff.manage.events import LOOKUP_PER_PAGE
 from project.presentation.bff.manage.organization_form import actor
 from project.presentation.bff.manage.schemas import (
+    ManageMessage,
     ManageRef,
     ManageRefList,
     ManageRefParams,
     OrganizationRelationCreate,
     OrganizationRelationForm,
     OrganizationRelationFormParams,
+    OrganizationRelationListItem,
+    OrganizationRelationListPage,
+    OrganizationRelationListParams,
     OrganizationRelationSaved,
     OrganizationRelationUpdate,
 )
@@ -244,4 +251,90 @@ def update_outgoing_organization_relation(
             "%(model_display_name)s successfully updated",
             model_display_name=gettext("Outgoing organization relation"),
         ),
+    )
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations/<int:id>/outgoing-organization-relations",
+    query=OrganizationRelationListParams,
+    response=OrganizationRelationListPage,
+    summary="List the outgoing organization relations",
+)
+@inject
+def list_outgoing_organization_relations(
+    id: int,
+    query: OrganizationRelationListParams,
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    if not has_access(SimpleNamespace(id=id), "outgoing_organization_relations:read"):
+        raise UnauthorizedError()
+
+    organization = result_or_404(
+        query_bus.handle(GetManageableOrganizationQuery(id=id))
+    )
+    page = result_or_404(
+        query_bus.handle(
+            ListOutgoingOrganizationRelationsQuery(
+                admin_unit_id=id,
+                keyword=query.keyword or None,
+                # The old list dropped the filter when the organization cannot verify others.
+                verify=query.verify if organization.can_verify_other else None,
+                auto_verify_event_reference_requests=query.auto_verify_event_reference_requests,
+                sort=OrganizationRelationSort(query.sort or "name"),
+                page=query.to_page_request(),
+            )
+        )
+    )
+
+    if page.is_out_of_range:
+        abort(404)
+
+    return OrganizationRelationListPage(
+        items=[
+            OrganizationRelationListItem(
+                id=r.id,
+                organization_id=r.target_admin_unit.id,
+                organization_name=r.target_admin_unit.name,
+                verify=r.verify,
+                auto_verify_event_reference_requests=r.auto_verify_event_reference_requests,
+                last_modified_at=r.last_modified_at,
+            )
+            for r in page.items
+        ],
+        page=page.page,
+        per_page=page.per_page,
+        total=page.total,
+        pages=page.pages,
+        can_write=has_access(
+            SimpleNamespace(id=id), "outgoing_organization_relations:write"
+        ),
+        can_verify_other=organization.can_verify_other,
+    )
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations/<int:id>/outgoing-organization-relations/<int:relation_id>/delete",
+    method="POST",
+    response=ManageMessage,
+    summary="Delete an outgoing organization relation",
+)
+@inject
+def delete_outgoing_organization_relation(
+    id: int,
+    relation_id: int,
+    message_bus: MessageBus = Provide[Application.cqrs.message_bus],
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    _relation_or_404(id, relation_id, query_bus)
+    message_bus.handle_command(
+        DeleteOrganizationRelationCommand(actor=actor(), id=relation_id)
+    )
+
+    return ManageMessage(
+        message=gettext(
+            "%(model_display_name)s successfully deleted",
+            model_display_name=gettext("Outgoing organization relation"),
+        )
     )

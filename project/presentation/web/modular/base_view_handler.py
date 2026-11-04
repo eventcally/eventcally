@@ -58,8 +58,6 @@ class BaseViewHandler:
     list_display_class = None
     list_decorators = []
     list_form_class = None
-    list_filters = []
-    list_search_definitions = []
     list_sort_definitions = []
     generic_prefix = ""
 
@@ -71,11 +69,7 @@ class BaseViewHandler:
         self.template_pathes = list()
         self.permissions = set()
 
-        if not self.list_form_class and (
-            self.list_filters
-            or self.list_search_definitions
-            or self.list_sort_definitions
-        ):
+        if not self.list_form_class and self.list_sort_definitions:
 
             class ListForm(BaseListForm):
                 pass
@@ -372,10 +366,6 @@ class BaseViewHandler:
             list_form_class = self.list_view_class.form_class or self.list_form_class
 
             if list_form_class:
-                list_form_class.filters = list_form_class.filters or self.list_filters
-                list_form_class.search_definitions = (
-                    list_form_class.search_definitions or self.list_search_definitions
-                )
                 list_form_class.sort_definitions = (
                     list_form_class.sort_definitions or self.list_sort_definitions
                 )

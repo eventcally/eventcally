@@ -11,7 +11,11 @@ vi.mock("@/shared/api", () => ({
   api: { GET: (...a: unknown[]) => GET(...a), POST: (...a: unknown[]) => POST(...a) },
 }));
 
+import { createMemoryHistory, createRouter } from "vue-router";
+import { testRoutes } from "../testing";
 import OrganizationVerificationRequestReviewPage from "./OrganizationVerificationRequestReviewPage.vue";
+
+const newRouter = () => createRouter({ history: createMemoryHistory(), routes: testRoutes });
 
 const assign = vi.fn();
 const BASE = "/bff/manage/organizations/{id}/incoming-verification-requests/{request_id}";
@@ -52,6 +56,7 @@ async function mountPage() {
     global: {
       plugins: [
         createBootstrap(),
+        newRouter(),
         createI18n({
           legacy: false,
           locale: "en",

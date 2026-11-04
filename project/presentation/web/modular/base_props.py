@@ -1,10 +1,9 @@
 import os
 
 from flask_babel import format_date, format_datetime
-from markupsafe import Markup
 
 from project.presentation.shared.permissions import get_organization_permission_infos
-from project.shared.utils import get_localized_enum_name, getattr_keypath
+from project.shared.utils import getattr_keypath
 
 
 class BasePropFormatter:
@@ -30,27 +29,6 @@ class DatePropFormatter(BasePropFormatter):
 class StringPropFormatter(BasePropFormatter):
     def format(self, data):
         return data if data is not None else ""
-
-
-class EnumPropFormatter(BasePropFormatter):
-    enum_name = None
-
-    def format(self, data):
-        return get_localized_enum_name(data, self.enum_name) if data else ""
-
-
-class BadgePropFormatter(EnumPropFormatter):
-    badge_mapping = dict()
-
-    def format(self, data):
-        localized = super().format(data)
-        if not localized:  # pragma: no cover
-            return localized
-
-        badge_class = self.badge_mapping[data]
-        return Markup(
-            f'<span class="badge badge-pill badge-{badge_class}">{localized}</span>'
-        )
 
 
 class UnboundProp:
@@ -90,7 +68,6 @@ class BaseProp:
         keypath=None,
         method_name=None,
         link_method_name=None,
-        hide_when_empty=False,
         no_wrap=False,
         icon=None,
         _display=None,
@@ -101,7 +78,6 @@ class BaseProp:
         self.keypath = keypath
         self.method_name = method_name
         self.link_method_name = link_method_name
-        self.hide_when_empty = hide_when_empty
         self.no_wrap = no_wrap
         self.icon = icon
         self._display = _display
@@ -124,12 +100,6 @@ class BaseProp:
         data = self.get_display_data(object)
         return self.formatter.format(data) if self.formatter else data
 
-    def should_display(self, object):
-        if not self.hide_when_empty:
-            return True
-
-        return self.get_display_value(object)
-
     def get_link(self, object):
         if not self.link_method_name:
             return None
@@ -148,12 +118,6 @@ class IntProp(StringProp):
     pass
 
 
-class EnumProp(BaseProp):
-    def __init__(self, *args, **kwargs):
-        kwargs.setdefault("formatter", EnumPropFormatter())
-        super().__init__(*args, **kwargs)
-
-
 class ListProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", ListPropFormatter())
@@ -170,12 +134,6 @@ class DateProp(BaseProp):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("formatter", DatePropFormatter())
         super().__init__(*args, **kwargs)
-
-
-class BoolProp(BaseProp):
-    def get_display_data(self, object):
-        data = super().get_display_data(object)
-        return True if data else False
 
 
 class CountProp(BaseProp):  # pragma: no cover

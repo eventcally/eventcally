@@ -195,4 +195,27 @@ describe("manage router", () => {
       expect((await resolve(`/manage/admin_unit/3/${path}/x`)).name).toBe("not-found");
     }
   });
+
+  it("resolves the relation and verification request pages", async () => {
+    const lists = [
+      ["outgoing_organization_relations", "outgoing-organization-relations"],
+      ["incoming_organization_verification_requests", "incoming-verification-requests"],
+      ["outgoing_organization_verification_requests", "outgoing-verification-requests"],
+    ];
+    for (const [path, name] of lists) {
+      const route = await resolve(`/manage/admin_unit/3/${path}`);
+      expect(route.name).toBe(name);
+      const props = route.matched[0].props.default as (r: typeof route) => unknown;
+      expect(props(route)).toEqual({ organizationId: 3 });
+      expect((await resolve(`/manage/admin_unit/x/${path}`)).name).toBe("not-found");
+    }
+
+    const read = await resolve("/manage/admin_unit/3/outgoing_organization_verification_request/7");
+    expect(read.name).toBe("outgoing-verification-request");
+    const props = read.matched[0].props.default as (r: typeof read) => unknown;
+    expect(props(read)).toEqual({ organizationId: 3, id: 7 });
+    expect(
+      (await resolve("/manage/admin_unit/3/outgoing_organization_verification_request/x")).name,
+    ).toBe("not-found");
+  });
 });

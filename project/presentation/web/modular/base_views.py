@@ -3,7 +3,7 @@ from typing import Optional
 from flask import flash, redirect, render_template, request
 from flask.views import View
 from flask_babel import lazy_gettext
-from wtforms import RadioField, SelectField, StringField
+from wtforms import SelectField
 
 from project.application.message_bus import MessageBus
 from project.application.query_bus import QueryBus
@@ -15,7 +15,6 @@ from project.presentation.shared.query_results import (
     abort_if_page_out_of_range,
     page_request_from_request_args,
 )
-from project.presentation.web.modular.filters import BooleanFilter, EnumFilter
 from project.presentation.web.views.utils import (
     flash_errors,
     get_pagination_urls,
@@ -116,46 +115,12 @@ class BaseListView(BaseView):
         class ListForm(self.form_class):
             pass
 
-        if self.form_class.search_definitions:
-            field = self.create_search_field()
-            setattr(ListForm, "keyword", field)
-
-        for filter in self.form_class.filters:
-            field = self.create_field_for_filter(filter)
-            setattr(ListForm, filter.key, field)
-
         if self.form_class.sort_definitions:
             field = self.create_sort_field(self.form_class.sort_definitions)
             setattr(ListForm, "sort", field)
 
         form = ListForm(**kwargs)
         return form
-
-    def create_field_for_filter(self, filter):
-        if isinstance(filter, BooleanFilter):
-            field = RadioField(
-                filter.label,
-                choices=filter.options,
-                default="",
-                coerce=str,
-                render_kw={"formrow": True, "ri": "radio"},
-            )
-        elif isinstance(filter, EnumFilter):
-            field = SelectField(
-                filter.label,
-                choices=filter.options,
-                default="",
-                coerce=int,
-                render_kw={"formrow": True},
-            )
-        else:
-            raise NotImplementedError()  # pragma: no cover
-
-        return field
-
-    def create_search_field(self):
-        field = StringField(lazy_gettext("Keyword"), render_kw={"formrow": True})
-        return field
 
     def create_sort_field(self, definitions):
         choices = list()

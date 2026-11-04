@@ -36,8 +36,6 @@ EXPECTED = (
 
 def _pages(app, db, seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(admin=True)
-    other_user_id = seeder.create_user("other@test.de")
-    other_admin_unit_id = seeder.create_admin_unit(other_user_id, "Andere Crew")
     pages = {}
 
     invitation_id = seeder.create_admin_unit_invitation(admin_unit_id)
@@ -52,16 +50,6 @@ def _pages(app, db, seeder, utils):
     _stamp(app, db, "apikey", api_key_id, user_id)
     pages["api_key_read"] = utils.get_url(
         "manage_admin_unit.api_key", id=admin_unit_id, api_key_id=api_key_id
-    )
-
-    verification_id = seeder.create_admin_unit_verification_request(
-        admin_unit_id, other_admin_unit_id
-    )
-    _stamp(app, db, "adminunitverificationrequest", verification_id, user_id)
-    pages["verification_request_read"] = utils.get_url(
-        "manage_admin_unit.outgoing_organization_verification_request",
-        id=admin_unit_id,
-        organization_verification_request_id=verification_id,
     )
 
     client_id = seeder.insert_default_oauth2_client(admin_unit_id=admin_unit_id)
@@ -95,7 +83,8 @@ def _pages(app, db, seeder, utils):
         app_installation_id=installation_id,
     )
 
-    # The reference pages are Vue pages: their audit comes from the BFF.
+    # The reference and verification request pages are Vue pages: their audit comes
+    # from the BFF.
 
     return pages
 

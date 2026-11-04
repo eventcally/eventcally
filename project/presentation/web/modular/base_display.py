@@ -44,9 +44,6 @@ class BaseDisplay:
             else self.get_prop_label(prop)
         )
 
-    def should_display_prop(self, prop, object):
-        return prop.should_display(object)
-
     def get_prop_display_value(self, prop, object):
         return prop.get_display_value(object)
 

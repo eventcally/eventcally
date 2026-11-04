@@ -1113,3 +1113,90 @@ class OutgoingEventReferenceRequestRead(BaseModel):
     organization_id: int
     organization_name: str
     audit: Optional[ManageAudit] = None
+
+
+# Relations and verification requests
+
+
+class OrganizationRelationListParams(ManagePagedListParams):
+    keyword: Optional[str] = Field(default=None, max_length=255)
+    # The values of `OrganizationRelationSort`.
+    sort: Optional[Literal["name", "-last_modified_at"]] = None
+    # `1` / `0` like the old filters; empty: no filter.
+    verify: Optional[bool] = None
+    auto_verify_event_reference_requests: Optional[bool] = None
+
+
+class OrganizationRelationListItem(BaseModel):
+    id: int
+    organization_id: int
+    organization_name: str
+    verify: bool = False
+    auto_verify_event_reference_requests: bool = False
+    last_modified_at: Optional[datetime] = None
+
+
+class OrganizationRelationListPage(ManageListPage):
+    items: List[OrganizationRelationListItem]
+    # Without it the `verify` column and filter are not offered.
+    can_verify_other: bool
+
+
+class VerificationRequestListParams(ManagePagedListParams):
+    # `OrganizationVerificationRequestReviewStatus` value; -1 (the old "All") and empty: no filter.
+    review_status: Optional[int] = None
+
+
+class VerificationRequestListItem(BaseModel):
+    id: int
+    organization_id: int
+    organization_name: str
+    review_status: int
+    review_status_label: str
+    created_at: Optional[datetime] = None
+    can_review: bool = False
+
+
+class IncomingVerificationRequestListPage(ManageListPage):
+    items: List[VerificationRequestListItem]
+    review_status_choices: List[ManageIntChoice]
+
+
+class OutgoingVerificationRequestListPage(ManageListPage):
+    items: List[VerificationRequestListItem]
+    # An unverified organization without any request is led to the request dialog,
+    # as the old list redirected to the verifier selection.
+    suggest_create: bool = False
+
+
+class OutgoingVerificationRequestRead(BaseModel):
+    id: int
+    organization_id: int
+    organization_name: str
+    review_status: int
+    review_status_label: str
+    rejection_reason_label: Optional[str] = None
+    audit: Optional[ManageAudit] = None
+    can_write: bool
+
+
+class VerifierOrganization(BaseModel):
+    id: int
+    name: str
+    is_verified: bool = False
+    location: Optional[str] = None
+    logo_url: Optional[str] = None
+    description: Optional[str] = None
+    incoming_verification_requests_text: Optional[str] = None
+    # Whether the organization may ask this one (`CanRequestVerificationQuery`).
+    can_request: bool = False
+
+
+class VerifierOrganizationListPage(ManageListPage):
+    items: List[VerifierOrganization]
+    organization_name: str
+    postal_code: Optional[str] = None
+
+
+class VerificationRequestCreate(BaseModel):
+    target_id: int

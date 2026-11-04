@@ -9,6 +9,7 @@ import { manage } from "./legacy";
 const props = defineProps<{
   organizationId: number;
   organizationName?: string;
+  docsUrl?: string | null;
   items: { label: string; to?: RouteLocationRaw; href?: string }[];
 }>();
 
@@ -23,5 +24,5 @@ const all = computed(() =>
 </script>
 
 <template>
-  <AppBreadcrumb :items="all" />
+  <AppBreadcrumb :items="all" :docs-url="docsUrl" />
 </template>

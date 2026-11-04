@@ -5,7 +5,6 @@ import { useI18n } from "vue-i18n";
 import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
-import { manage } from "@/shared/legacy";
 import ContactLines from "../components/ContactLines.vue";
 import ReviewDecisionBar from "../components/ReviewDecisionBar.vue";
 
@@ -80,7 +79,7 @@ onMounted(load);
       :items="[
         {
           label: t('Incoming verification requests'),
-          href: manage.incomingVerificationRequests(organizationId),
+          to: { name: 'incoming-verification-requests', params: { organizationId } },
         },
         { label: title },
       ]"

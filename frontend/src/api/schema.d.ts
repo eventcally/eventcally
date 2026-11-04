@@ -936,6 +936,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/incoming-verification-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the verification requests to an organization */
+        get: operations["bff_manage_list_incoming_verification_requests"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/incoming-verification-requests/{request_id}/approve": {
         parameters: {
             query?: never;
@@ -1045,7 +1062,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** List the outgoing organization relations */
+        get: operations["bff_manage_list_outgoing_organization_relations"];
         put?: never;
         /** Create an outgoing organization relation */
         post: operations["bff_manage_create_outgoing_organization_relation"];
@@ -1107,6 +1125,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/outgoing-organization-relations/{relation_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete an outgoing organization relation */
+        post: operations["bff_manage_delete_outgoing_organization_relation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/outgoing-verification-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the verification requests of an organization */
+        get: operations["bff_manage_list_outgoing_verification_requests"];
+        put?: never;
+        /** Ask an organization to verify the organization */
+        post: operations["bff_manage_create_outgoing_verification_request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/outgoing-verification-requests/{request_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a verification request of an organization */
+        get: operations["bff_manage_get_outgoing_verification_request"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/outgoing-verification-requests/{request_id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Withdraw a verification request */
+        post: operations["bff_manage_withdraw_outgoing_verification_request"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/settings": {
         parameters: {
             query?: never;
@@ -1118,6 +1205,23 @@ export interface paths {
         get: operations["bff_manage_get_organization_settings"];
         /** Update the settings of an organization */
         put: operations["bff_manage_update_organization_settings"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/verifier-organizations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the organizations that can verify an organization */
+        get: operations["bff_manage_list_verifier_organizations"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -3393,6 +3497,23 @@ export interface components {
              */
             rating_text: string | null;
         };
+        /** IncomingVerificationRequestListPage */
+        IncomingVerificationRequestListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["VerificationRequestListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Review Status Choices */
+            review_status_choices: components["schemas"]["ManageIntChoice"][];
+            /** Total */
+            total: number;
+        };
         /** ManageAudit */
         ManageAudit: {
             /**
@@ -3807,6 +3928,47 @@ export interface components {
              */
             verify: boolean;
         };
+        /** OrganizationRelationListItem */
+        OrganizationRelationListItem: {
+            /**
+             * Auto Verify Event Reference Requests
+             * @default false
+             */
+            auto_verify_event_reference_requests: boolean;
+            /** Id */
+            id: number;
+            /**
+             * Last Modified At
+             * @default null
+             */
+            last_modified_at: string | null;
+            /** Organization Id */
+            organization_id: number;
+            /** Organization Name */
+            organization_name: string;
+            /**
+             * Verify
+             * @default false
+             */
+            verify: boolean;
+        };
+        /** OrganizationRelationListPage */
+        OrganizationRelationListPage: {
+            /** Can Verify Other */
+            can_verify_other: boolean;
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["OrganizationRelationListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
         /** OrganizationRelationSaved */
         OrganizationRelationSaved: {
             /** Id */
@@ -4024,6 +4186,48 @@ export interface components {
             event_id: number;
             /** Event Name */
             event_name: string;
+            /** Id */
+            id: number;
+            /** Organization Id */
+            organization_id: number;
+            /** Organization Name */
+            organization_name: string;
+            /**
+             * Rejection Reason Label
+             * @default null
+             */
+            rejection_reason_label: string | null;
+            /** Review Status */
+            review_status: number;
+            /** Review Status Label */
+            review_status_label: string;
+        };
+        /** OutgoingVerificationRequestListPage */
+        OutgoingVerificationRequestListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["VerificationRequestListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /**
+             * Suggest Create
+             * @default false
+             */
+            suggest_create: boolean;
+            /** Total */
+            total: number;
+        };
+        /** OutgoingVerificationRequestRead */
+        OutgoingVerificationRequestRead: {
+            /** @default null */
+            audit: components["schemas"]["ManageAudit"] | null;
+            /** Can Write */
+            can_write: boolean;
             /** Id */
             id: number;
             /** Organization Id */
@@ -5136,6 +5340,93 @@ export interface components {
             message: string;
             /** Name */
             name: string;
+        };
+        /** VerificationRequestCreate */
+        VerificationRequestCreate: {
+            /** Target Id */
+            target_id: number;
+        };
+        /** VerificationRequestListItem */
+        VerificationRequestListItem: {
+            /**
+             * Can Review
+             * @default false
+             */
+            can_review: boolean;
+            /**
+             * Created At
+             * @default null
+             */
+            created_at: string | null;
+            /** Id */
+            id: number;
+            /** Organization Id */
+            organization_id: number;
+            /** Organization Name */
+            organization_name: string;
+            /** Review Status */
+            review_status: number;
+            /** Review Status Label */
+            review_status_label: string;
+        };
+        /** VerifierOrganization */
+        VerifierOrganization: {
+            /**
+             * Can Request
+             * @default false
+             */
+            can_request: boolean;
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /** Id */
+            id: number;
+            /**
+             * Incoming Verification Requests Text
+             * @default null
+             */
+            incoming_verification_requests_text: string | null;
+            /**
+             * Is Verified
+             * @default false
+             */
+            is_verified: boolean;
+            /**
+             * Location
+             * @default null
+             */
+            location: string | null;
+            /**
+             * Logo Url
+             * @default null
+             */
+            logo_url: string | null;
+            /** Name */
+            name: string;
+        };
+        /** VerifierOrganizationListPage */
+        VerifierOrganizationListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["VerifierOrganization"][];
+            /** Organization Name */
+            organization_name: string;
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /**
+             * Postal Code
+             * @default null
+             */
+            postal_code: string | null;
+            /** Total */
+            total: number;
         };
         /** WidgetCategory */
         WidgetCategory: {
@@ -9636,6 +9927,68 @@ export interface operations {
             };
         };
     };
+    bff_manage_list_incoming_verification_requests: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+                review_status?: number | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IncomingVerificationRequestListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_approve_incoming_verification_request: {
         parameters: {
             query?: never;
@@ -10021,6 +10374,71 @@ export interface operations {
             };
         };
     };
+    bff_manage_list_outgoing_organization_relations: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+                keyword?: string | null;
+                sort?: ("name" | "-last_modified_at") | null;
+                verify?: boolean | null;
+                auto_verify_event_reference_requests?: boolean | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrganizationRelationListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_create_outgoing_organization_relation: {
         parameters: {
             query?: never;
@@ -10344,6 +10762,337 @@ export interface operations {
             };
         };
     };
+    bff_manage_delete_outgoing_organization_relation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                relation_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageMessage"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_outgoing_verification_requests: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutgoingVerificationRequestListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_create_outgoing_verification_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VerificationRequestCreate"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageMessage"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_outgoing_verification_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                request_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OutgoingVerificationRequestRead"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_withdraw_outgoing_verification_request: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                request_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManageDeleteSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageDeleted"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_get_organization_settings: {
         parameters: {
             query?: never;
@@ -10431,6 +11180,67 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_verifier_organizations: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VerifierOrganizationListPage"];
                 };
             };
             /** @description Unauthorized */

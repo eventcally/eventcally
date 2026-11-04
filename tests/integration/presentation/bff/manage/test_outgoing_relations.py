@@ -357,3 +357,158 @@ def test_update_keeps_verify_without_permission(client, app, db, seeder, utils, 
 
     assert response.status_code == 200
     assert _relation(app, relation_id) == dict(verify=True, auto=True)
+
+
+# list
+
+
+def _stamp(app, db, target_id, updated_at):
+    from sqlalchemy import text
+
+    with app.app_context():
+        db.session.execute(
+            text("UPDATE adminunit SET updated_at = :u WHERE id = :id"),
+            {"u": updated_at, "id": target_id},
+        )
+        db.session.commit()
+
+
+@pytest.fixture
+def listed(client, app, db, seeder, utils, setup):
+    """Relations to `Alpha` (verify) and `beta` (auto verify), `Alpha` modified first."""
+    admin_unit_id, other_id = setup
+    alpha_id = seeder.create_admin_unit(seeder.create_user("a@test.de"), "Alpha Crew")
+    beta_id = seeder.create_admin_unit(seeder.create_user("b@test.de"), "beta Crew")
+    alpha_relation = seeder.create_admin_unit_relation(
+        admin_unit_id, alpha_id, verify=True
+    )
+    beta_relation = seeder.create_admin_unit_relation(
+        admin_unit_id, beta_id, auto_verify_event_reference_requests=True
+    )
+    _stamp(app, db, alpha_id, "2026-01-01")
+    _stamp(app, db, beta_id, "2026-03-01")
+    return admin_unit_id, alpha_id, beta_id, alpha_relation, beta_relation
+
+
+def _names(response):
+    return [item["organization_name"] for item in response.json["items"]]
+
+
+def test_list(client, utils, listed):
+    admin_unit_id, alpha_id, _, alpha_relation, _ = listed
+
+    response = utils.get_json_ok(_urls(admin_unit_id)["base"])
+
+    assert _names(response) == ["Alpha Crew", "beta Crew"]
+    assert response.json["can_write"] is True
+    assert response.json["can_verify_other"] is True
+    assert response.json["per_page"] == 50
+    first = response.json["items"][0]
+    assert first["id"] == alpha_relation
+    assert first["organization_id"] == alpha_id
+    assert first["verify"] is True
+    assert first["auto_verify_event_reference_requests"] is False
+    assert first["last_modified_at"] is not None
+
+
+def test_list_sort_search_and_filters(client, utils, listed):
+    admin_unit_id = listed[0]
+    base = _urls(admin_unit_id)["base"]
+
+    assert _names(utils.get_json_ok(base + "?sort=-last_modified_at")) == [
+        "beta Crew",
+        "Alpha Crew",
+    ]
+    assert _names(utils.get_json_ok(base + "?keyword=BE")) == ["beta Crew"]
+    assert _names(utils.get_json_ok(base + "?verify=1")) == ["Alpha Crew"]
+    assert _names(utils.get_json_ok(base + "?verify=0")) == ["beta Crew"]
+    assert _names(
+        utils.get_json_ok(base + "?auto_verify_event_reference_requests=1")
+    ) == ["beta Crew"]
+
+
+def test_list_ignores_the_verify_filter_without_permission(
+    client, app, db, utils, listed
+):
+    admin_unit_id = listed[0]
+    with app.app_context():
+        from project.infrastructure.models import AdminUnit
+
+        db.session.get(AdminUnit, admin_unit_id).can_verify_other = False
+        db.session.commit()
+
+    response = utils.get_json_ok(_urls(admin_unit_id)["base"] + "?verify=1")
+
+    assert response.json["can_verify_other"] is False
+    assert _names(response) == ["Alpha Crew", "beta Crew"]
+
+
+def test_list_out_of_range_is_404(client, utils, listed):
+    assert utils.get_json(_urls(listed[0])["base"] + "?page=9").status_code == 404
+
+
+def test_list_without_permission_is_403(client, seeder, utils):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+    utils.get_ok("/organizations")
+
+    assert utils.get_json(_urls(admin_unit_id)["base"]).status_code == 403
+
+
+# delete
+
+
+def test_delete(client, app, utils, listed):
+    admin_unit_id, _, _, alpha_relation, _ = listed
+
+    response = utils.post_json(
+        _urls(admin_unit_id, alpha_relation)["form"] + "/delete", dict()
+    )
+
+    assert response.status_code == 200
+    assert response.json == dict(
+        message="Ausgehende Organisationsbeziehung erfolgreich gelöscht"
+    )
+    assert _relation(app, alpha_relation) is None
+
+
+def test_delete_without_permission_is_403(client, app, seeder, utils):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    target_id = seeder.create_admin_unit(seeder.create_user("t@test.de"), "Target")
+    relation_id = seeder.create_admin_unit_relation(admin_unit_id, target_id)
+    seeder.create_admin_unit_member(admin_unit_id, [])
+    utils.login()
+    utils.get_ok("/organizations")
+
+    response = utils.post_json(
+        _urls(admin_unit_id, relation_id)["form"] + "/delete", dict()
+    )
+
+    assert response.status_code == 403
+    assert _relation(app, relation_id) is not None
+
+
+def test_delete_of_another_organization_is_404(client, app, seeder, utils, setup):
+    admin_unit_id, other_id = setup
+    relation_id = seeder.create_admin_unit_relation(other_id, admin_unit_id)
+
+    response = utils.post_json(
+        _urls(admin_unit_id, relation_id)["form"] + "/delete", dict()
+    )
+
+    assert response.status_code == 404
+    assert _relation(app, relation_id) is not None
+
+
+def test_delete_with_db_error_is_400(client, app, mocker, utils, listed):
+    admin_unit_id, _, _, alpha_relation, _ = listed
+    utils.mock_db_commit(mocker)
+
+    response = utils.post_json(
+        _urls(admin_unit_id, alpha_relation)["form"] + "/delete", dict()
+    )
+
+    assert response.status_code == 400

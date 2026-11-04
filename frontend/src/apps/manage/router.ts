@@ -127,6 +127,33 @@ export const routes: RouteRecordRaw[] = [
     }),
   },
   {
+    path: "/manage/admin_unit/:organizationId(\\d+)/outgoing_organization_relations",
+    name: "outgoing-organization-relations",
+    component: () => import("./pages/OrganizationRelationsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/incoming_organization_verification_requests",
+    name: "incoming-verification-requests",
+    component: () => import("./pages/IncomingVerificationRequestsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/outgoing_organization_verification_requests",
+    name: "outgoing-verification-requests",
+    component: () => import("./pages/OutgoingVerificationRequestsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/outgoing_organization_verification_request/:id(\\d+)",
+    name: "outgoing-verification-request",
+    component: () => import("./pages/OutgoingVerificationRequestPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
     path: "/manage/admin_unit/:organizationId(\\d+)/update",
     name: "organization-settings",
     component: OrganizationSettingsPage,

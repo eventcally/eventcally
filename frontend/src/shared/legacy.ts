@@ -44,10 +44,6 @@ export const manage = {
     `/manage/admin_unit/${organizationId}/event_organizer/${id}/update`,
   eventReferenceRequestCreate: (organizationId: number, eventId: number) =>
     `/manage/admin_unit/${organizationId}/outgoing_event_reference_request/create_for_event/${eventId}`,
-  outgoingOrganizationRelations: (organizationId: number) =>
-    `/manage/admin_unit/${organizationId}/outgoing_organization_relations`,
-  incomingVerificationRequests: (organizationId: number) =>
-    `/manage/admin_unit/${organizationId}/incoming_organization_verification_requests`,
   customWidgets: (organizationId: number) => `/manage/admin_unit/${organizationId}/custom-widgets`,
   customWidgetCreate: (organizationId: number) =>
     `/manage/admin_unit/${organizationId}/custom-widgets/create`,

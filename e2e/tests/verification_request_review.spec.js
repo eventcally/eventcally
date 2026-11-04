@@ -21,7 +21,7 @@ test.describe("Verification request review", () => {
     await page.locator("[data-test=reject-confirm]").click();
     await expect(page).toHaveURL(/\/incoming_organization_verification_requests/);
     await shouldContain(page.locator("div.alert"), "Verifizierungsanfrage erfolgreich aktualisiert");
-    await shouldContain(page.locator("main .badge-pill"), "Abgelehnt");
+    await shouldContain(page.locator("main .badge"), "Abgelehnt");
 
     // Accept
     await page.goto(reviewUrl);

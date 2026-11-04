@@ -78,8 +78,6 @@ class BaseListForm(BaseForm):
     class Meta:
         csrf = False
 
-    filters = None
-    search_definitions = None
     sort_definitions = None
 
     submit = SubmitField(

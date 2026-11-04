@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 15:08+0100\n"
+"POT-Creation-Date: 2026-11-04 16:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.12.1\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: project/presentation/web/templates/security/authorize.html:10
 #, python-format
@@ -41,7 +41,7 @@ msgstr ""
 msgid "%(count)d event dates"
 msgstr ""
 
-#: project/presentation/shared/permissions.py:80
+#: project/presentation/shared/permissions.py:78
 #, python-format
 msgid "%(domain_label)s: %(label)s"
 msgstr ""
@@ -55,21 +55,23 @@ msgid ""
 msgstr ""
 
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:43
-#: project/presentation/bff/manage/event_organizers.py:198
-#: project/presentation/bff/manage/event_places.py:189
-#: project/presentation/bff/manage/outgoing_relations.py:205
-#: project/presentation/web/modular/base_views.py:314
+#: project/presentation/bff/manage/event_organizers.py:199
+#: project/presentation/bff/manage/event_places.py:190
+#: project/presentation/bff/manage/outgoing_relations.py:213
+#: project/presentation/web/modular/base_views.py:313
 #, python-format
 msgid "%(model_display_name)s successfully created"
 msgstr ""
 
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:47
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:42
-#: project/presentation/bff/manage/event_organizers.py:334
-#: project/presentation/bff/manage/event_places.py:319
-#: project/presentation/bff/manage/event_references.py:276
-#: project/presentation/bff/manage/events.py:365
-#: project/presentation/web/modular/base_views.py:433
+#: project/presentation/bff/manage/event_organizers.py:335
+#: project/presentation/bff/manage/event_places.py:320
+#: project/presentation/bff/manage/event_references.py:275
+#: project/presentation/bff/manage/events.py:366
+#: project/presentation/bff/manage/outgoing_relations.py:337
+#: project/presentation/bff/manage/verification_requests.py:263
+#: project/presentation/web/modular/base_views.py:432
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr ""
@@ -80,12 +82,12 @@ msgid "%(model_display_name)s successfully revoked"
 msgstr ""
 
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:71
-#: project/presentation/bff/manage/event_forms.py:582
-#: project/presentation/bff/manage/event_organizers.py:246
-#: project/presentation/bff/manage/event_places.py:235
-#: project/presentation/bff/manage/event_references.py:248
-#: project/presentation/bff/manage/outgoing_relations.py:243
-#: project/presentation/web/modular/base_views.py:385
+#: project/presentation/bff/manage/event_forms.py:583
+#: project/presentation/bff/manage/event_organizers.py:247
+#: project/presentation/bff/manage/event_places.py:236
+#: project/presentation/bff/manage/event_references.py:247
+#: project/presentation/bff/manage/outgoing_relations.py:251
+#: project/presentation/web/modular/base_views.py:384
 #, python-format
 msgid "%(model_display_name)s successfully updated"
 msgstr ""
@@ -95,7 +97,7 @@ msgstr ""
 msgid "%(name)s invited you to create an organization."
 msgstr ""
 
-#: project/presentation/shared/reference_request.py:6
+#: project/presentation/shared/reference_request.py:7
 #, python-format
 msgid "%(organization)s accepted your reference request"
 msgstr ""
@@ -180,7 +182,7 @@ msgstr ""
 msgid "A referenced event was changed."
 msgstr ""
 
-#: project/presentation/bff/manage/outgoing_relations.py:189
+#: project/presentation/bff/manage/outgoing_relations.py:196
 msgid "A relation to this organization already exists."
 msgstr ""
 
@@ -224,7 +226,7 @@ msgstr ""
 msgid "Accept reference request"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:140
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:139
 msgid "Accept verification request"
 msgstr ""
 
@@ -264,13 +266,13 @@ msgstr ""
 msgid "Actor is not authorized to perform this action."
 msgstr ""
 
-#: project/application/command_handlers/authorization_utils.py:75
-#: project/application/services/actor_authorization_service.py:53
+#: project/application/command_handlers/authorization_utils.py:76
+#: project/application/services/actor_authorization_service.py:54
 msgid "Actor is not permitted to perform this action on behalf of a user."
 msgstr ""
 
-#: project/application/command_handlers/authorization_utils.py:98
-#: project/application/services/actor_authorization_service.py:65
+#: project/application/command_handlers/authorization_utils.py:99
+#: project/application/services/actor_authorization_service.py:66
 msgid "Actor is not permitted to perform this platform-admin action."
 msgstr ""
 
@@ -387,7 +389,9 @@ msgstr ""
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:251
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:263
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:301
+#: frontend/src/shared/TriStateFilter.vue:17
 #: project/presentation/bff/manage/reference_requests.py:40
+#: project/presentation/bff/manage/verification_requests.py:71
 #: project/presentation/web/modular/filters.py:29
 #: project/presentation/web/modular/filters.py:46
 msgid "All"
@@ -423,13 +427,13 @@ msgstr ""
 msgid "An account already exists with this email."
 msgstr ""
 
-#: project/domain/errors/duplicate_error.py:7
+#: project/domain/errors/duplicate_error.py:8
 msgid ""
 "An entry with the entered values already exists. Duplicate entries are "
 "not allowed."
 msgstr ""
 
-#: project/presentation/web/views/utils.py:37
+#: project/presentation/web/views/utils.py:38
 msgid ""
 "An entry with the entered values ​​already exists. Duplicate entries are "
 "not allowed."
@@ -507,7 +511,7 @@ msgstr ""
 msgid "Apps"
 msgstr ""
 
-#: project/presentation/web/templates/manage/verification_requests_outgoing_create.html:12
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:107
 #, python-format
 msgid "Ask \"%(name)s\" to verify your organization."
 msgstr ""
@@ -579,6 +583,7 @@ msgstr ""
 #: frontend/src/apps/manage/components/RecurrenceRuleModal.vue:451
 #: frontend/src/apps/manage/components/ReviewDecisionBar.vue:59
 #: frontend/src/apps/manage/components/ReviewDecisionBar.vue:94
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:152
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:148
 #: frontend/src/shared/ConfirmModal.vue:30
 msgid "Cancel"
@@ -634,7 +639,7 @@ msgstr ""
 #: frontend/src/apps/manage/components/EventReferenceRatingModal.vue:82
 #: frontend/src/apps/manage/pages/EventEditPage.vue:655
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:110
-#: project/presentation/web/forms/reference.py:19
+#: project/presentation/web/forms/reference.py:20
 msgid ""
 "Choose how relevant the event is to your organization. The value is not "
 "visible and is used for sorting."
@@ -838,7 +843,7 @@ msgstr ""
 
 #: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:151
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:169
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:202
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:201
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:104
 #: project/presentation/web/modular/base_form.py:65
 msgid "Create"
@@ -847,9 +852,11 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:141
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:138
 #: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:30
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:153
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:111
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:46
 #: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:38
-#: project/presentation/web/modular/base_views.py:308
+#: project/presentation/web/modular/base_views.py:307
 #: project/presentation/web/templates/generic/list.html:18
 #, python-format
 msgid "Create %(model_display_name)s"
@@ -901,7 +908,9 @@ msgstr ""
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:101
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:272
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:78
+#: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:66
 #: frontend/src/apps/manage/pages/OutgoingEventReferencesPage.vue:49
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:73
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:180
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:85
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:34
@@ -910,9 +919,7 @@ msgstr ""
 #: project/presentation/web/views/manage_admin_unit/api_key/displays.py:19
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:16
 #: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:21
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/displays.py:16
 #: project/presentation/web/views/manage_admin_unit/organization_invitation/displays.py:10
-#: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:49
 msgid "Created at"
 msgstr ""
 
@@ -1025,6 +1032,12 @@ msgstr ""
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:67
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:101
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:218
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:135
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:226
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:57
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:98
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:88
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:157
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:74
 #: frontend/src/apps/user/pages/OAuth2ClientPage.vue:55
 #: project/presentation/web/modular/base_form.py:74
@@ -1038,8 +1051,11 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:195
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:120
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:151
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:225
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:97
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:156
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:23
-#: project/presentation/web/modular/base_views.py:421
+#: project/presentation/web/modular/base_views.py:420
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr ""
@@ -1152,14 +1168,17 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:198
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:122
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:154
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:228
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:99
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:159
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:91
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:86
-#: project/presentation/web/modular/base_views.py:427
+#: project/presentation/web/modular/base_views.py:426
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app_installation/views.py:40
+#: project/presentation/web/views/manage_admin_unit/app_installation/views.py:41
 #, python-format
 msgid "Do you want to install '%(app_name)s'?"
 msgstr ""
@@ -1175,12 +1194,12 @@ msgid "Do you want to revoke '%(object_title)s'?"
 msgstr ""
 
 #: frontend/src/apps/manage/pages/PlanningPage.vue:162
+#: frontend/src/shared/AppBreadcrumb.vue:37
 #: frontend/src/shared/IcalExportModal.vue:36
 #: project/presentation/web/jinja_filters.py:66
 #: project/presentation/web/templates/home.html:38
 #: project/presentation/web/templates/macros/nav.html.j2:15
 #: project/presentation/web/templates/manage/admin_units.html:28
-#: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:13
 #: project/presentation/web/templates/security/login_user.html:21
 #: project/presentation/web/templates/security/register_user.html:43
 msgid "Docs"
@@ -1224,6 +1243,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:66
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:95
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:215
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:129
 #: project/presentation/web/modular/base_view_handler.py:200
 #: project/presentation/web/templates/_macros.html:591
 #: project/presentation/web/templates/_macros.html:634
@@ -1328,8 +1348,8 @@ msgid ""
 "adults and children."
 msgstr ""
 
-#: project/presentation/bff/user/api_keys.py:152
-#: project/presentation/web/modular/base_views.py:411
+#: project/presentation/bff/user/api_keys.py:153
+#: project/presentation/web/modular/base_views.py:410
 #, python-format
 msgid ""
 "Entered %(property_name)s does not match %(model_display_name)s "
@@ -1398,6 +1418,8 @@ msgstr ""
 #: frontend/src/apps/manage/components/EventReferenceRatingModal.vue:50
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:59
 #: frontend/src/apps/manage/components/RecurrenceRuleModal.vue:170
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:46
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:82
 #: frontend/src/apps/manage/composables/useExportJob.ts:42
 #: frontend/src/apps/manage/composables/useExportJob.ts:63
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:73
@@ -1417,19 +1439,23 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:55
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:36
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:36
+#: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:46
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:104
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:118
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:45
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:104
 #: frontend/src/apps/manage/pages/OrganizationExportPage.vue:31
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:64
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:126
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:63
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:125
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:66
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:61
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:148
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:39
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:53
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:38
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:52
 #: frontend/src/apps/manage/pages/OutgoingEventReferenceRequestPage.vue:31
 #: frontend/src/apps/manage/pages/OutgoingEventReferencesPage.vue:30
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:34
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:34
 #: frontend/src/apps/manage/pages/PlanningPage.vue:75
 #: frontend/src/apps/public/pages/EventDatesPage.vue:59
 #: frontend/src/apps/public/pages/EventDatesPage.vue:73
@@ -1625,7 +1651,7 @@ msgstr ""
 msgid "Event references"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:99
+#: project/application/services/abstract_email_service.py:100
 #: project/application/services/abstract_email_service.py:106
 msgid "Event review status updated"
 msgstr ""
@@ -2054,7 +2080,7 @@ msgid ""
 " that you can find through the %(search_open)ssearch%(search_close)s."
 msgstr ""
 
-#: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:18
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:160
 msgid "Here you can find organizations that can verify other organizations."
 msgstr ""
 
@@ -2098,13 +2124,13 @@ msgid "Homepage URL"
 msgstr ""
 
 #: frontend/src/shared/TosAcceptLabel.vue:36
-#: project/presentation/web/forms/common.py:72
+#: project/presentation/web/forms/common.py:73
 #, python-format
 msgid "I read and accept %(privacy_open)sPrivacy%(privacy_close)s."
 msgstr ""
 
 #: frontend/src/shared/TosAcceptLabel.vue:33
-#: project/presentation/web/forms/common.py:62
+#: project/presentation/web/forms/common.py:63
 #, python-format
 msgid ""
 "I read and accept %(tos_open)sTerms of Service%(tos_close)s and "
@@ -2117,8 +2143,8 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: project/presentation/bff/manage/request_reviews.py:278
-#: project/presentation/bff/manage/request_reviews.py:379
+#: project/presentation/bff/manage/request_reviews.py:279
+#: project/presentation/bff/manage/request_reviews.py:380
 #, python-format
 msgid ""
 "If all upcoming reference requests of %(admin_unit_name)s should be "
@@ -2126,24 +2152,24 @@ msgid ""
 msgstr ""
 
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:150
-#: project/presentation/web/views/manage_admin_unit/organization_invitation/forms.py:27
+#: project/presentation/web/views/manage_admin_unit/organization_invitation/forms.py:28
 msgid ""
 "If set, all upcoming reference requests of the new organization are "
 "verified automatically."
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:189
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:188
 msgid ""
 "If set, all upcoming reference requests of the other organization are "
 "verified automatically."
 msgstr ""
 
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:139
-#: project/presentation/web/views/manage_admin_unit/organization_invitation/forms.py:20
+#: project/presentation/web/views/manage_admin_unit/organization_invitation/forms.py:21
 msgid "If set, events of the new organization are publicly visible."
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:177
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:176
 msgid "If set, events of the other organization are publicly visible."
 msgstr ""
 
@@ -2224,10 +2250,11 @@ msgstr ""
 msgid "Incoming references"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:82
+#: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:91
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:81
 #: project/presentation/shared/permissions.py:146
 #: project/presentation/web/templates/_managebar.html:70
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/view_handler.py:66
+#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/view_handler.py:35
 msgid "Incoming verification requests"
 msgstr ""
 
@@ -2324,6 +2351,7 @@ msgstr ""
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:125
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:147
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:144
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:159
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:102
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:56
 #: frontend/src/apps/public/pages/OrganizationsPage.vue:57
@@ -2356,7 +2384,6 @@ msgstr ""
 
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:57
 #: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:50
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/view_handler.py:49
 msgid "Last created first"
 msgstr ""
 
@@ -2364,14 +2391,14 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:97
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:80
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:192
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:15
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:121
 msgid "Last modified at"
 msgstr ""
 
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:158
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:154
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:151
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:58
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:177
 msgid "Last modified first"
 msgstr ""
 
@@ -2524,7 +2551,7 @@ msgstr ""
 msgid "Max. height"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:130
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:129
 #: project/presentation/web/templates/_managebar.html:61
 msgid "Members"
 msgstr ""
@@ -2585,6 +2612,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:150
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:202
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:69
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:176
 #: frontend/src/apps/public/pages/EventReportPage.vue:99
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:83
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:79
@@ -2604,7 +2632,6 @@ msgstr ""
 #: project/presentation/web/views/manage_admin_unit/api_key/view_handler.py:47
 #: project/presentation/web/views/manage_admin_unit/app/forms.py:69
 #: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:75
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:54
 #: project/templates/email/referenced_event_changed_notice.txt:11
 msgid "Name"
 msgstr ""
@@ -2644,7 +2671,7 @@ msgstr ""
 msgid "New permissions"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:95
+#: project/application/services/abstract_email_service.py:96
 msgid "New reference automatically verified"
 msgstr ""
 
@@ -2652,7 +2679,7 @@ msgstr ""
 msgid "New reference request"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:111
+#: project/application/services/abstract_email_service.py:112
 msgid "New verification request"
 msgstr ""
 
@@ -2681,6 +2708,7 @@ msgstr ""
 #: frontend/src/apps/admin/pages/EmailPage.vue:29
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:303
+#: frontend/src/shared/TriStateFilter.vue:25
 #: project/presentation/web/modular/filters.py:31
 #: project/presentation/web/templates/_macros.html:825
 msgid "No"
@@ -2701,7 +2729,7 @@ msgstr ""
 msgid "No organizations found"
 msgstr ""
 
-#: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:44
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:232
 #, python-format
 msgid ""
 "No organizations were found that can verify your organization with postal"
@@ -2833,10 +2861,14 @@ msgstr ""
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:100
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:206
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:77
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:152
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:94
+#: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:64
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:151
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:115
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:93
 #: frontend/src/apps/manage/pages/OutgoingEventReferenceRequestPage.vue:67
 #: frontend/src/apps/manage/pages/OutgoingEventReferencesPage.vue:48
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:82
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:71
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:127
 #: frontend/src/apps/user/pages/MemberInvitationsPage.vue:25
 #: frontend/src/apps/user/pages/MembershipsPage.vue:25
@@ -2851,16 +2883,12 @@ msgstr ""
 #: project/presentation/web/templates/_managebar.html:47
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:16
 #: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:41
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/displays.py:11
 #: project/presentation/web/views/manage_admin_unit/organization_invitation/displays.py:9
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:9
-#: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:31
-#: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:44
 #: project/templates/email/referenced_event_changed_notice.txt:6
 msgid "Organization"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:86
+#: project/application/services/abstract_email_service.py:87
 msgid "Organization deletion requested"
 msgstr ""
 
@@ -2869,7 +2897,7 @@ msgstr ""
 msgid "Organization invitation"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:89
+#: project/application/services/abstract_email_service.py:90
 msgid "Organization invitation accepted"
 msgstr ""
 
@@ -2921,6 +2949,7 @@ msgstr ""
 msgid "Organization memberships"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:229
 #: project/infrastructure/babel_extract.py:1
 msgid "Organization relation"
 msgstr ""
@@ -2950,8 +2979,11 @@ msgstr ""
 msgid "Organization successfully verified"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:27
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:26
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:37
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:41
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/bff/manage/verification_requests.py:264
 msgid "Organization verification request"
 msgstr ""
 
@@ -2977,7 +3009,7 @@ msgstr ""
 msgid "Organizations"
 msgstr ""
 
-#: project/presentation/web/views/manage_blueprint/views.py:24
+#: project/presentation/web/views/manage_blueprint/views.py:25
 msgid ""
 "Organizations cannot currently be created. The project is in a closed "
 "test phase. If you are interested, you can contact us."
@@ -3009,21 +3041,24 @@ msgstr ""
 
 #: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:133
 #: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:138
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:156
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:161
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:155
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:160
 msgid "Other organization"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:35
-#: project/presentation/bff/manage/outgoing_relations.py:207
-#: project/presentation/bff/manage/outgoing_relations.py:245
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:64
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:34
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:98
+#: project/presentation/bff/manage/outgoing_relations.py:214
+#: project/presentation/bff/manage/outgoing_relations.py:252
+#: project/presentation/bff/manage/outgoing_relations.py:338
+#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:32
 msgid "Outgoing organization relation"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:138
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:137
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:144
 #: project/presentation/shared/permissions.py:167
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:67
+#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:35
 msgid "Outgoing organization relations"
 msgstr ""
 
@@ -3043,9 +3078,11 @@ msgstr ""
 msgid "Outgoing references"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:68
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:100
 #: project/presentation/shared/permissions.py:160
 #: project/presentation/web/templates/_managebar.html:54
-#: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/view_handler.py:62
+#: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/view_handler.py:31
 msgid "Outgoing verification requests"
 msgstr ""
 
@@ -3152,7 +3189,7 @@ msgstr ""
 msgid "Please choose an image file."
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:35
+#: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:36
 msgid "Please download the private key. It will only be available once."
 msgstr ""
 
@@ -3161,7 +3198,7 @@ msgid "Please enter a valid time, between 00:00 and 23:59."
 msgstr ""
 
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:50
-#: project/presentation/web/views/manage_admin_unit/api_key/views.py:29
+#: project/presentation/web/views/manage_admin_unit/api_key/views.py:30
 #, python-format
 msgid "Please note the key: %(key)s. It will only be displayed once."
 msgstr ""
@@ -3266,7 +3303,7 @@ msgstr ""
 msgid "Rating"
 msgstr ""
 
-#: project/presentation/shared/permissions.py:63
+#: project/presentation/shared/permissions.py:64
 #, python-format
 msgid "Read %(entity_display_name)s"
 msgstr ""
@@ -3314,7 +3351,7 @@ msgstr ""
 msgid "Reference request already verified."
 msgstr ""
 
-#: project/presentation/shared/reference_request.py:11
+#: project/presentation/shared/reference_request.py:12
 #, python-format
 msgid ""
 "Reference request to %(organization)s successfully created. You will be "
@@ -3350,7 +3387,7 @@ msgstr ""
 msgid "Referenced by"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:102
+#: project/application/services/abstract_email_service.py:103
 msgid "Referenced event changed"
 msgstr ""
 
@@ -3384,13 +3421,13 @@ msgstr ""
 msgid "Reject reference request"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:141
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:140
 msgid "Reject verification request"
 msgstr ""
 
 #: frontend/src/apps/manage/components/ReviewDecisionBar.vue:84
 #: frontend/src/apps/manage/pages/OutgoingEventReferenceRequestPage.vue:64
-#: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:37
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:89
 msgid "Rejection reason"
 msgstr ""
 
@@ -3469,7 +3506,7 @@ msgstr ""
 msgid "Request reference"
 msgstr ""
 
-#: project/presentation/web/views/verification_request.py:101
+#: project/presentation/bff/manage/verification_requests.py:366
 msgid ""
 "Request successfully created. You will be notified after the other "
 "organization reviewed the request."
@@ -3479,13 +3516,12 @@ msgstr ""
 msgid "Request successfully updated"
 msgstr ""
 
-#: project/presentation/web/forms/verification_request.py:7
-#: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:37
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:144
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:218
 msgid "Request verification"
 msgstr ""
 
-#: project/presentation/web/templates/manage/verification_requests_outgoing_create.html:5
-#: project/presentation/web/templates/manage/verification_requests_outgoing_create.html:9
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:61
 #, python-format
 msgid "Request verification for organization \"%(name)s\""
 msgstr ""
@@ -3516,25 +3552,25 @@ msgid "Retry"
 msgstr ""
 
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:26
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:26
-#: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/views.py:32
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:27
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:25
+#: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/views.py:31
+#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:31
 #, python-format
 msgid "Review %(model_display_name)s"
 msgstr ""
 
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:121
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/view_handler.py:101
+#: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:74
 msgid "Review request"
 msgstr ""
 
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:99
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:145
+#: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:65
+#: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:96
 #: frontend/src/apps/manage/pages/OutgoingEventReferenceRequestPage.vue:59
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/displays.py:13
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/view_handler.py:45
-#: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:33
-#: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/displays.py:46
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:84
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:72
 msgid "Review status"
 msgstr ""
 
@@ -3749,6 +3785,7 @@ msgstr ""
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:154
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:151
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:148
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:174
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:206
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:54
 #: project/presentation/web/modular/base_views.py:169
@@ -3837,7 +3874,7 @@ msgstr ""
 msgid "Target group origin"
 msgstr ""
 
-#: project/domain/services/organization_verification.py:32
+#: project/domain/services/organization_verification.py:33
 msgid "Target organization can no longer verify other organizations."
 msgstr ""
 
@@ -3911,7 +3948,7 @@ msgstr ""
 msgid "The full name of the organization"
 msgstr ""
 
-#: project/presentation/web/views/utils.py:245
+#: project/presentation/web/views/utils.py:246
 msgid ""
 "The invitation was issued to another user. Sign in with the email address"
 " the invitation was sent to."
@@ -3921,7 +3958,7 @@ msgstr ""
 msgid "The invitation will be sent to this email address."
 msgstr ""
 
-#: project/application/command_handlers/leave_organization_handler.py:28
+#: project/application/command_handlers/leave_organization_handler.py:29
 msgid "The last remaining administrator can not leave the organization."
 msgstr ""
 
@@ -3947,13 +3984,13 @@ msgstr ""
 msgid "The minimum age that participants should be."
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:79
+#: project/presentation/web/views/manage_admin_unit/admin_unit/views.py:80
 msgid ""
 "The organization is not deleted immediately. After a period of time, the "
 "organization will be deleted. Until then, the deletion can be canceled."
 msgstr ""
 
-#: project/presentation/bff/manage/organizations.py:174
+#: project/presentation/bff/manage/organizations.py:175
 msgid ""
 "The organization is not verified. Events are therefore not publicly "
 "visible."
@@ -4040,7 +4077,7 @@ msgstr ""
 #: project/presentation/bff/manage/event_forms.py:284
 #: project/presentation/bff/manage/image_form.py:38
 #: project/presentation/bff/manage/outgoing_reference_requests.py:129
-#: project/presentation/bff/manage/outgoing_relations.py:179
+#: project/presentation/bff/manage/outgoing_relations.py:186
 msgid "This field is required."
 msgstr ""
 
@@ -4120,7 +4157,7 @@ msgid "Until"
 msgstr ""
 
 #: frontend/src/apps/manage/pages/EventEditPage.vue:695
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:202
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:201
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:233
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:68
 #: frontend/src/apps/user/pages/OAuth2ClientPage.vue:49
@@ -4129,7 +4166,7 @@ msgid "Update"
 msgstr ""
 
 #: frontend/src/apps/manage/components/EventReferenceRatingModal.vue:63
-#: project/presentation/web/modular/base_views.py:379
+#: project/presentation/web/modular/base_views.py:378
 #, python-format
 msgid "Update %(model_display_name)s"
 msgstr ""
@@ -4158,7 +4195,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:107
+#: project/application/services/abstract_email_service.py:108
 msgid "User deletion requested"
 msgstr ""
 
@@ -4177,7 +4214,11 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:37
+#: project/presentation/bff/manage/verification_requests.py:355
+msgid "Verification cannot be requested from this organization."
+msgstr ""
+
+#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:42
 msgid "Verification request already verified"
 msgstr ""
 
@@ -4185,7 +4226,7 @@ msgstr ""
 msgid "Verification request already verified."
 msgstr ""
 
-#: project/application/services/abstract_email_service.py:114
+#: project/application/services/abstract_email_service.py:115
 msgid "Verification request review status updated"
 msgstr ""
 
@@ -4193,9 +4234,8 @@ msgstr ""
 msgid "Verification request successfully updated"
 msgstr ""
 
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:64
 #: frontend/src/apps/manage/pages/OrganizationSettingsPage.vue:184
-#: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:6
-#: project/presentation/web/templates/manage/verification_requests_outgoing_create_select.html:11
 msgid "Verification requests"
 msgstr ""
 
@@ -4210,7 +4250,9 @@ msgstr ""
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:150
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:56
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:213
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:101
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:123
+#: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:194
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:100
 #: project/presentation/web/templates/_macros.html:274
 msgid "Verified"
 msgstr ""
@@ -4225,9 +4267,10 @@ msgstr ""
 msgid "Verify new organization"
 msgstr ""
 
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:174
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:11
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:45
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:173
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:116
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:166
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:201
 msgid "Verify other organization"
 msgstr ""
 
@@ -4237,11 +4280,12 @@ msgstr ""
 
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:123
 #: frontend/src/apps/manage/pages/OrganizationCreatePage.vue:159
-#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:184
-#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:152
+#: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:183
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:119
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:171
+#: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:207
+#: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:151
 #: project/presentation/web/views/manage_admin_unit/organization_invitation/forms.py:26
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/displays.py:13
-#: project/presentation/web/views/manage_admin_unit/outgoing_organization_relation/view_handler.py:48
 msgid "Verify reference requests automatically"
 msgstr ""
 
@@ -4252,6 +4296,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:104
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:84
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:213
+#: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:79
 #: frontend/src/apps/user/pages/MemberInvitationsPage.vue:45
 #: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:55
 #: project/presentation/web/modular/base_view_handler.py:197
@@ -4276,8 +4321,8 @@ msgstr ""
 msgid "View events"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/view_handler.py:108
-#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:39
+#: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:82
+#: project/presentation/web/views/manage_admin_unit/incoming_verification_request/views.py:44
 msgid "View organization"
 msgstr ""
 
@@ -4383,7 +4428,7 @@ msgstr ""
 msgid "Would you like to accept the invitation from %(name)s?"
 msgstr ""
 
-#: project/presentation/shared/permissions.py:67
+#: project/presentation/shared/permissions.py:68
 #, python-format
 msgid "Write %(entity_display_name)s"
 msgstr ""
@@ -4399,6 +4444,7 @@ msgstr ""
 #: frontend/src/apps/admin/pages/EmailPage.vue:29
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:302
+#: frontend/src/shared/TriStateFilter.vue:21
 #: project/presentation/web/modular/filters.py:30
 #: project/presentation/web/templates/_macros.html:825
 msgid "Yes"
@@ -4410,8 +4456,8 @@ msgid ""
 "delete a single date instead, you have to edit the event to do so."
 msgstr ""
 
-#: project/presentation/bff/user/profile.py:149
-#: project/presentation/web/views/user_blueprint/shells.py:71
+#: project/presentation/bff/user/profile.py:150
+#: project/presentation/web/views/user_blueprint/shells.py:72
 msgid ""
 "You are administrator of at least one organization. Cancel your "
 "membership to delete your account."
@@ -4432,7 +4478,7 @@ msgid "You have been invited to join %(admin_unit_name)s."
 msgstr ""
 
 #: project/application/services/abstract_email_service.py:84
-#: project/application/services/abstract_email_service.py:92
+#: project/application/services/abstract_email_service.py:93
 msgid "You have received an invitation"
 msgstr ""
 

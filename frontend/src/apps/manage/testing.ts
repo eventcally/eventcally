@@ -27,6 +27,13 @@ export const testRoutes = [
   { path: `${base}/outgoing_event_reference_requests`, name: "outgoing-event-reference-requests", component: Blank },
   { path: `${base}/outgoing_event_reference_request/:id`, name: "outgoing-event-reference-request", component: Blank },
   { path: `${base}/incoming_event_reference_request/:id/review`, name: "event-reference-request-review", component: Blank },
+  { path: `${base}/outgoing_organization_relations`, name: "outgoing-organization-relations", component: Blank },
+  { path: `${base}/outgoing_organization_relation/create`, name: "outgoing-organization-relation-create", component: Blank },
+  { path: `${base}/outgoing_organization_relation/:id/update`, name: "outgoing-organization-relation-update", component: Blank },
+  { path: `${base}/incoming_organization_verification_requests`, name: "incoming-verification-requests", component: Blank },
+  { path: `${base}/incoming_organization_verification_request/:id/review`, name: "verification-request-review", component: Blank },
+  { path: `${base}/outgoing_organization_verification_requests`, name: "outgoing-verification-requests", component: Blank },
+  { path: `${base}/outgoing_organization_verification_request/:id`, name: "outgoing-verification-request", component: Blank },
 ];
 
 const mounted: { unmount: () => void }[] = [];

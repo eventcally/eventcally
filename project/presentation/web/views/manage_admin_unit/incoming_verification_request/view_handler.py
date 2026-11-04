@@ -1,32 +1,21 @@
-from flask import url_for
-from flask_babel import gettext, lazy_gettext
+from flask_babel import lazy_gettext
 
 from project.application.queries import (
     GetIncomingOrganizationVerificationRequestReviewQuery,
-    ListIncomingOrganizationVerificationRequestsQuery,
 )
-from project.domain.models.enums.organization_verification_request_review_status import (
-    OrganizationVerificationRequestReviewStatus,
-)
-from project.presentation.shared.current_admin_unit import current_admin_unit
-from project.presentation.web.modular.filters import (
-    KeyEnumFilter,
-    enum_filter_value_or_none,
-)
-from project.presentation.web.modular.sort_definition import KeySortDefinition
 from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
 from project.presentation.web.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
 )
-from project.presentation.web.views.manage_admin_unit.incoming_verification_request.displays import (
-    ListDisplay,
-)
 from project.presentation.web.views.manage_admin_unit.incoming_verification_request.views import (
+    ListView,
     ReviewView,
 )
 
 
 class ViewHandler(ManageAdminUnitChildViewHandler):
+    """Shells: the list and the review page are Vue pages (`/bff/manage`)."""
+
     model_name = "organization_verification_request"
     model_name_plural = "organization_verification_requests"
     display_name = "Organization verification request"
@@ -36,28 +25,8 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
     read_view_class = None
     update_view_class = None
     delete_view_class = None
-    list_display_class = ListDisplay
-    list_filters = [
-        KeyEnumFilter(
-            "review_status",
-            OrganizationVerificationRequestReviewStatus,
-            enum_name="AdminUnitVerificationRequestReviewStatus",
-            label=lazy_gettext("Review status"),
-        ),
-    ]
-    list_sort_definitions = [
-        KeySortDefinition("-created_at", label=lazy_gettext("Last created first")),
-    ]
+    list_view_class = ListView
     generic_prefix = "incoming_"
-
-    def create_list_query(self, form, page_request, **kwargs):
-        return ListIncomingOrganizationVerificationRequestsQuery(
-            admin_unit_id=current_admin_unit.id,
-            review_status=enum_filter_value_or_none(
-                OrganizationVerificationRequestReviewStatus, form.review_status.data
-            ),
-            page=page_request,
-        )
 
     def create_get_query(self, object_id):
         return GetIncomingOrganizationVerificationRequestReviewQuery(id=object_id)
@@ -90,27 +59,6 @@ class ViewHandler(ManageAdminUnitChildViewHandler):
             f"{single_endpoint_name}_review",
             app,
         )
-
-    def get_additional_list_actions(self, object):
-        result = super().get_additional_list_actions(object)
-
-        if object.review_status != OrganizationVerificationRequestReviewStatus.verified:
-            kwargs = dict()
-            kwargs.setdefault(self.get_id_query_arg_name(), object.id)
-            review_action = self._create_action(
-                self.get_endpoint_url("review", **kwargs), gettext("Review request")
-            )
-            if review_action:
-                result.append(review_action)
-
-        view_organization_action = self._create_action(
-            url_for("main.organization", id=object.source_admin_unit_id),
-            gettext("View organization"),
-        )
-        if view_organization_action:
-            result.append(view_organization_action)
-
-        return result
 
 
 handler = ViewHandler()
