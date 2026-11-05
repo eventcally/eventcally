@@ -119,8 +119,7 @@ def _save_body(**kwargs):
 
 @pytest.fixture
 def setup(client, seeder, utils):
-    # Webhook deliveries are not part of any organization role: platform admins only.
-    user_id, admin_unit_id = seeder.setup_base(admin=True)
+    user_id, admin_unit_id = seeder.setup_base()
     app_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
     _shell(utils, admin_unit_id)
     return user_id, admin_unit_id, app_id
@@ -230,6 +229,16 @@ def test_apps_of_others_are_404(client, app, db, seeder, utils, setup):
     assert _key_ids(app, db, foreign_id) == [foreign_key_id]
 
 
+def test_app_of_another_own_organization_is_404(client, seeder, utils, setup):
+    user_id, admin_unit_id, _ = setup
+    other_unit_id = seeder.create_admin_unit(user_id, "Zweite Crew")
+    foreign_id = seeder.insert_default_oauth2_client_app(admin_unit_id=other_unit_id)
+
+    response = utils.get_json(f"{BASE_URL.format(admin_unit_id)}/{foreign_id}")
+
+    assert response.status_code == 404
+
+
 def test_children_of_another_app_are_404(client, app, db, seeder, utils, setup):
     _, admin_unit_id, app_id = setup
     second_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
@@ -325,20 +334,48 @@ def test_read_lists_the_keys(client, app, db, seeder, utils, setup):
     assert "private_pem" not in str(body)
 
 
-def test_organization_admin_does_not_see_webhook_deliveries(
-    client, app, db, seeder, utils
+def test_organization_admin_sees_webhook_deliveries(
+    client, app, db, seeder, utils, mocker
 ):
+    from project.application.message_bus import MessageBus
+
     _, admin_unit_id = seeder.setup_base()
     app_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
     delivery_id = _delivery(app, db, app_id)
+    attempt_id = _attempt(app, db, delivery_id)
+    _shell(utils, admin_unit_id)
     base = f"{BASE_URL.format(admin_unit_id)}/{app_id}"
+    deliveries = f"{base}/webhook-deliveries"
 
     body = utils.get_json_ok(base).json
 
-    assert body["can_read_deliveries"] is False
+    assert body["can_read_deliveries"] is True
     assert body["can_read_keys"] is True
-    assert utils.get_json(f"{base}/webhook-deliveries").status_code == 403
-    assert utils.get_json(f"{base}/webhook-deliveries/{delivery_id}").status_code == 403
+    assert utils.get_json(deliveries).status_code == 200
+    assert utils.get_json(f"{deliveries}/{delivery_id}").status_code == 200
+    attempts = utils.get_json_ok(f"{deliveries}/{delivery_id}/attempts").json
+    assert [i["id"] for i in attempts["items"]] == [attempt_id]
+    mocker.patch.object(MessageBus, "dispatch_command")
+    assert (
+        utils.post_json(f"{deliveries}/{delivery_id}/attempts", {}).status_code == 200
+    )
+
+
+def test_member_without_admin_role_cannot_see_webhook_deliveries(
+    client, app, db, seeder, utils
+):
+    _, admin_unit_id, _ = seeder.setup_base_event_verifier()
+    app_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
+    delivery_id = _delivery(app, db, app_id)
+    utils.get_ok("/organizations")
+    deliveries = f"{BASE_URL.format(admin_unit_id)}/{app_id}/webhook-deliveries"
+
+    assert utils.get_json(deliveries).status_code == 403
+    assert utils.get_json(f"{deliveries}/{delivery_id}").status_code == 403
+    assert utils.get_json(f"{deliveries}/{delivery_id}/attempts").status_code == 403
+    assert (
+        utils.post_json(f"{deliveries}/{delivery_id}/attempts", {}).status_code == 403
+    )
 
 
 def test_read_carries_the_audit(client, app, db, utils, setup):

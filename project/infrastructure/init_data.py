@@ -34,6 +34,9 @@ organization_admin_permissions = [
     "outgoing_organization_verification_requests:write",
     "settings:read",
     "settings:write",
+    "webhook_deliveries:read",
+    "webhook_delivery_attempts:read",
+    "webhook_delivery_attempts:write",
     "widgets:read",
     "widgets:write",
 ]

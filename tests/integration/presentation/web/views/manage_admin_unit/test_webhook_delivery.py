@@ -63,7 +63,7 @@ def _create_webhook_delivery_attempt(app, db, webhook_delivery_id):
 
 
 def test_list_and_read_are_shells(client, app, db, seeder: Seeder, utils: UtilActions):
-    _, admin_unit_id = seeder.setup_base(admin=True)
+    _, admin_unit_id = seeder.setup_base()
     app_id, delivery_id = _create_webhook_delivery(app, db, seeder, admin_unit_id)
 
     response = utils.get_endpoint_ok(
@@ -83,7 +83,7 @@ def test_list_and_read_are_shells(client, app, db, seeder: Seeder, utils: UtilAc
 def test_delivery_of_another_app_is_unauthorized(
     client, app, db, seeder: Seeder, utils: UtilActions
 ):
-    _, admin_unit_id = seeder.setup_base(admin=True)
+    _, admin_unit_id = seeder.setup_base()
     app_id, delivery_id = _create_webhook_delivery(app, db, seeder, admin_unit_id)
     other_app_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
 
@@ -98,7 +98,7 @@ def test_delivery_of_another_app_is_unauthorized(
 
 
 def test_foreign_or_unknown_delivery(client, app, db, seeder: Seeder, utils):
-    user_id, admin_unit_id = seeder.setup_base(admin=True)
+    user_id, admin_unit_id = seeder.setup_base()
     app_id, delivery_id = _create_webhook_delivery(app, db, seeder, admin_unit_id)
     other_admin_unit_id = seeder.create_admin_unit(user_id, "Other crew")
 
@@ -124,7 +124,7 @@ def test_foreign_or_unknown_delivery(client, app, db, seeder: Seeder, utils):
 
 def test_removed_pages_are_gone(client, app, db, seeder: Seeder, utils: UtilActions):
     """The attempts are a section of the delivery page."""
-    _, admin_unit_id = seeder.setup_base(admin=True)
+    _, admin_unit_id = seeder.setup_base()
     app_id, delivery_id = _create_webhook_delivery(app, db, seeder, admin_unit_id)
     base = (
         f"/manage/admin_unit/{admin_unit_id}/app/{app_id}"
@@ -140,8 +140,34 @@ def test_removed_pages_are_gone(client, app, db, seeder: Seeder, utils: UtilActi
 
 
 def test_unknown_app_of_the_children_is_not_found(client, seeder: Seeder, utils):
-    _, admin_unit_id = seeder.setup_base(admin=True)
+    _, admin_unit_id = seeder.setup_base()
 
     utils.assert_response_notFound(
         utils.get(f"/manage/admin_unit/{admin_unit_id}/app/4711/webhook_deliveries")
+    )
+
+
+def test_member_without_admin_role_is_unauthorized(
+    client, app, db, seeder: Seeder, utils: UtilActions
+):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    seeder.create_admin_unit_member_event_verifier(admin_unit_id)
+    utils.login()
+    app_id, delivery_id = _create_webhook_delivery(app, db, seeder, admin_unit_id)
+
+    utils.get_unauthorized(
+        utils.get_url(
+            "manage_admin_unit.app.webhook_deliveries",
+            id=admin_unit_id,
+            app_id=app_id,
+        )
+    )
+    utils.get_unauthorized(
+        utils.get_url(
+            "manage_admin_unit.app.webhook_delivery",
+            id=admin_unit_id,
+            app_id=app_id,
+            webhook_delivery_id=delivery_id,
+        )
     )
