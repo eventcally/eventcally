@@ -78,6 +78,8 @@ describe("ApiKeyPage", () => {
       "Please note the key: SECRET123. It will only be displayed once.",
     );
     expect(wrapper.find(".alert-success").text()).toBe("API key successfully created");
+    // Taken out of the history state: a reload does not show it again.
+    expect(history.state?.key).toBeUndefined();
   });
 
   it("shows the message of an update", async () => {

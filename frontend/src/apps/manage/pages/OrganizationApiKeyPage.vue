@@ -8,6 +8,7 @@ import { errorMessage } from "@/shared/apiError";
 import AuditLine from "@/shared/AuditLine.vue";
 import { boot } from "@/shared/boot";
 import ConfirmModal from "@/shared/ConfirmModal.vue";
+import { takeCreatedKey } from "@/shared/createdKey";
 import { formatDate } from "@/shared/format";
 import ManageBreadcrumb from "@/shared/ManageBreadcrumb.vue";
 import ReadActions from "@/shared/ReadActions.vue";
@@ -30,8 +31,9 @@ const loading = ref(true);
 const error = ref<string | null>(null);
 
 // The key is only known right after the creation (the create page hands it over through
-// the history state); a reload or any later visit never shows it.
-const createdKey = computed<string | null>(() => history.state?.key ?? null);
+// the history state). It is taken out of the state, so a reload or any later visit never
+// shows it.
+const createdKey = takeCreatedKey();
 
 async function load() {
   const { data, error: err } = await api.GET(
