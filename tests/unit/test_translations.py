@@ -1,5 +1,9 @@
 import ast
+import enum
 import gettext
+import importlib
+import inspect
+import pkgutil
 from io import BytesIO
 from pathlib import Path
 
@@ -9,6 +13,7 @@ from babel.messages.mofile import write_mo
 from babel.messages.pofile import read_po
 
 from project.domain import errors
+from project.domain.models import enums as domain_enums
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE_DIRS = ["project/domain", "project/application"]
@@ -72,6 +77,48 @@ def test_domain_error_messages_have_german_translation():
     assert msgids, "no domain/application messages were extracted"
     untranslated = sorted(m for m in msgids if de.gettext(m) == m)
     assert not untranslated, f"Missing German translations: {untranslated}"
+
+
+# `bff/manage/verification_requests.py` (STATUS_ENUM_NAME / REASON_ENUM_NAME) localizes
+# these enums under their old names; importing it here would pull in the container.
+ENUM_MSGID_ALIASES = {
+    "OrganizationVerificationRequestReviewStatus": "AdminUnitVerificationRequestReviewStatus",
+    "OrganizationVerificationRequestRejectionReason": "AdminUnitVerificationRequestRejectionReason",
+}
+
+
+def _domain_enums():
+    for module_info in pkgutil.iter_modules(domain_enums.__path__):
+        module = importlib.import_module(f"{domain_enums.__name__}.{module_info.name}")
+        for value in vars(module).values():
+            if (
+                inspect.isclass(value)
+                and issubclass(value, enum.Enum)
+                and value.__module__ == module.__name__
+            ):
+                yield value
+
+
+@pytest.mark.parametrize("locale", ["de", "en"])
+def test_domain_enum_members_have_translations(locale):
+    """`get_localized_enum_name` builds "<Enum>.<member>" at runtime; a member without a
+    translation shows up as that raw msgid (e.g. a status badge "EventStatus.scheduled").
+    """
+    with (TRANSLATIONS / locale / "LC_MESSAGES" / "messages.mo").open("rb") as f:
+        catalog = gettext.GNUTranslations(f)
+
+    enums = list(_domain_enums())
+    assert enums, "no domain enums were found"
+
+    missing = []
+    for enum_class in enums:
+        prefix = ENUM_MSGID_ALIASES.get(enum_class.__name__, enum_class.__name__)
+        for member in enum_class:
+            msgid = f"{prefix}.{member.name}"
+            if catalog.gettext(msgid) == msgid:
+                missing.append(msgid)
+
+    assert not missing, f"Missing {locale} translations: {sorted(missing)}"
 
 
 @pytest.mark.parametrize("locale", ["de", "en"])

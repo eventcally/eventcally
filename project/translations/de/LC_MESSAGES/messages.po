@@ -1915,7 +1915,7 @@ msgstr "Präsenzveranstaltung und online"
 
 #: project/presentation/bff/manage/event_forms.py:136
 msgid "EventAttendanceMode.offline"
-msgstr ""
+msgstr "Präsenzveranstaltung"
 
 #: frontend/src/shared/EventWarningPills.vue:54
 #: project/presentation/web/templates/layout.html:110
@@ -1934,7 +1934,7 @@ msgstr "In Planung"
 
 #: project/presentation/bff/manage/event_forms.py:137
 msgid "EventPublicStatus.published"
-msgstr ""
+msgstr "Veröffentlicht"
 
 #: project/presentation/bff/manage/request_reviews.py:62
 msgid "EventReferenceRequestRejectionReason.duplicate"
@@ -2006,19 +2006,19 @@ msgstr "Neu angesetzt"
 
 #: project/presentation/bff/manage/event_forms.py:138
 msgid "EventStatus.scheduled"
-msgstr ""
+msgstr "Geplant"
 
 #: project/presentation/bff/manage/event_forms.py:139
 msgid "EventTargetGroupOrigin.both"
-msgstr ""
+msgstr "Für Touristen und Einwohner"
 
 #: project/presentation/bff/manage/event_forms.py:140
 msgid "EventTargetGroupOrigin.resident"
-msgstr ""
+msgstr "Hauptsächlich für Einwohner"
 
 #: project/presentation/bff/manage/event_forms.py:141
 msgid "EventTargetGroupOrigin.tourist"
-msgstr ""
+msgstr "Hauptsächlich für Touristen"
 
 #: project/shared/utils.py:20
 msgid "Event_"
@@ -5579,24 +5579,6 @@ msgstr "Jahr(e)"
 
 #~ msgid "Enter new place"
 #~ msgstr "Neuen Ort eingeben"
-
-#~ msgid "EventAttendanceMode.offline"
-#~ msgstr "Präsenzveranstaltung"
-
-#~ msgid "EventPublicStatus.published"
-#~ msgstr "Veröffentlicht"
-
-#~ msgid "EventStatus.scheduled"
-#~ msgstr "Geplant"
-
-#~ msgid "EventTargetGroupOrigin.both"
-#~ msgstr "Für Touristen und Einwohner"
-
-#~ msgid "EventTargetGroupOrigin.resident"
-#~ msgstr "Hauptsächlich für Einwohner"
-
-#~ msgid "EventTargetGroupOrigin.tourist"
-#~ msgstr "Hauptsächlich für Touristen"
 
 #~ msgid "Just use %(term)s"
 #~ msgstr "Verwende einfach %(term)s"
