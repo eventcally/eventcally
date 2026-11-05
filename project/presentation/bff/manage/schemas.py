@@ -1428,3 +1428,157 @@ class OAuth2ClientRead(BaseModel):
     token_endpoint_auth_method: List[str]
     audit: Optional[ManageAudit] = None
     can_write: bool
+
+
+# Apps, app keys, webhook deliveries and app installations
+
+
+class AppListItem(BaseModel):
+    id: int
+    client_name: Optional[str] = None
+
+
+class AppListPage(ManageListPage):
+    items: List[AppListItem]
+
+
+class AppPermissionChoice(BaseModel):
+    permission: str
+    label: str
+
+
+class AppFormOptions(BaseModel):
+    scopes: List[str]
+    app_permissions: List[AppPermissionChoice]
+    event_types: List[str]
+
+
+class AppWebhookFields(BaseModel):
+    url: Optional[Annotated[str, StringConstraints(max_length=255)]] = None
+    secret: Optional[Annotated[str, StringConstraints(max_length=255)]] = None
+    disabled: bool = False
+    event_types: List[str] = []
+
+
+class AppSave(BaseModel):
+    client_name: str = Field(min_length=1)
+    redirect_uris: List[str] = []
+    scopes: List[str] = []
+    app_permissions: List[str] = Field(min_length=1)
+    homepage_url: Optional[Annotated[str, StringConstraints(max_length=255)]] = None
+    setup_url: Optional[Annotated[str, StringConstraints(max_length=255)]] = None
+    description: Optional[str] = None
+    webhook: AppWebhookFields = AppWebhookFields()
+
+
+class AppSaved(BaseModel):
+    id: int
+    redirect_url: str
+
+
+class AppKeyItem(BaseModel):
+    id: int
+    kid: str
+    checksum: str
+
+
+class AppKeyCreated(BaseModel):
+    id: int
+    kid: str
+    # Only part of this answer, never read again.
+    private_pem: str
+
+
+class AppRead(BaseModel):
+    id: int
+    client_id: str
+    client_secret: Optional[str] = None
+    client_name: Optional[str] = None
+    client_uri: Optional[str] = None
+    scope: str
+    scopes: List[str]
+    redirect_uris: List[str]
+    grant_types: List[str]
+    response_types: List[str]
+    token_endpoint_auth_method: List[str]
+    app_permissions: List[str]
+    homepage_url: Optional[str] = None
+    setup_url: Optional[str] = None
+    webhook_url: Optional[str] = None
+    description: Optional[str] = None
+    keys: List[AppKeyItem]
+    can_read_keys: bool
+    can_write_keys: bool
+    can_read_deliveries: bool
+    audit: Optional[ManageAudit] = None
+    can_write: bool
+
+
+class WebhookDeliveryItem(BaseModel):
+    id: int
+    event_type: str
+    timestamp: Optional[datetime] = None
+    organization: Optional[str] = None
+
+
+class WebhookDeliveryListPage(ManageListPage):
+    items: List[WebhookDeliveryItem]
+    app_title: str
+
+
+class WebhookDeliveryRead(WebhookDeliveryItem):
+    app_id: int
+    app_title: str
+    can_attempt: bool
+
+
+class WebhookDeliveryAttemptItem(BaseModel):
+    id: int
+    start_at: datetime
+    end_at: Optional[datetime] = None
+    url: Optional[str] = None
+    status: Optional[str] = None
+    status_code: Optional[str] = None
+
+
+class WebhookDeliveryAttemptListPage(ManageListPage):
+    items: List[WebhookDeliveryAttemptItem]
+
+
+class AppInstallationListItem(BaseModel):
+    id: int
+    app: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+
+class AppInstallationListPage(ManageListPage):
+    items: List[AppInstallationListItem]
+
+
+class AppInstallationRead(BaseModel):
+    id: int
+    app: Optional[str] = None
+    permissions: List[str]
+    # The permissions the app requests now, set when they differ from the granted ones.
+    requested_permissions: List[str]
+    needs_permission_update: bool
+    created_at: Optional[datetime] = None
+    audit: Optional[ManageAudit] = None
+    can_write: bool
+
+
+class AppInstallationSaved(BaseModel):
+    id: int
+    redirect_url: str
+
+
+class InstallableAppRead(BaseModel):
+    id: int
+    client_name: Optional[str] = None
+    homepage_url: Optional[str] = None
+    description: Optional[str] = None
+    permissions: List[str]
+
+
+class AppInstallSave(BaseModel):
+    app_id: int

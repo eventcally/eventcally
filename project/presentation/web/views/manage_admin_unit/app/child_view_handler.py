@@ -14,21 +14,3 @@ class AppChildViewHandler(ManageAdminUnitChildViewHandler):
 
         if not getattr_keypath(object, self.app_id_attribute_name) == g.current_app.id:
             abort(401)
-
-    def get_breadcrumbs(self):
-        result = super().get_breadcrumbs()
-
-        result.append(
-            self._create_breadcrumb(
-                self.parent.get_list_url(),
-                self.parent.get_model_display_name_plural(),
-            )
-        )
-        result.append(
-            self._create_breadcrumb(
-                self.parent.get_read_url(g.current_app),
-                self.parent.get_object_title(g.current_app),
-            )
-        )
-
-        return result

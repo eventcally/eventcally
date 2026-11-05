@@ -1,32 +1,3 @@
-def test_get_pagination_urls(app):
-    from types import SimpleNamespace
-
-    from project.presentation.web.views.utils import get_pagination_urls
-
-    pagination = SimpleNamespace(
-        page=2,
-        pages=5,
-        total=50,
-        has_prev=True,
-        has_next=True,
-        prev_num=1,
-        next_num=3,
-    )
-
-    with app.test_request_context("/eventdates?per_page=10"):
-        result = get_pagination_urls(pagination)
-
-    assert result["page"] == 2
-    assert result["pages"] == 5
-    assert result["total"] == 50
-    assert "page=1" in result["prev_url"]
-    assert "page=1" in result["first_url"]
-    assert "page=3" in result["next_url"]
-    assert "page=5" in result["last_url"]
-    assert "per_page=10" in result["next_url"]
-    assert get_pagination_urls(None) == {}
-
-
 def test_handle_sql_error_without_orig():
     from sqlalchemy.exc import SQLAlchemyError
 
@@ -108,21 +79,6 @@ def test_handleBaseError():
     error = MyError("Something went wrong")
     result = handleBaseError(error)
     assert result == "Something went wrong (This is the cause of the error.)"
-
-
-def test_handle_base_error_flashes_instead_of_raising(app):
-    from flask import get_flashed_messages
-
-    from project.domain.errors import BaseError
-    from project.presentation.web.views.utils import handle_base_error
-
-    @handle_base_error
-    def fails():
-        raise BaseError("Something went wrong")
-
-    with app.test_request_context():
-        assert fails() is None
-        assert get_flashed_messages() == ["Something went wrong"]
 
 
 def test_get_meta_data(seeder, app, db):

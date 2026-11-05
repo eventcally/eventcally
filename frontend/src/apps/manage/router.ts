@@ -327,6 +327,79 @@ export const routes: RouteRecordRaw[] = [
       id: Number(route.params.id),
     }),
   },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/apps",
+    name: "apps",
+    component: () => import("./pages/AppsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/app/create",
+    name: "app-create",
+    component: () => import("./pages/AppEditPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/app/:id(\\d+)",
+    name: "app",
+    component: () => import("./pages/AppPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/app/:id(\\d+)/update",
+    name: "app-update",
+    component: () => import("./pages/AppEditPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/app/:appId(\\d+)/webhook_deliveries",
+    name: "webhook-deliveries",
+    component: () => import("./pages/WebhookDeliveriesPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      appId: Number(route.params.appId),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/app/:appId(\\d+)/webhook_delivery/:id(\\d+)",
+    name: "webhook-delivery",
+    component: () => import("./pages/WebhookDeliveryPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      appId: Number(route.params.appId),
+      id: Number(route.params.id),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/app_installations",
+    name: "app-installations",
+    component: () => import("./pages/AppInstallationsPage.vue"),
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/app_installations/install/:appId(\\d+)",
+    name: "app-install",
+    component: () => import("./pages/AppInstallPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      appId: Number(route.params.appId),
+    }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/app_installation/:id(\\d+)",
+    name: "app-installation",
+    component: () => import("./pages/AppInstallationPage.vue"),
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
   { path: "/manage/admin_units", name: "organizations", component: () => import("./pages/OrganizationsPage.vue") },
   {
     path: "/manage/admin_unit/:organizationId(\\d+)/widgets",

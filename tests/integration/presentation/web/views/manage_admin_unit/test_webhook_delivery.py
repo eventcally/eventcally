@@ -62,158 +62,86 @@ def _create_webhook_delivery_attempt(app, db, webhook_delivery_id):
         return attempt.id
 
 
-def test_webhook_delivery_list(client, app, db, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base(admin=True)
-    app_id, webhook_delivery_id = _create_webhook_delivery(
-        app, db, seeder, admin_unit_id
+def test_list_and_read_are_shells(client, app, db, seeder: Seeder, utils: UtilActions):
+    _, admin_unit_id = seeder.setup_base(admin=True)
+    app_id, delivery_id = _create_webhook_delivery(app, db, seeder, admin_unit_id)
+
+    response = utils.get_endpoint_ok(
+        "manage_admin_unit.app.webhook_deliveries", id=admin_unit_id, app_id=app_id
     )
+    utils.assert_response_contains(response, 'id="boot"')
 
-    url = utils.get_url(
-        "manage_admin_unit.app.webhook_deliveries",
-        id=admin_unit_id,
-        app_id=app_id,
-    )
-    utils.get_ok(url)
-
-
-def test_webhook_delivery_read(client, app, db, seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base(admin=True)
-    app_id, webhook_delivery_id = _create_webhook_delivery(
-        app, db, seeder, admin_unit_id
-    )
-
-    url = utils.get_url(
+    response = utils.get_endpoint_ok(
         "manage_admin_unit.app.webhook_delivery",
         id=admin_unit_id,
         app_id=app_id,
-        webhook_delivery_id=webhook_delivery_id,
+        webhook_delivery_id=delivery_id,
     )
-    utils.get_ok(url)
+    utils.assert_response_contains(response, 'id="boot"')
 
 
-def test_webhook_delivery_attempt_list(
+def test_delivery_of_another_app_is_unauthorized(
     client, app, db, seeder: Seeder, utils: UtilActions
 ):
+    _, admin_unit_id = seeder.setup_base(admin=True)
+    app_id, delivery_id = _create_webhook_delivery(app, db, seeder, admin_unit_id)
+    other_app_id = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
+
+    utils.get_unauthorized(
+        utils.get_url(
+            "manage_admin_unit.app.webhook_delivery",
+            id=admin_unit_id,
+            app_id=other_app_id,
+            webhook_delivery_id=delivery_id,
+        )
+    )
+
+
+def test_foreign_or_unknown_delivery(client, app, db, seeder: Seeder, utils):
     user_id, admin_unit_id = seeder.setup_base(admin=True)
-    app_id, webhook_delivery_id = _create_webhook_delivery(
-        app, db, seeder, admin_unit_id
+    app_id, delivery_id = _create_webhook_delivery(app, db, seeder, admin_unit_id)
+    other_admin_unit_id = seeder.create_admin_unit(user_id, "Other crew")
+
+    utils.get_unauthorized(
+        utils.get_url(
+            "manage_admin_unit.app.webhook_delivery",
+            id=other_admin_unit_id,
+            app_id=app_id,
+            webhook_delivery_id=delivery_id,
+        )
+    )
+    utils.assert_response_notFound(
+        utils.get(
+            utils.get_url(
+                "manage_admin_unit.app.webhook_delivery",
+                id=admin_unit_id,
+                app_id=app_id,
+                webhook_delivery_id=4711,
+            )
+        )
     )
 
-    url = utils.get_url(
-        "manage_admin_unit.app.webhook_delivery.webhook_delivery_attempts",
-        id=admin_unit_id,
-        app_id=app_id,
-        webhook_delivery_id=webhook_delivery_id,
-    )
-    utils.get_ok(url)
 
-
-def test_webhook_delivery_attempt_create(
-    client, app, db, seeder: Seeder, utils: UtilActions, requests_mock
-):
-    user_id, admin_unit_id = seeder.setup_base(admin=True)
-    app_id, webhook_delivery_id = _create_webhook_delivery(
-        app, db, seeder, admin_unit_id
+def test_removed_pages_are_gone(client, app, db, seeder: Seeder, utils: UtilActions):
+    """The attempts are a section of the delivery page."""
+    _, admin_unit_id = seeder.setup_base(admin=True)
+    app_id, delivery_id = _create_webhook_delivery(app, db, seeder, admin_unit_id)
+    base = (
+        f"/manage/admin_unit/{admin_unit_id}/app/{app_id}"
+        f"/webhook_delivery/{delivery_id}"
     )
 
-    # mock the webhook delivery HTTP call
-    requests_mock.post("https://example.test/webhook", status_code=200)
+    for path in (
+        "webhook_delivery_attempts",
+        "webhook_delivery_attempt/create",
+        "webhook_delivery_attempt/1",
+    ):
+        utils.assert_response_notFound(utils.get(f"{base}/{path}"))
 
-    url = utils.get_url(
-        "manage_admin_unit.app.webhook_delivery.webhook_delivery_attempt_create",
-        id=admin_unit_id,
-        app_id=app_id,
-        webhook_delivery_id=webhook_delivery_id,
+
+def test_unknown_app_of_the_children_is_not_found(client, seeder: Seeder, utils):
+    _, admin_unit_id = seeder.setup_base(admin=True)
+
+    utils.assert_response_notFound(
+        utils.get(f"/manage/admin_unit/{admin_unit_id}/app/4711/webhook_deliveries")
     )
-    response = utils.get_ok(url)
-    # POST the form
-    utils.post_form(url, response, {})
-
-
-def test_webhook_delivery_attempt_read(
-    client, app, db, seeder: Seeder, utils: UtilActions
-):
-    """Read a specific delivery attempt – covers get_object_by_id and check_object_access."""
-    user_id, admin_unit_id = seeder.setup_base(admin=True)
-    app_id, webhook_delivery_id = _create_webhook_delivery(
-        app, db, seeder, admin_unit_id
-    )
-    attempt_id = _create_webhook_delivery_attempt(app, db, webhook_delivery_id)
-
-    url = utils.get_url(
-        "manage_admin_unit.app.webhook_delivery.webhook_delivery_attempt",
-        id=admin_unit_id,
-        app_id=app_id,
-        webhook_delivery_id=webhook_delivery_id,
-        webhook_delivery_attempt_id=attempt_id,
-    )
-    utils.get_ok(url)
-
-
-def test_webhook_delivery_child_view_handler_check_object_access_abort(
-    client, app, db, seeder: Seeder, utils: UtilActions
-):
-    """Access an attempt via a different delivery URL – covers webhook_delivery/child_view_handler.py:25 abort."""
-    user_id, admin_unit_id = seeder.setup_base(admin=True)
-    app_id, webhook_delivery_id_1 = _create_webhook_delivery(
-        app, db, seeder, admin_unit_id
-    )
-    attempt_id = _create_webhook_delivery_attempt(app, db, webhook_delivery_id_1)
-
-    # Create a second delivery for the SAME app
-    with app.app_context():
-        from project.infrastructure.models.webhook_delivery import WebhookDelivery
-        from project.infrastructure.models.webhook_event import WebhookEvent
-
-        webhook_event_2 = WebhookEvent()
-        webhook_event_2.event_type = "app.installed"
-        webhook_event_2.timestamp = datetime.datetime.now(datetime.timezone.utc)
-        webhook_event_2.payload = {}
-        db.session.add(webhook_event_2)
-
-        from project.infrastructure.models.oauth import OAuth2Client
-
-        oauth2_client = db.session.get(OAuth2Client, app_id)
-        webhook_2 = oauth2_client.webhook
-
-        webhook_delivery_2 = WebhookDelivery()
-        webhook_delivery_2.app_id = app_id
-        webhook_delivery_2.webhook = webhook_2
-        webhook_delivery_2.webhook_event = webhook_event_2
-        db.session.add(webhook_delivery_2)
-        db.session.commit()
-        webhook_delivery_id_2 = webhook_delivery_2.id
-
-    # Access attempt of delivery_1 via delivery_2's URL – mismatch triggers abort(401)
-    url = utils.get_url(
-        "manage_admin_unit.app.webhook_delivery.webhook_delivery_attempt",
-        id=admin_unit_id,
-        app_id=app_id,
-        webhook_delivery_id=webhook_delivery_id_2,  # wrong delivery
-        webhook_delivery_attempt_id=attempt_id,
-    )
-    response = utils.get(url)
-    assert response.status_code in (401, 403, 404)
-
-
-def test_app_child_view_handler_check_object_access_abort(
-    client, app, db, seeder: Seeder, utils: UtilActions
-):
-    """Access a webhook delivery belonging to a different app – covers abort(401)."""
-    user_id, admin_unit_id = seeder.setup_base(admin=True)
-
-    # Create two apps; delivery belongs to app_id_1
-    app_id_1, webhook_delivery_id = _create_webhook_delivery(
-        app, db, seeder, admin_unit_id
-    )
-    app_id_2 = seeder.insert_default_oauth2_client_app(admin_unit_id=admin_unit_id)
-
-    # Try to read delivery of app_1 using app_2's URL – should not return 200
-    url = utils.get_url(
-        "manage_admin_unit.app.webhook_delivery",
-        id=admin_unit_id,
-        app_id=app_id_2,  # wrong app
-        webhook_delivery_id=webhook_delivery_id,
-    )
-    response = utils.get(url)
-    assert response.status_code in (401, 403, 404)

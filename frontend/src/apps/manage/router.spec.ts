@@ -296,4 +296,65 @@ describe("manage router", () => {
     expect((await resolve("/manage/admin_unit/3/api_key/7/delete")).name).toBe("not-found");
     expect((await resolve("/manage/admin_unit/3/oauth2_client/7/delete")).name).toBe("not-found");
   });
+
+  it("resolves the app and app installation pages", async () => {
+    const lists = [
+      ["apps", "apps"],
+      ["app/create", "app-create"],
+      ["app_installations", "app-installations"],
+    ];
+    for (const [path, name] of lists) {
+      const route = await resolve(`/manage/admin_unit/3/${path}`);
+      expect(route.name).toBe(name);
+      const props = route.matched[0].props.default as (r: typeof route) => unknown;
+      expect(props(route)).toEqual({ organizationId: 3 });
+      expect((await resolve(`/manage/admin_unit/x/${path}`)).name).toBe("not-found");
+    }
+
+    const objects = [
+      ["app/7", "app"],
+      ["app/7/update", "app-update"],
+      ["app_installation/7", "app-installation"],
+    ];
+    for (const [path, name] of objects) {
+      const route = await resolve(`/manage/admin_unit/3/${path}`);
+      expect(route.name).toBe(name);
+      const props = route.matched[0].props.default as (r: typeof route) => unknown;
+      expect(props(route)).toEqual({ organizationId: 3, id: 7 });
+      expect((await resolve(`/manage/admin_unit/3/${path.replace("7", "x")}`)).name).toBe(
+        "not-found",
+      );
+    }
+
+    const install = await resolve("/manage/admin_unit/3/app_installations/install/8");
+    expect(install.name).toBe("app-install");
+    const installProps = install.matched[0].props.default as (r: typeof install) => unknown;
+    expect(installProps(install)).toEqual({ organizationId: 3, appId: 8 });
+
+    const deliveries = await resolve("/manage/admin_unit/3/app/5/webhook_deliveries");
+    expect(deliveries.name).toBe("webhook-deliveries");
+    const deliveriesProps = deliveries.matched[0].props.default as (r: typeof deliveries) => unknown;
+    expect(deliveriesProps(deliveries)).toEqual({ organizationId: 3, appId: 5 });
+
+    const delivery = await resolve("/manage/admin_unit/3/app/5/webhook_delivery/9");
+    expect(delivery.name).toBe("webhook-delivery");
+    const deliveryProps = delivery.matched[0].props.default as (r: typeof delivery) => unknown;
+    expect(deliveryProps(delivery)).toEqual({ organizationId: 3, appId: 5, id: 9 });
+
+    // The removed delete, key and attempt URLs resolve to nothing.
+    for (const path of [
+      "app/7/delete",
+      "app/7/app_keys",
+      "app/7/app_key/create",
+      "app/7/app_key/2",
+      "app/7/app_key/2/delete",
+      "app/5/webhook_delivery/9/webhook_delivery_attempts",
+      "app/5/webhook_delivery/9/webhook_delivery_attempt/create",
+      "app/5/webhook_delivery/9/webhook_delivery_attempt/1",
+      "app_installation/7/delete",
+      "app_installation/7/accept_permissions",
+    ]) {
+      expect((await resolve(`/manage/admin_unit/3/${path}`)).name).toBe("not-found");
+    }
+  });
 });

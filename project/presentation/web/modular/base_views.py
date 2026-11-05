@@ -1,29 +1,13 @@
 from typing import Optional
 
-from flask import flash, render_template
 from flask.views import View
 from flask_babel import lazy_gettext
 
-from project.application.message_bus import MessageBus
 from project.application.query_bus import QueryBus
-from project.application.services.abstract_app_context_provider import (
-    AbstractAppContextProvider,
-)
 from project.presentation.shared.permissions import PermissionAction
-from project.presentation.shared.query_results import (
-    abort_if_page_out_of_range,
-    page_request_from_request_args,
-)
-from project.presentation.web.views.utils import (
-    flash_errors,
-    get_pagination_urls,
-    handle_base_error,
-    non_match_for_deletion,
-)
 
 
 class BaseView(View):
-    template_file_name = None
     permission: str = None
     permission_action: PermissionAction = None
 
@@ -35,16 +19,8 @@ class BaseView(View):
         self.handler: Optional[BaseViewHandler] = kwargs.get("handler")
 
     @property
-    def message_bus(self) -> MessageBus:
-        return self.handler.message_bus
-
-    @property
     def query_bus(self) -> QueryBus:
         return self.handler.query_bus
-
-    @property
-    def app_context_provider(self) -> AbstractAppContextProvider:
-        return self.handler.app_context_provider
 
     @classmethod
     def as_view(cls, name, *class_args, **class_kwargs):
@@ -61,175 +37,34 @@ class BaseView(View):
     def get_title(self, **kwargs):  # pragma: no cover
         return ""
 
-    def get_instruction(self, **kwargs):  # pragma: no cover
-        return ""
-
-    def get_docs_url(self, **kwargs):  # pragma: no cover
-        return None
-
-    def get_templates(self):
-        result = list()
-
-        for path in self.handler.template_pathes:
-            result.append(
-                f"{path}{self.handler.get_template_folder()}/{self.template_file_name}"
-            )
-            result.append(f"{path}generic/{self.template_file_name}")
-
-        return result
-
     def check_access(self, **kwargs):
         return self.handler.check_access(**kwargs)
 
-    def render_template(self, **kwargs):
-        kwargs.setdefault("title", self.get_title(**kwargs))
-        kwargs.setdefault("instruction", self.get_instruction(**kwargs))
-        kwargs.setdefault("view", self)
-        return render_template(self.get_templates(), **kwargs)
-
-    def get_breadcrumbs(self):
-        return self.handler.get_breadcrumbs()
-
 
 class BaseListView(BaseView):
-    display_class = None
-    list_context_name = None
-    template_file_name = "list.html"
     permission_action = PermissionAction.read
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if not self.list_context_name:
-            self.list_context_name = self.handler.model_name_plural
-
-    def create_display(self, **kwargs):
-        return self.display_class(**kwargs)
 
     def get_title(self, **kwargs):
         return self.handler.get_model_display_name_plural()
 
-    def render_template(self, **kwargs):
-        if "objects" in kwargs and self.list_context_name:
-            kwargs[self.list_context_name] = kwargs.get("objects")
-        return super().render_template(**kwargs)
-
-    def get_list_per_page(self):
-        return self.handler.get_list_per_page()
-
-    def dispatch_request(self, **kwargs):
-        response = self.check_access(**kwargs)
-
-        if response:  # pragma: no cover
-            return response
-
-        page_request = page_request_from_request_args(per_page=self.get_list_per_page())
-        list_query = self.handler.create_list_query(page_request=page_request, **kwargs)
-
-        paginate = self.query_bus.handle(list_query)
-        abort_if_page_out_of_range(paginate)
-
-        objects = paginate.items
-        pagination = get_pagination_urls(paginate, **kwargs)
-        display = self.create_display()
-
-        return self.render_template(
-            display=display, objects=objects, pagination=pagination
-        )
-
 
 class BaseObjectView(BaseView):
-    object_context_name = None
-    display_class = None
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.object_context_name:
-            self.object_context_name = self.handler.model_name
-
     def get_object_from_kwargs(self, **kwargs):
         return self.handler.get_object_from_kwargs(**kwargs)
 
     def check_object_access(self, object):
         return self.handler.check_object_access(object)
 
-    def create_display(self, **kwargs):
-        return self.display_class(**kwargs)
-
-    def render_template(self, **kwargs):
-        object = kwargs.get("object")
-        if object and self.object_context_name:
-            kwargs[self.object_context_name] = object
-
-        if self.display_class:
-            kwargs["display"] = self.create_display()
-
-        return super().render_template(**kwargs)
-
-    def get_breadcrumbs(self):
-        result = super().get_breadcrumbs()
-
-        list_url = self.handler.get_list_url()
-        if list_url:
-            result.append(
-                self.handler._create_breadcrumb(
-                    list_url, self.handler.get_model_display_name_plural()
-                )
-            )
-
-        return result
-
-
-class BaseFormView(BaseObjectView):
-    methods = ["GET", "POST"]
-    form_class = None
-
-    def create_form(self, **kwargs):
-        return self.form_class(**kwargs)
-
-    def get_redirect_url(self, **kwargs):  # pragma: no cover
-        return None
-
-    def get_success_text(self, object, form):  # pragma: no cover
-        return ""
-
-    def flash_success_message(self, object, form):
-        flash(self.get_success_text(object, form), "success")
-
 
 class BaseReadView(BaseObjectView):
-    template_file_name = "read.html"
     permission_action = PermissionAction.read
 
     def get_title(self, **kwargs):
         return self.handler.get_object_title(kwargs["object"])
 
-    def dispatch_request(self, **kwargs):
-        response = self.check_access(**kwargs)
 
-        if response:  # pragma: no cover
-            return response
-
-        object = self.get_object_from_kwargs(**kwargs)
-        response = self.check_object_access(object)
-
-        if response:  # pragma: no cover
-            return response
-
-        return self.render_template(object=object)
-
-
-class BaseCreateView(BaseFormView):
-    template_file_name = "create.html"
+class BaseCreateView(BaseView):
     permission_action = PermissionAction.write
-
-    def get_redirect_url(self, **kwargs):
-        result = self.handler.get_read_url(**kwargs)
-
-        if not result:
-            result = self.handler.get_list_url(**kwargs)
-
-        return result
 
     def get_title(self, **kwargs):
         return lazy_gettext(
@@ -237,65 +72,13 @@ class BaseCreateView(BaseFormView):
             model_display_name=self.handler.get_model_display_name(),
         )
 
-    def get_success_text(self, object, form):
-        return lazy_gettext(
-            "%(model_display_name)s successfully created",
-            model_display_name=self.handler.get_model_display_name(),
-        )
 
-    def dispatch_request(self, **kwargs):
-        response = self.check_access(**kwargs)
-
-        if response:  # pragma: no cover
-            return response
-
-        form = self.create_form(**kwargs)
-        object = None
-
-        if form.validate_on_submit():
-            response = self.dispatch_validated_form(form, object, **kwargs)
-            if response:
-                return response
-        else:
-            flash_errors(form)
-
-        return self.render_template(form=form, object=object)
-
-
-class BaseObjectFormView(BaseFormView):
-    def dispatch_request(self, **kwargs):
-        response = self.check_access(**kwargs)
-
-        if response:  # pragma: no cover
-            return response
-
-        object = self.get_object_from_kwargs(**kwargs)
-        response = self.check_object_access(object)
-
-        if response:  # pragma: no cover
-            return response
-
-        form = self.create_form(obj=object)
-
-        if form.validate_on_submit():
-            response = self.dispatch_validated_form(form, object, **kwargs)
-            if response:
-                return response
-        else:
-            flash_errors(form)
-
-        return self.render_template(form=form, object=object)
-
-    def dispatch_validated_form(self, form, object, **kwargs):  # pragma: no cover
-        raise NotImplementedError()
+class BaseObjectFormView(BaseObjectView):
+    pass
 
 
 class BaseUpdateView(BaseObjectFormView):
-    template_file_name = "update.html"
     permission_action = PermissionAction.write
-
-    def get_redirect_url(self, **kwargs):
-        return self.handler.get_read_url(**kwargs)
 
     def get_title(self, **kwargs):
         return lazy_gettext(
@@ -303,68 +86,12 @@ class BaseUpdateView(BaseObjectFormView):
             model_display_name=self.handler.get_model_display_name(),
         )
 
-    def get_success_text(self, object, form):
-        return lazy_gettext(
-            "%(model_display_name)s successfully updated",
-            model_display_name=self.handler.get_model_display_name(),
-        )
-
 
 class BaseDeleteView(BaseObjectFormView):
-    template_file_name = "delete.html"
     permission_action = PermissionAction.write
-
-    def can_object_be_deleted(self, form, object):
-        if not self.handler.can_object_be_deleted(form, object):
-            return False
-
-        if not form:  # pragma: no cover
-            return True
-
-        confirmation_field_name = getattr(form, "confirmation_field_name")
-        confirmation_field = form.get_field_by_name(confirmation_field_name)
-        if not confirmation_field:  # pragma: no cover
-            return True
-
-        field_data = confirmation_field.data
-        object_data = getattr(object, confirmation_field_name)
-
-        if non_match_for_deletion(field_data, object_data):
-            message = lazy_gettext(
-                "Entered %(property_name)s does not match %(model_display_name)s %(property_name)s",
-                model_display_name=self.handler.get_model_display_name(),
-                property_name=confirmation_field.label.text,
-            )
-            flash(message, "danger")
-            return False
-        return True
 
     def get_title(self, **kwargs):
         return lazy_gettext(
             "Delete %(model_display_name)s",
             model_display_name=self.handler.get_model_display_name(),
         )
-
-    def get_instruction(self, **kwargs):
-        return lazy_gettext(
-            "Do you want to delete '%(object_title)s'?",
-            object_title=self.handler.get_object_title(kwargs["object"]),
-        )
-
-    def get_success_text(self, object, form):
-        return lazy_gettext(
-            "%(model_display_name)s successfully deleted",
-            model_display_name=self.handler.get_model_display_name(),
-        )
-
-    def create_form(self, **kwargs):
-        del kwargs["obj"]
-        return self.form_class(**kwargs)
-
-    def get_redirect_url(self, **kwargs):
-        return self.handler.get_list_url(**kwargs)
-
-    @handle_base_error
-    def dispatch_validated_form(self, form, object, **kwargs):
-        if self.can_object_be_deleted(form, object):
-            return self.dispatch_validated_form_deletable(form, object, **kwargs)

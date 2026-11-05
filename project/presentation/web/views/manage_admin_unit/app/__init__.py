@@ -11,12 +11,6 @@ app_bp = BaseBlueprint(
 )
 
 
-@app_bp.url_defaults
-def app_bp_url_defaults(endpoint, values):
-    if "app_id" not in values:
-        values.setdefault("app_id", g.current_app.id)
-
-
 @app_bp.url_value_preprocessor
 def app_bp_url_value_preprocessor(endpoint, values):
     from flask import abort
@@ -35,7 +29,6 @@ def app_bp_url_value_preprocessor(endpoint, values):
     g.current_app = app
 
 
-import project.presentation.web.views.manage_admin_unit.app.app_key.view_handler
 import project.presentation.web.views.manage_admin_unit.app.webhook_delivery.view_handler
 from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
 
