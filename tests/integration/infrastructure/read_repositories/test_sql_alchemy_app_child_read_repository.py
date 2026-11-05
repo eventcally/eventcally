@@ -55,7 +55,6 @@ def test_deliveries_and_attempts(app, db, read_repo, seeder):
         "list_attempts",
         ListAppWebhookDeliveryAttemptsQuery(webhook_delivery_id=delivery_id),
     )
-    attempt = read_repo("get_attempt", attempt_id)
 
     assert [item.id for item in page.items] == [delivery_id]
     assert delivery.admin_unit_id == admin_unit_id
@@ -63,13 +62,12 @@ def test_deliveries_and_attempts(app, db, read_repo, seeder):
     assert delivery.webhook_event.event_type == "app.installed"
     assert delivery.app_installation is None
     assert [item.id for item in attempts.items] == [attempt_id]
-    assert attempt.status_code == "200"
-    assert attempt.app_id == app_id
-    assert attempt.admin_unit_id == admin_unit_id
+    assert attempts.items[0].status_code == "200"
+    assert attempts.items[0].app_id == app_id
+    assert attempts.items[0].admin_unit_id == admin_unit_id
     assert read_repo("webhook_delivery_admin_unit_id", delivery_id) == admin_unit_id
     assert read_repo("webhook_delivery_admin_unit_id", 4711) is None
     assert read_repo("get_delivery", 4711) is None
-    assert read_repo("get_attempt", 4711) is None
 
 
 def test_deliveries_and_attempts_for_app(app, db, read_repo, seeder):

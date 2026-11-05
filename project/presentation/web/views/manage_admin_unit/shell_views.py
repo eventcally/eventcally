@@ -1,14 +1,10 @@
-from flask import render_template
+from typing import Callable
 
+from flask import abort, current_app, render_template
+
+from project.application.query_bus import QueryBus
+from project.presentation.shared.access import admin_unit_owner_access_or_401
 from project.presentation.web.boot import build_boot_data
-from project.presentation.web.modular.base_views import (
-    BaseCreateView,
-    BaseDeleteView,
-    BaseListView,
-    BaseObjectFormView,
-    BaseReadView,
-    BaseUpdateView,
-)
 
 
 def render_manage_shell(title, **context):
@@ -22,49 +18,20 @@ def render_manage_shell(title, **context):
     )
 
 
-class ShellViewMixin:
-    """Turns a modular view into a shell: it keeps the endpoint and the server side
-    guards (permission, foreign object 401/404, module specific
-    `check_object_access`) and answers `GET` with the Vue frame."""
-
-    methods = ["GET"]
-
-    def dispatch_request(self, **kwargs):
-        response = self.check_access(**kwargs)
-
-        if response:  # pragma: no cover
-            return response
-
-        title_kwargs = {}
-
-        # The create views have no object.
-        if isinstance(self, (BaseReadView, BaseObjectFormView)):
-            object = self.get_object_from_kwargs(**kwargs)
-            response = self.check_object_access(object)
-
-            if response:  # pragma: no cover
-                return response
-
-            title_kwargs["object"] = object
-
-        return render_manage_shell(self.get_title(**title_kwargs))
+def query_bus() -> QueryBus:
+    return current_app.container.cqrs.query_bus()
 
 
-class ListShellView(ShellViewMixin, BaseListView):
-    pass
+def owned_object_or_abort(
+    query,
+    admin_unit_id_of: Callable = lambda object: object.admin_unit_id,
+):
+    """The object of a shell's URL: 404 when it does not exist, 401 when it belongs to
+    another organization than the one the user manages."""
+    object = query_bus().handle(query)
 
+    if object is None:
+        abort(404)
 
-class ReadShellView(ShellViewMixin, BaseReadView):
-    pass
-
-
-class CreateShellView(ShellViewMixin, BaseCreateView):
-    pass
-
-
-class UpdateShellView(ShellViewMixin, BaseUpdateView):
-    pass
-
-
-class DeleteShellView(ShellViewMixin, BaseDeleteView):
-    pass
+    admin_unit_owner_access_or_401(admin_unit_id_of(object))
+    return object

@@ -7,7 +7,6 @@ import pytest
 from project.application import queries
 from project.application.query_handlers import (
     GetAppKeyHandler,
-    GetAppWebhookDeliveryAttemptHandler,
     GetAppWebhookDeliveryHandler,
     ListAppKeysHandler,
     ListAppWebhookDeliveriesHandler,
@@ -67,9 +66,6 @@ class FakeRepo(AbstractAppChildReadRepository):
     def list_attempts(self, query):
         return self._page(ATTEMPT)
 
-    def get_attempt(self, object_id):
-        return ATTEMPT if object_id == 1 else None
-
     def list_deliveries_for_app(self, query):
         return self._page(DELIVERY)
 
@@ -127,12 +123,6 @@ def test_lists(handler_class, query_class, parent, permission):
             queries.GetAppWebhookDeliveryQuery,
             "webhook_deliveries:read",
             DELIVERY,
-        ),
-        (
-            GetAppWebhookDeliveryAttemptHandler,
-            queries.GetAppWebhookDeliveryAttemptQuery,
-            "webhook_delivery_attempts:read",
-            ATTEMPT,
         ),
     ],
 )

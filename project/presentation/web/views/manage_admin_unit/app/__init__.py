@@ -1,12 +1,9 @@
-from flask import current_app, g
+from flask import Blueprint, current_app, g
 
-from project.presentation.web.modular.base_blueprint import BaseBlueprint
-
-app_bp = BaseBlueprint(
+app_bp = Blueprint(
     "app",
     __name__,
     url_prefix="/app/<int:app_id>",
-    template_folder="templates",
     static_folder="static",
 )
 
@@ -29,7 +26,7 @@ def app_bp_url_value_preprocessor(endpoint, values):
     g.current_app = app
 
 
-import project.presentation.web.views.manage_admin_unit.app.webhook_delivery.view_handler
+import project.presentation.web.views.manage_admin_unit.app.webhook_delivery.shells
 from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
 
 manage_admin_unit_bp.register_blueprint(app_bp)

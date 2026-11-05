@@ -176,14 +176,6 @@ class SqlAlchemyAppChildReadRepository(AbstractAppChildReadRepository):
         count_stmt = select(WebhookDeliveryAttempt.id).where(*filters)
         return paginate(self.session, stmt, count_stmt, query.page, _to_attempt)
 
-    def get_attempt(
-        self, object_id: ObjectId
-    ) -> Optional[AppWebhookDeliveryAttemptReadModel]:
-        row = self.session.execute(
-            self._attempt_select().where(WebhookDeliveryAttempt.id == object_id)
-        ).one_or_none()
-        return _to_attempt(row) if row else None
-
     def _attempt_select(self):
         return (
             select(
