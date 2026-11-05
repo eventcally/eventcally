@@ -113,46 +113,14 @@
   </p>
 {% endmacro %}
 
-{% macro render_event_organizer(organizer) %}
-    {{ organizer.name }}
-{% endmacro %}
-
 {% macro render_location(location) %}{{ location | location_str }}{% endmacro %}
 {% macro render_place(place) %}{{ place | place_str }}{% endmacro %}
-
-{% macro render_events_sub_menu() %}
-{% endmacro %}
-
-{% macro render_location_card(location, place=None) %}
-{% if location %}
-<div class="card card-body">
-  <p>
-      {{ location.street }}<br />
-      {{ location.postalCode }} {{ location.city }}
-  </p>
-
-  <p>
-      <a href="http://www.google.com/maps?q={% if place %}{{ render_place(place) | quote_plus }}{% else %}{{ render_location(location) | quote_plus }}{% endif %}">{{ _('Show on Google Maps') }}</a>
-  </p>
-
-</div>
-{% endif %}
-{% endmacro %}
 
 {% macro render_string_prop(prop, icon = None, label_key = None) %}
 {% if prop %}
 <div>
   {% if icon %}<i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>{% endif %}
   {{ prop }}
-</div>
-{% endif %}
-{% endmacro %}
-
-{% macro render_text_prop(prop, icon = None, label_key = None) %}
-{% if prop %}
-<div>
-  {% if icon %}<i class="fa fa-fw {{ icon }}" data-toggle="tooltip" title="{{ _(label_key) }}"></i>{% endif %}
-  <span style="white-space:pre-wrap;">{{ prop }}</span>
 </div>
 {% endif %}
 {% endmacro %}
@@ -252,19 +220,7 @@
 {{ render_public_status_pill(event) }} {{ render_event_status_pill(event) }} {{ render_booked_up_pill(event) }} {{ render_attendance_mode_pill(event) }}
 {% endmacro %}
 
-{% macro render_event_review_status_pill(event) %}
-{% if event.review_status %}
- <span class="badge badge-pill {% if event.review_status == 2 %}badge-success{% elif event.review_status == 1 %}badge-info{% else %}badge-danger{% endif %}">{{ event.review_status | loc_enum }}</span>
-{% endif %}
-{% endmacro %}
-
 {% macro render_reference_request_review_status_pill(reference_request) %}
-{% if reference_request.review_status %}
- <span class="badge badge-pill {% if reference_request.review_status == 1 %}badge-info{% elif reference_request.review_status == 2 %}badge-success{% else %}badge-danger{% endif %}">{{ reference_request.review_status | loc_enum }}</span>
-{% endif %}
-{% endmacro %}
-
-{% macro render_verification_request_review_status_pill(reference_request) %}
 {% if reference_request.review_status %}
  <span class="badge badge-pill {% if reference_request.review_status == 1 %}badge-info{% elif reference_request.review_status == 2 %}badge-success{% else %}badge-danger{% endif %}">{{ reference_request.review_status | loc_enum }}</span>
 {% endif %}
@@ -327,21 +283,6 @@
 {{ render_image(image, 120, style="max-width:120px;", alt="Logo") }}
 {% endmacro %}
 
-{% macro render_event_review_status(event) %}
-  {{ render_enum_prop(event.review_status, 'fa-certificate', 'Review status') }}
-  {{ render_enum_prop(event.rejection_resaon, 'fa-search-minus', 'Rejection reason') }}
-{% endmacro %}
-
-{% macro render_reference_request_review_status(reference_request) %}
-  {{ render_enum_prop(reference_request.review_status, 'fa-certificate', 'Review status') }}
-  {{ render_enum_prop(reference_request.rejection_reason, 'fa-search-minus', 'Rejection reason') }}
-{% endmacro %}
-
-{% macro render_verification_request_review_status(verification_request) %}
-  {{ render_enum_prop(verification_request.review_status, 'fa-certificate', 'Review status') }}
-  {{ render_enum_prop(verification_request.rejection_reason, 'fa-search-minus', 'Rejection reason') }}
-{% endmacro %}
-
 {% macro render_audit(tracking_mixing, show_user=False) %}
   {% set created_at = tracking_mixing.created_at | datetimeformat('short') %}
 
@@ -361,10 +302,6 @@
       {% endif %}
     {% endif %}
   {% endif %}
-{% endmacro %}
-
-{% macro render_audit_container(tracking_mixing, show_user=False) %}
-<div class="my-4 small">{{ render_audit(tracking_mixing, show_user) }}</div>
 {% endmacro %}
 
 {% macro render_event_add_props(event) %}
@@ -789,20 +726,6 @@
   {% endif %}
 {% endmacro %}
 
-{% macro render_event_date_in_list(event_date) %}
-  {{ render_event_date_instance(event_date.start, event_date.allday) }}
-  {% if event_date.recurrence_rule %}
-  <i class="fas fa-history"></i>
-  {% endif %}
-{% endmacro %}
-
-{% macro render_event_in_list(event) %}
-  {{ render_event_date_instance(event.min_start_definition.start, event.min_start_definition.allday) }}
-  {% if event.is_recurring %}
-  <i class="fas fa-history"></i>
-  {% endif %}
-{% endmacro %}
-
 {% macro render_event_in_email(event) %}
   <ul>
     <li>{{ event.name }}</li>
@@ -866,40 +789,6 @@
       <li>{{ _('Dates (new)') }}: {{ render_date_definition_list(changes.date_definitions.new) }}</li>
     {% endif %}
   </ul>
-{% endmacro %}
-
-{% macro render_pagination(pagination) %}
-<nav aria-label="Page navigation">
-  <ul class="pagination">
-    {% if pagination['first_url'] %}
-    <li class="page-item"> <a class="page-link" href="{{ pagination['first_url'] }}" title="{{ _('First') }}"><i class="fa fa-angle-double-left"></i></a></li>
-    {% else %}
-    <li class="page-item disabled"><a class="page-link" href="#" title="{{ _('First') }}"><i class="fa fa-angle-double-left"></i></a></li>
-    {% endif %}
-    {% if pagination['prev_url'] %}
-    <li class="page-item"> <a class="page-link" href="{{ pagination['prev_url'] }}" title="{{ _('Previous') }}"><i class="fa fa-angle-left"></i></a></li>
-    {% else %}
-    <li class="page-item disabled"><a class="page-link" href="#" title="{{ _('Previous') }}"><i class="fa fa-angle-left"></i></a></li>
-    {% endif %}
-    <li class="page-item disabled d-none d-sm-inline"><span class="page-link">{{ _('Page %(page)d of %(pages)d (%(total)d total)', page=pagination["page"], pages=pagination["pages"], total=pagination["total"]) }}</span></li>
-    {% if pagination['next_url'] %}
-    <li class="page-item"> <a class="page-link" href="{{ pagination['next_url'] }}" title="{{ _('Next') }}"><i class="fa fa-angle-right"></i></a></li>
-    {% else %}
-    <li class="page-item disabled"><a class="page-link" href="#" title="{{ _('Next') }}"><i class="fa fa-angle-right"></i></a></li>
-    {% endif %}
-    {% if pagination['last_url'] %}
-    <li class="page-item"> <a class="page-link" href="{{ pagination['last_url'] }}" title="{{ _('Last') }}"><i class="fa fa-angle-double-right"></i></a></li>
-    {% else %}
-    <li class="page-item disabled"><a class="page-link" href="#" title="{{ _('Last') }}"><i class="fa fa-angle-double-right"></i></a></li>
-    {% endif %}
-  </ul>
-</nav>
-{% endmacro %}
-
-{% macro render_roles(roles) %}
-{% if roles %}
-  {% for role in roles %}{{ _(role.title) }}{%if not loop.last %}, {% endif %}{% endfor %}
-{% endif %}
 {% endmacro %}
 
 {% macro render_email_button(url, title) %}
@@ -1049,7 +938,3 @@
 <script src="{{ url_for('static', filename='form.js')}}"></script>
 {% endmacro %}
 
-{% macro render_form_styles() %}
-<link rel="stylesheet" href="{{ url_for('static', filename='ext/select2.4.0.13.min.css')}}" />
-<link rel="stylesheet" href="{{ url_for('static', filename='ext/select2-bootstrap4.1.5.2.min.css')}}" />
-{% endmacro %}

@@ -10,9 +10,6 @@ from .get_app_handler import GetAppHandler
 from .get_app_installation_for_app_handler import GetAppInstallationForAppHandler
 from .get_app_installation_handler import GetAppInstallationHandler
 from .get_app_key_handler import GetAppKeyHandler
-from .get_app_webhook_delivery_attempt_handler import (
-    GetAppWebhookDeliveryAttemptHandler,
-)
 from .get_app_webhook_delivery_handler import GetAppWebhookDeliveryHandler
 from .get_current_organization_handler import GetCurrentOrganizationHandler
 from .get_custom_event_category_handler import GetCustomEventCategoryHandler

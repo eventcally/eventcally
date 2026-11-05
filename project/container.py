@@ -1348,11 +1348,6 @@ class Cqrs(containers.DeclarativeContainer):
                     query_handlers.GetInstallableAppHandler,
                     repo=read_repos.app_installation_read_repo,
                 ),
-                queries.GetAppWebhookDeliveryAttemptQuery: providers.Factory(
-                    query_handlers.GetAppWebhookDeliveryAttemptHandler,
-                    repo=read_repos.app_child_read_repo,
-                    authz=actor_authorization_service,
-                ),
                 queries.ListAppWebhookDeliveryAttemptsQuery: providers.Factory(
                     query_handlers.ListAppWebhookDeliveryAttemptsHandler,
                     repo=read_repos.app_child_read_repo,

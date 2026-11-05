@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generate and verify the ignore list of the delivery-reads-through-queries contract.
 
-The contract in `.importlinter` forbids `project.presentation.web` (views, modular
-framework, forms, Jinja filters), `project.presentation.api` and `project.presentation.shared` from importing
+The contract in `.importlinter` forbids `project.presentation.web` (views,
+forms, Jinja filters), `project.presentation.api` and `project.presentation.shared` from importing
 `project.infrastructure.models`. Every module
 that still does is listed in its `ignore_imports`, one line per (importer, imported module) pair. The
 list must only shrink: delete an entry as soon as its import is gone.

@@ -108,7 +108,6 @@ def _init_container(app: Flask):
     container.wire(
         packages=[
             "project.presentation.web.views",
-            "project.presentation.web.modular",
             "project.presentation.api",
             "project.presentation.bff",
         ],

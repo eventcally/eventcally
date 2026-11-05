@@ -70,12 +70,6 @@ class AbstractAppChildReadRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_attempt(
-        self, object_id: ObjectId
-    ) -> Optional[AppWebhookDeliveryAttemptReadModel]:  # pragma: no cover
-        raise NotImplementedError
-
-    @abc.abstractmethod
     def list_deliveries_for_app(
         self, query: ListWebhookDeliveriesForAppQuery
     ) -> Page[AppWebhookDeliveryReadModel]:  # pragma: no cover
