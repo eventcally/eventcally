@@ -11,7 +11,8 @@ export interface Audit {
   updated_by_label?: string | null;
 }
 
-const props = defineProps<{ audit?: Audit | null }>();
+// `inline`: plain text for a line that carries other content (the event pages).
+const props = defineProps<{ audit?: Audit | null; inline?: boolean }>();
 
 const { t } = useI18n();
 
@@ -49,7 +50,8 @@ const lines = computed(() => {
 </script>
 
 <template>
-  <div v-if="lines.length" class="my-4 small text-muted" data-test="audit">
+  <span v-if="inline && lines.length" data-test="audit">{{ lines.join(" ") }}</span>
+  <div v-else-if="lines.length" class="my-4 small text-muted" data-test="audit">
     <div v-for="line in lines" :key="line">{{ line }}</div>
   </div>
 </template>

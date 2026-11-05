@@ -4,14 +4,27 @@ import {
   type RouteRecordRaw,
 } from "vue-router";
 import { boot } from "@/shared/boot";
+import EventActionsPage from "./pages/EventActionsPage.vue";
+import EventDatePage from "./pages/EventDatePage.vue";
 import EventDatesPage from "./pages/EventDatesPage.vue";
+import EventPage from "./pages/EventPage.vue";
 import EventReportPage from "./pages/EventReportPage.vue";
 import NotFoundPage from "./pages/NotFoundPage.vue";
 import OrganizationPage from "./pages/OrganizationPage.vue";
 import OrganizationsPage from "./pages/OrganizationsPage.vue";
 import OrganizerPage from "./pages/OrganizerPage.vue";
 
+const numericId = (route: { params: Record<string, unknown> }) => ({ id: Number(route.params.id) });
+
 export const routes: RouteRecordRaw[] = [
+  { path: "/event/:id(\\d+)", name: "event", component: EventPage, props: numericId },
+  {
+    path: "/event/:id(\\d+)/actions",
+    name: "event-actions",
+    component: EventActionsPage,
+    props: numericId,
+  },
+  { path: "/eventdate/:id(\\d+)", name: "event-date", component: EventDatePage, props: numericId },
   {
     path: "/event/:id(\\d+)/report",
     name: "event-report",

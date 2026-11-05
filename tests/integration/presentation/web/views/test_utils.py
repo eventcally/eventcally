@@ -12,61 +12,6 @@ def test_truncate():
     assert truncate(None, 3) is None
 
 
-def _refresh_dates(app, event_id):
-    from project.application.commands import UpdateEventRecurringDatesCommand
-    from project.domain.models.entities.actor import Actor
-
-    app.container.cqrs.message_bus().handle(
-        UpdateEventRecurringDatesCommand(actor=Actor(), event_id=event_id)
-    )
-
-
-def test_get_calendar_links(client, seeder, utils, app, db, mocker):
-    user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
-
-    with app.test_request_context():
-        with app.app_context():
-            from project.infrastructure.models import Event, EventAttendanceMode
-            from project.presentation.web.views.utils import (
-                get_calendar_links_for_event_date,
-            )
-            from project.shared.dateutils import create_berlin_date
-
-            utils.mock_now(mocker, 2020, 1, 3)
-
-            event = db.session.get(Event, event_id)
-            date_definition = event.date_definitions[0]
-
-            date_definition.end = None
-            event.attendance_mode = EventAttendanceMode.online
-            event_date = event.dates[0]
-            links = get_calendar_links_for_event_date(event_date)
-            assert "&location" not in links["google"]
-
-            # All-day single day
-            date_definition.start = create_berlin_date(2020, 1, 2, 14, 30)
-            date_definition.end = None
-            date_definition.allday = True
-            db.session.commit()
-            _refresh_dates(app, event_id)
-            db.session.expire_all()
-            event_date = event.dates[0]
-            links = get_calendar_links_for_event_date(event_date)
-            assert "&dates=20200102/20200103&" in links["google"]
-
-            # All-day multiple days
-            date_definition.start = create_berlin_date(2020, 1, 2, 14, 30)
-            date_definition.end = create_berlin_date(2020, 1, 3, 14, 30)
-            date_definition.allday = True
-            db.session.commit()
-            _refresh_dates(app, event_id)
-            db.session.expire_all()
-            event_date = event.dates[0]
-            links = get_calendar_links_for_event_date(event_date)
-            assert "&dates=20200102/20200104&" in links["google"]
-
-
 def test_handleBaseError():
     from project.domain.errors import BaseError
     from project.presentation.web.views.utils import handleBaseError

@@ -4,6 +4,7 @@ import {
   formatDateShort,
   formatDateTime,
   formatDateTimeShort,
+  ensureLinkScheme,
   formatEventDate,
   formatFileSize,
   formatStart,
@@ -93,5 +94,16 @@ describe("formatDateShort", () => {
   it("formats a short date", () => {
     expect(formatDateShort("2026-10-24T09:42:00", "de")).toBe("24.10.26");
     expect(formatDateShort(undefined, "de")).toBe("");
+  });
+});
+
+describe("ensureLinkScheme", () => {
+  it("keeps links that have a scheme", () => {
+    expect(ensureLinkScheme("http://a.test")).toBe("http://a.test");
+    expect(ensureLinkScheme("https://a.test")).toBe("https://a.test");
+  });
+
+  it("adds https to links without one", () => {
+    expect(ensureLinkScheme("a.test/x")).toBe("https://a.test/x");
   });
 });

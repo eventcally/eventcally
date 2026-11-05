@@ -7319,6 +7319,31 @@
         "title": "PlanningOptions",
         "type": "object"
       },
+      "PublicCalendarLinks": {
+        "properties": {
+          "google": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Google"
+          },
+          "ics": {
+            "title": "Ics",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ics"
+        ],
+        "title": "PublicCalendarLinks",
+        "type": "object"
+      },
       "PublicChoice": {
         "properties": {
           "label": {
@@ -7353,6 +7378,83 @@
           "label"
         ],
         "title": "PublicDistance",
+        "type": "object"
+      },
+      "PublicEventAudit": {
+        "properties": {
+          "created_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Created At"
+          },
+          "created_by_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Created By Label"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Updated At"
+          },
+          "updated_by_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Updated By Label"
+          }
+        },
+        "title": "PublicEventAudit",
+        "type": "object"
+      },
+      "PublicEventCategoryGroup": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Names",
+            "type": "array"
+          }
+        },
+        "required": [
+          "label",
+          "names"
+        ],
+        "title": "PublicEventCategoryGroup",
         "type": "object"
       },
       "PublicEventDate": {
@@ -7394,6 +7496,47 @@
           "event"
         ],
         "title": "PublicEventDate",
+        "type": "object"
+      },
+      "PublicEventDateDetail": {
+        "properties": {
+          "allday": {
+            "default": false,
+            "title": "Allday",
+            "type": "boolean"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "End"
+          },
+          "event": {
+            "$ref": "#/components/schemas/PublicEventDetail"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "start": {
+            "format": "date-time",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "start",
+          "event"
+        ],
+        "title": "PublicEventDateDetail",
         "type": "object"
       },
       "PublicEventDateEvent": {
@@ -7589,6 +7732,667 @@
         "title": "PublicEventDatePlace",
         "type": "object"
       },
+      "PublicEventDateRow": {
+        "properties": {
+          "allday": {
+            "default": false,
+            "title": "Allday",
+            "type": "boolean"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "End"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "start": {
+            "format": "date-time",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "start"
+        ],
+        "title": "PublicEventDateRow",
+        "type": "object"
+      },
+      "PublicEventDetail": {
+        "properties": {
+          "accessible_for_free": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Accessible For Free"
+          },
+          "age_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Age From"
+          },
+          "age_to": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Age To"
+          },
+          "allday": {
+            "default": false,
+            "title": "Allday",
+            "type": "boolean"
+          },
+          "attendance_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Attendance Mode"
+          },
+          "attendance_mode_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Attendance Mode Label"
+          },
+          "audit": {
+            "$ref": "#/components/schemas/PublicEventAudit"
+          },
+          "booked_up": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Booked Up"
+          },
+          "calendar_links": {
+            "$ref": "#/components/schemas/PublicCalendarLinks"
+          },
+          "categories": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PublicEventCategoryGroup"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "co_organizers": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PublicEventOrganizer"
+            },
+            "title": "Co Organizers",
+            "type": "array"
+          },
+          "dates": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PublicEventDateRow"
+            },
+            "title": "Dates",
+            "type": "array"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "End"
+          },
+          "expected_participants": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Participants"
+          },
+          "external_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "External Link"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "internal_tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Internal Tags"
+          },
+          "kid_friendly": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Kid Friendly"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "organization": {
+            "$ref": "#/components/schemas/PublicEventOrganization"
+          },
+          "organization_id": {
+            "title": "Organization Id",
+            "type": "integer"
+          },
+          "organizer": {
+            "$ref": "#/components/schemas/PublicEventOrganizer"
+          },
+          "photo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicImage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "place": {
+            "$ref": "#/components/schemas/PublicEventPlace"
+          },
+          "price_info": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Price Info"
+          },
+          "public_status": {
+            "title": "Public Status",
+            "type": "string"
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Rating"
+          },
+          "reference_requests": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PublicEventReferenceRequest"
+            },
+            "title": "Reference Requests",
+            "type": "array"
+          },
+          "references": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PublicEventReferrer"
+            },
+            "title": "References",
+            "type": "array"
+          },
+          "registration_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Registration Required"
+          },
+          "rights": {
+            "$ref": "#/components/schemas/PublicEventRights"
+          },
+          "share_links": {
+            "$ref": "#/components/schemas/PublicShareLinks"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Start"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "status_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status Label"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tags"
+          },
+          "target_group_origin_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Target Group Origin Label"
+          },
+          "ticket_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Ticket Link"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "organization_id",
+          "public_status",
+          "place",
+          "organizer",
+          "organization",
+          "rights",
+          "share_links",
+          "calendar_links",
+          "audit"
+        ],
+        "title": "PublicEventDetail",
+        "type": "object"
+      },
+      "PublicEventOrganization": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Address"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Email"
+          },
+          "fax": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Fax"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "is_verified": {
+            "default": false,
+            "title": "Is Verified",
+            "type": "boolean"
+          },
+          "logo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicImage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Phone"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "PublicEventOrganization",
+        "type": "object"
+      },
+      "PublicEventOrganizer": {
+        "properties": {
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Email"
+          },
+          "fax": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Fax"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "logo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicImage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Phone"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "PublicEventOrganizer",
+        "type": "object"
+      },
+      "PublicEventPlace": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Address"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "City"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "directions_query": {
+            "title": "Directions Query",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "organization_id": {
+            "title": "Organization Id",
+            "type": "integer"
+          },
+          "photo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicImage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          }
+        },
+        "required": [
+          "id",
+          "organization_id",
+          "name",
+          "directions_query"
+        ],
+        "title": "PublicEventPlace",
+        "type": "object"
+      },
       "PublicEventReference": {
         "properties": {
           "reference_id": {
@@ -7617,6 +8421,156 @@
           "state"
         ],
         "title": "PublicEventReference",
+        "type": "object"
+      },
+      "PublicEventReferenceRequest": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "organization": {
+            "$ref": "#/components/schemas/PublicOrganizationBadge"
+          },
+          "review_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Review Status"
+          },
+          "review_status_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Review Status Label"
+          }
+        },
+        "required": [
+          "id",
+          "organization"
+        ],
+        "title": "PublicEventReferenceRequest",
+        "type": "object"
+      },
+      "PublicEventReferrer": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "organization": {
+            "$ref": "#/components/schemas/PublicOrganizationBadge"
+          }
+        },
+        "required": [
+          "id",
+          "organization"
+        ],
+        "title": "PublicEventReferrer",
+        "type": "object"
+      },
+      "PublicEventRights": {
+        "properties": {
+          "can_create_event": {
+            "title": "Can Create Event",
+            "type": "boolean"
+          },
+          "can_create_reference_request": {
+            "title": "Can Create Reference Request",
+            "type": "boolean"
+          },
+          "can_duplicate_event": {
+            "title": "Can Duplicate Event",
+            "type": "boolean"
+          },
+          "can_reference_event": {
+            "title": "Can Reference Event",
+            "type": "boolean"
+          },
+          "can_update_event": {
+            "title": "Can Update Event",
+            "type": "boolean"
+          },
+          "can_verify_event": {
+            "title": "Can Verify Event",
+            "type": "boolean"
+          },
+          "can_view_actions": {
+            "title": "Can View Actions",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "can_duplicate_event",
+          "can_verify_event",
+          "can_reference_event",
+          "can_create_reference_request",
+          "can_create_event",
+          "can_view_actions",
+          "can_update_event"
+        ],
+        "title": "PublicEventRights",
+        "type": "object"
+      },
+      "PublicImage": {
+        "properties": {
+          "copyright_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Copyright Text"
+          },
+          "license_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "License Code"
+          },
+          "license_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "License Url"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "PublicImage",
         "type": "object"
       },
       "PublicOrganization": {
@@ -7751,6 +8705,29 @@
           "ical_url"
         ],
         "title": "PublicOrganization",
+        "type": "object"
+      },
+      "PublicOrganizationBadge": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "is_verified": {
+            "default": false,
+            "title": "Is Verified",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "PublicOrganizationBadge",
         "type": "object"
       },
       "PublicOrganizationPage": {
@@ -8075,6 +9052,44 @@
           "pages"
         ],
         "title": "PublicOrganizerRefPage",
+        "type": "object"
+      },
+      "PublicShareLinks": {
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string"
+          },
+          "facebook": {
+            "title": "Facebook",
+            "type": "string"
+          },
+          "telegram": {
+            "title": "Telegram",
+            "type": "string"
+          },
+          "twitter": {
+            "title": "Twitter",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          },
+          "whatsapp": {
+            "title": "Whatsapp",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "facebook",
+          "twitter",
+          "email",
+          "whatsapp",
+          "telegram"
+        ],
+        "title": "PublicShareLinks",
         "type": "object"
       },
       "RequestReviewed": {
@@ -23561,6 +24576,142 @@
           }
         },
         "summary": "Options of the event date search"
+      }
+    },
+    "/bff/public/event-dates/{id}": {
+      "get": {
+        "operationId": "bff_public_get_event_date",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicEventDateDetail"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get event date"
+      }
+    },
+    "/bff/public/events/{id}": {
+      "get": {
+        "operationId": "bff_public_get_event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicEventDetail"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get event"
       }
     },
     "/bff/public/events/{id}/report-form": {

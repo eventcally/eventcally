@@ -62,4 +62,16 @@ describe("AuditLine", () => {
     });
     expect(anonymous.text()).toMatch(/Last updated at [^b]*\.$/);
   });
+
+  it("renders one plain line when inline", () => {
+    const wrapper = mount(AuditLine, {
+      props: { audit: { created_at: "2026-11-03T14:41:00Z" }, inline: true },
+      global: {
+        plugins: [createI18n({ legacy: false, locale: "en", messages: { en: messages } })],
+      },
+    });
+
+    expect(wrapper.find("span[data-test=audit]").text()).toContain("Created at");
+    expect(wrapper.find("div").exists()).toBe(false);
+  });
 });

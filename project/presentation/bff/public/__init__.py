@@ -5,6 +5,7 @@ from flask import Blueprint
 bff_public_bp = Blueprint("bff_public", __name__, url_prefix="/public")
 
 from project.presentation.bff.public import event_dates  # noqa: E402, F401
+from project.presentation.bff.public import event_details  # noqa: E402, F401
 from project.presentation.bff.public import events  # noqa: E402, F401
 from project.presentation.bff.public import organizations  # noqa: E402, F401
 from project.presentation.bff.public import organizers  # noqa: E402, F401

@@ -1990,6 +1990,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/public/event-dates/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get event date */
+        get: operations["bff_public_get_event_date"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/public/events/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get event */
+        get: operations["bff_public_get_event"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/public/events/{id}/report-form": {
         parameters: {
             query?: never;
@@ -5707,6 +5741,16 @@ export interface components {
             /** Max Dates */
             max_dates: number;
         };
+        /** PublicCalendarLinks */
+        PublicCalendarLinks: {
+            /**
+             * Google
+             * @default null
+             */
+            google: string | null;
+            /** Ics */
+            ics: string;
+        };
         /** PublicChoice */
         PublicChoice: {
             /** Label */
@@ -5721,6 +5765,36 @@ export interface components {
             /** Value */
             value: number;
         };
+        /** PublicEventAudit */
+        PublicEventAudit: {
+            /**
+             * Created At
+             * @default null
+             */
+            created_at: string | null;
+            /**
+             * Created By Label
+             * @default null
+             */
+            created_by_label: string | null;
+            /**
+             * Updated At
+             * @default null
+             */
+            updated_at: string | null;
+            /**
+             * Updated By Label
+             * @default null
+             */
+            updated_by_label: string | null;
+        };
+        /** PublicEventCategoryGroup */
+        PublicEventCategoryGroup: {
+            /** Label */
+            label: string;
+            /** Names */
+            names: string[];
+        };
         /** PublicEventDate */
         PublicEventDate: {
             /** Allday */
@@ -5731,6 +5805,27 @@ export interface components {
              */
             end: string | null;
             event: components["schemas"]["PublicEventDateEvent"];
+            /** Id */
+            id: number;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+        };
+        /** PublicEventDateDetail */
+        PublicEventDateDetail: {
+            /**
+             * Allday
+             * @default false
+             */
+            allday: boolean;
+            /**
+             * End
+             * @default null
+             */
+            end: string | null;
+            event: components["schemas"]["PublicEventDetail"];
             /** Id */
             id: number;
             /**
@@ -5808,6 +5903,282 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** PublicEventDateRow */
+        PublicEventDateRow: {
+            /**
+             * Allday
+             * @default false
+             */
+            allday: boolean;
+            /**
+             * End
+             * @default null
+             */
+            end: string | null;
+            /** Id */
+            id: number;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+        };
+        /** PublicEventDetail */
+        PublicEventDetail: {
+            /**
+             * Accessible For Free
+             * @default null
+             */
+            accessible_for_free: boolean | null;
+            /**
+             * Age From
+             * @default null
+             */
+            age_from: number | null;
+            /**
+             * Age To
+             * @default null
+             */
+            age_to: number | null;
+            /**
+             * Allday
+             * @default false
+             */
+            allday: boolean;
+            /**
+             * Attendance Mode
+             * @default null
+             */
+            attendance_mode: string | null;
+            /**
+             * Attendance Mode Label
+             * @default null
+             */
+            attendance_mode_label: string | null;
+            audit: components["schemas"]["PublicEventAudit"];
+            /**
+             * Booked Up
+             * @default null
+             */
+            booked_up: boolean | null;
+            calendar_links: components["schemas"]["PublicCalendarLinks"];
+            /**
+             * Categories
+             * @default []
+             */
+            categories: components["schemas"]["PublicEventCategoryGroup"][];
+            /**
+             * Co Organizers
+             * @default []
+             */
+            co_organizers: components["schemas"]["PublicEventOrganizer"][];
+            /**
+             * Dates
+             * @default []
+             */
+            dates: components["schemas"]["PublicEventDateRow"][];
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * End
+             * @default null
+             */
+            end: string | null;
+            /**
+             * Expected Participants
+             * @default null
+             */
+            expected_participants: number | null;
+            /**
+             * External Link
+             * @default null
+             */
+            external_link: string | null;
+            /** Id */
+            id: number;
+            /**
+             * Internal Tags
+             * @default null
+             */
+            internal_tags: string | null;
+            /**
+             * Kid Friendly
+             * @default null
+             */
+            kid_friendly: boolean | null;
+            /** Name */
+            name: string;
+            organization: components["schemas"]["PublicEventOrganization"];
+            /** Organization Id */
+            organization_id: number;
+            organizer: components["schemas"]["PublicEventOrganizer"];
+            /** @default null */
+            photo: components["schemas"]["PublicImage"] | null;
+            place: components["schemas"]["PublicEventPlace"];
+            /**
+             * Price Info
+             * @default null
+             */
+            price_info: string | null;
+            /** Public Status */
+            public_status: string;
+            /**
+             * Rating
+             * @default null
+             */
+            rating: number | null;
+            /**
+             * Reference Requests
+             * @default []
+             */
+            reference_requests: components["schemas"]["PublicEventReferenceRequest"][];
+            /**
+             * References
+             * @default []
+             */
+            references: components["schemas"]["PublicEventReferrer"][];
+            /**
+             * Registration Required
+             * @default null
+             */
+            registration_required: boolean | null;
+            rights: components["schemas"]["PublicEventRights"];
+            share_links: components["schemas"]["PublicShareLinks"];
+            /**
+             * Start
+             * @default null
+             */
+            start: string | null;
+            /**
+             * Status
+             * @default null
+             */
+            status: string | null;
+            /**
+             * Status Label
+             * @default null
+             */
+            status_label: string | null;
+            /**
+             * Tags
+             * @default null
+             */
+            tags: string | null;
+            /**
+             * Target Group Origin Label
+             * @default null
+             */
+            target_group_origin_label: string | null;
+            /**
+             * Ticket Link
+             * @default null
+             */
+            ticket_link: string | null;
+        };
+        /** PublicEventOrganization */
+        PublicEventOrganization: {
+            /**
+             * Address
+             * @default null
+             */
+            address: string | null;
+            /**
+             * Email
+             * @default null
+             */
+            email: string | null;
+            /**
+             * Fax
+             * @default null
+             */
+            fax: string | null;
+            /** Id */
+            id: number;
+            /**
+             * Is Verified
+             * @default false
+             */
+            is_verified: boolean;
+            /** @default null */
+            logo: components["schemas"]["PublicImage"] | null;
+            /** Name */
+            name: string;
+            /**
+             * Phone
+             * @default null
+             */
+            phone: string | null;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+        };
+        /** PublicEventOrganizer */
+        PublicEventOrganizer: {
+            /**
+             * Email
+             * @default null
+             */
+            email: string | null;
+            /**
+             * Fax
+             * @default null
+             */
+            fax: string | null;
+            /** Id */
+            id: number;
+            /** @default null */
+            logo: components["schemas"]["PublicImage"] | null;
+            /** Name */
+            name: string;
+            /**
+             * Phone
+             * @default null
+             */
+            phone: string | null;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+        };
+        /** PublicEventPlace */
+        PublicEventPlace: {
+            /**
+             * Address
+             * @default null
+             */
+            address: string | null;
+            /**
+             * City
+             * @default null
+             */
+            city: string | null;
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /** Directions Query */
+            directions_query: string;
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Organization Id */
+            organization_id: number;
+            /** @default null */
+            photo: components["schemas"]["PublicImage"] | null;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+        };
         /** PublicEventReference */
         PublicEventReference: {
             /**
@@ -5820,6 +6191,65 @@ export interface components {
              * @enum {string}
              */
             state: "own" | "none" | "referenced";
+        };
+        /** PublicEventReferenceRequest */
+        PublicEventReferenceRequest: {
+            /** Id */
+            id: number;
+            organization: components["schemas"]["PublicOrganizationBadge"];
+            /**
+             * Review Status
+             * @default null
+             */
+            review_status: string | null;
+            /**
+             * Review Status Label
+             * @default null
+             */
+            review_status_label: string | null;
+        };
+        /** PublicEventReferrer */
+        PublicEventReferrer: {
+            /** Id */
+            id: number;
+            organization: components["schemas"]["PublicOrganizationBadge"];
+        };
+        /** PublicEventRights */
+        PublicEventRights: {
+            /** Can Create Event */
+            can_create_event: boolean;
+            /** Can Create Reference Request */
+            can_create_reference_request: boolean;
+            /** Can Duplicate Event */
+            can_duplicate_event: boolean;
+            /** Can Reference Event */
+            can_reference_event: boolean;
+            /** Can Update Event */
+            can_update_event: boolean;
+            /** Can Verify Event */
+            can_verify_event: boolean;
+            /** Can View Actions */
+            can_view_actions: boolean;
+        };
+        /** PublicImage */
+        PublicImage: {
+            /**
+             * Copyright Text
+             * @default null
+             */
+            copyright_text: string | null;
+            /**
+             * License Code
+             * @default null
+             */
+            license_code: string | null;
+            /**
+             * License Url
+             * @default null
+             */
+            license_url: string | null;
+            /** Url */
+            url: string;
         };
         /** PublicOrganization */
         PublicOrganization: {
@@ -5873,6 +6303,18 @@ export interface components {
              * @default null
              */
             url: string | null;
+        };
+        /** PublicOrganizationBadge */
+        PublicOrganizationBadge: {
+            /** Id */
+            id: number;
+            /**
+             * Is Verified
+             * @default false
+             */
+            is_verified: boolean;
+            /** Name */
+            name: string;
         };
         /** PublicOrganizationPage */
         PublicOrganizationPage: {
@@ -6010,6 +6452,21 @@ export interface components {
             per_page: number;
             /** Total */
             total: number;
+        };
+        /** PublicShareLinks */
+        PublicShareLinks: {
+            /** Email */
+            email: string;
+            /** Facebook */
+            facebook: string;
+            /** Telegram */
+            telegram: string;
+            /** Twitter */
+            twitter: string;
+            /** Url */
+            url: string;
+            /** Whatsapp */
+            whatsapp: string;
         };
         /** RequestReviewed */
         RequestReviewed: {
@@ -16413,6 +16870,122 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventDateSearchOptions"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_public_get_event_date: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicEventDateDetail"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_public_get_event: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicEventDetail"];
                 };
             };
             /** @description Unauthorized */

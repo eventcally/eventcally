@@ -1,19 +1,34 @@
-import pytest
-
 from tests.integration.seeder import Seeder
 from tests.integration.utils import UtilActions
 
 
-@pytest.mark.parametrize(
-    "external_link", [None, "https://example.com", "www.example.com"]
-)
-def test_read(client, seeder: Seeder, utils: UtilActions, external_link):
+def _assert_shell(response):
+    assert b'<div id="app"' in response.data
+    assert b'id="boot"' in response.data
+
+
+def test_read(client, seeder: Seeder, utils: UtilActions):
     user_id, admin_unit_id = seeder.setup_base(log_in=False)
-    event_id = seeder.create_event(admin_unit_id, external_link=external_link)
+    event_id = seeder.create_event(admin_unit_id, name="Stadtfest")
 
     url = utils.get_url("main.event", event_id=event_id)
     response = utils.get_ok(url)
+
+    _assert_shell(response)
     assert b"vue.2.6.14" not in response.data
+    # The head stays server-rendered for crawlers and social cards.
+    utils.assert_response_contains(response, "<title>Stadtfest</title>")
+    utils.assert_response_contains(
+        response,
+        f'<link rel="canonical" href="http://localhost{utils.get_url("main.event", event_id=event_id)}" />',
+    )
+    utils.assert_response_contains(response, 'property="og:title" content="Stadtfest"')
+    utils.assert_response_contains(response, 'name="twitter:card"')
+    utils.assert_response_contains(response, 'application/ld+json"')
+    # No-JS fallback
+    utils.assert_response_contains(response, "<noscript>")
+    utils.assert_response_contains(response, "<h1>Stadtfest</h1>")
+    utils.assert_response_contains(response, "Beschreibung")
 
     event_id = seeder.create_event(admin_unit_id, draft=True)
     url = utils.get_url("main.event", event_id=event_id)
@@ -28,58 +43,8 @@ def test_read(client, seeder: Seeder, utils: UtilActions, external_link):
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
-
-def test_read_containsActionLink(seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base()
-    other_user_id = seeder.create_user("other@test.de")
-    other_admin_unit_id = seeder.create_admin_unit(
-        other_user_id, "Other Crew", verified=True
-    )
-    event_id = seeder.create_event(other_admin_unit_id)
-
-    url = utils.get_url("main.event", event_id=event_id)
-    response = utils.get_ok(url)
-
-    action_url = utils.get_url("main.event_actions", event_id=event_id)
-    assert action_url in str(response.data)
-
-
-def test_read_shows_reference_requests(seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base()
-
-    (
-        other_user_id,
-        other_admin_unit_id,
-        event_id,
-        reference_request_id,
-    ) = seeder.create_outgoing_reference_request(admin_unit_id)
-
-    url = utils.get_url("main.event", event_id=event_id)
-    utils.get_ok(url)
-
-
-def test_read_co_organizers(seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base()
-    event_id, organizer_a_id, organizer_b_id = seeder.create_event_with_co_organizers(
-        admin_unit_id
-    )
-
-    url = utils.get_url("main.event", event_id=event_id)
-    response = utils.get_ok(url)
-    utils.assert_response_contains(response, "Organizer A")
-    utils.assert_response_contains(response, "Organizer B")
-
-
-def test_read_with_custom_category(seeder: Seeder, utils: UtilActions):
-    _, admin_unit_id = seeder.setup_base()
-    _, custom_event_category_id = seeder.get_one_custom_event_category_set()
-    event_id = seeder.create_event(
-        admin_unit_id, custom_category_ids={custom_event_category_id}
-    )
-
-    url = utils.get_url("main.event", event_id=event_id)
-    response = utils.get_ok(url)
-    utils.assert_response_contains(response, "Custom Category")
+    response = utils.get(utils.get_url("main.event", event_id=1234))
+    utils.assert_response_notFound(response)
 
 
 def test_create_renders_shell(client, utils: UtilActions, seeder: Seeder):
@@ -132,11 +97,8 @@ def test_actions(seeder: Seeder, utils: UtilActions):
 
     url = utils.get_url("main.event_actions", event_id=event_id)
     response = utils.get_ok(url)
+    _assert_shell(response)
     assert b"vue.2.6.14" not in response.data
-
-    # Nutzer ist alleine auf der Welt. Deshalb darf es keine Referenz-Links geben
-    assert b"Empfehlung anfragen" not in response.data
-    assert b"Veranstaltung empfehlen" not in response.data
 
     event_id = seeder.create_event(admin_unit_id, draft=True)
     url = utils.get_url("main.event_actions", event_id=event_id)
@@ -151,54 +113,8 @@ def test_actions(seeder: Seeder, utils: UtilActions):
     response = utils.get(url)
     utils.assert_response_unauthorized(response)
 
-
-def test_actions_withReferenceRequestLink(seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base()
-    event_id = seeder.create_event(admin_unit_id)
-    other_user_id = seeder.create_user("other@test.de")
-    seeder.create_admin_unit(other_user_id, "Other Crew")
-
-    url = utils.get_url("main.event_actions", event_id=event_id)
-    response = utils.get_ok(url)
-
-    # 'Empfehlung anfragen' erlaubt: Referenz-Anfrage an andere AdminUnit
-    assert b"Empfehlung anfragen" in response.data
-
-    # Es gibt keine andere AdminUnit, bei der der aktuelle Nutzer Mitglied ist. Deshalb kann er die Veranstaltung nicht empfehlen.
-    assert b"Veranstaltung empfehlen" not in response.data
-
-
-def test_actions_unverifiedWithoutReferenceRequestLink(
-    seeder: Seeder, utils: UtilActions
-):
-    user_id, admin_unit_id = seeder.setup_base(admin_unit_verified=False)
-    event_id = seeder.create_event(admin_unit_id)
-    other_user_id = seeder.create_user("other@test.de")
-    seeder.create_admin_unit(other_user_id, "Other Crew")
-
-    url = utils.get_url("main.event_actions", event_id=event_id)
-    response = utils.get_ok(url)
-
-    # 'Empfehlung anfragen' nicht erlaubt
-    assert b"Empfehlung anfragen" not in response.data
-
-
-def test_actions_withReferenceLink(seeder: Seeder, utils: UtilActions):
-    user_id, admin_unit_id = seeder.setup_base()
-    other_user_id = seeder.create_user("other@test.de")
-    other_admin_unit_id = seeder.create_admin_unit(
-        other_user_id, "Other Crew", verified=True
-    )
-    event_id = seeder.create_event(other_admin_unit_id)
-
-    url = utils.get_url("main.event_actions", event_id=event_id)
-    response = utils.get_ok(url)
-
-    # 'Empfehlung anfragen' nicht erlaubt: Der aktuelle Nutzer ist nicht Mitglied der anderen AdminUnit.
-    assert b"Empfehlung anfragen" not in response.data
-
-    # Referenz auf Veranstaltung der anderen AdminUnit erlaubt
-    assert b"Veranstaltung empfehlen" in response.data
+    response = utils.get(utils.get_url("main.event_actions", event_id=1234))
+    utils.assert_response_notFound(response)
 
 
 def test_delete_renders_shell(client, seeder: Seeder, utils: UtilActions):

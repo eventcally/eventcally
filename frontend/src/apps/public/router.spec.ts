@@ -19,6 +19,20 @@ describe("public router", () => {
     expect(route.params).toMatchObject({ id: "12" });
   });
 
+  it("resolves the event pages", async () => {
+    const event = await resolve("/event/12");
+    expect(event.name).toBe("event");
+    expect(event.params).toMatchObject({ id: "12" });
+
+    expect((await resolve("/event/12/actions")).name).toBe("event-actions");
+
+    const date = await resolve("/eventdate/4");
+    expect(date.name).toBe("event-date");
+    expect(date.params).toMatchObject({ id: "4" });
+
+    expect((await resolve("/eventdate/x")).name).toBe("not-found");
+  });
+
   it("resolves the organizer page", async () => {
     const route = await resolve("/organizers/5");
 

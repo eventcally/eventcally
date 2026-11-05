@@ -8,9 +8,36 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    {% if canonical_url %}
+    <link rel="canonical" href="{{ canonical_url }}" />
+    {% endif %}
     {%- block metas %}
       <meta property="og:type" content="website">
       <meta property="og:title" content="{{ self.title() }}">
+
+      {% if canonical_url %}
+        <meta property="og:url" content="{{ canonical_url }}" />
+      {% endif %}
+
+      {% set meta_description = 'Mit der offenen Veranstaltungsdatenbank Events einfach bekannt machen!' %}
+      {% set og_image = url_for('static', filename='og_image.png', _external=True) %}
+      {% set twitter_card = 'summary' %}
+
+      {% if meta %}
+        {% set meta_description = meta['description'] %}
+
+        {% if 'image' in meta %}
+          {% set og_image = meta['image'] %}
+          {% set twitter_card = 'summary_large_image' %}
+        {% endif %}
+      {% endif %}
+
+      <meta property="og:image" content="{{ og_image }}">
+      <meta name="twitter:card" content="{{ twitter_card }}">
+
+      <meta name="description" content="{{ meta_description }}">
+      <meta property="og:description" content="{{ meta_description }}">
+      <meta name="twitter:title" content="{{ self.title() }}">
     {%- endblock metas %}
 
     <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png')}}">
@@ -23,6 +50,20 @@
 
     {%- block styles %}
     {%- endblock styles %}
+
+    {% if structured_data %}
+    <script type="application/ld+json">
+      {{ structured_data | safe }}
+    </script>
+    {% endif %}
+
+    {% if structured_datas %}
+      {% for structured_data in structured_datas %}
+      <script type="application/ld+json">
+        {{ structured_data | safe }}
+      </script>
+      {% endfor %}
+    {% endif %}
 
     {% block header %}
     {% endblock %}
