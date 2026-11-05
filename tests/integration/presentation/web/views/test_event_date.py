@@ -8,7 +8,13 @@ def test_read(client, seeder: Seeder, utils: UtilActions):
 
     url = utils.get_url("main.event_date", id=1)
     response = utils.get_ok(url)
+    assert b'<div id="app"' in response.data
     assert b"vue.2.6.14" not in response.data
+    utils.assert_response_contains(
+        response, f'<link rel="canonical" href="http://localhost{url}" />'
+    )
+    utils.assert_response_contains(response, 'application/ld+json"')
+    utils.assert_response_contains(response, "<noscript>")
 
     seeder.create_event(admin_unit_id, draft=True)
     url = utils.get_url("main.event_date", id=2)
@@ -21,6 +27,10 @@ def test_read(client, seeder: Seeder, utils: UtilActions):
     seeder.create_event_unverified()
     url = utils.get_url("main.event_date", id=3)
     response = utils.get(url)
+    utils.assert_response_unauthorized(response)
+
+    response = utils.get(utils.get_url("main.event_date", id=1234))
+    utils.assert_response_notFound(response)
 
 
 def test_ical(client, seeder: Seeder, utils: UtilActions):

@@ -1,5 +1,4 @@
 import os
-from urllib.parse import quote_plus
 
 from flask import current_app, url_for
 from markupsafe import Markup
@@ -7,12 +6,7 @@ from markupsafe import Markup
 from project.application.queries import GetManageMenuOptionsQuery, GetSiteNoticesQuery
 from project.presentation.shared.urls import url_for_image
 from project.presentation.web.vite import vite_entry
-from project.shared.utils import (
-    get_event_category_name,
-    get_localized_enum_name,
-    get_location_str,
-    get_place_str,
-)
+from project.shared.utils import get_localized_enum_name
 
 
 def _query_bus():
@@ -25,20 +19,6 @@ def env_override(value, key):
 
 def is_list(value):  # pragma: no cover
     return isinstance(value, list)
-
-
-def any_dict_value_true(data: dict):
-    return any(data.values())
-
-
-def ensure_link_scheme(link: str):
-    if not link:  # pragma: no cover
-        return link
-
-    if link.startswith("http://") or link.startswith("https://"):
-        return link
-
-    return f"https://{link}"
 
 
 def human_file_size(bytes, units=[" bytes", "KB", "MB", "GB", "TB", "PB", "EB"]):
@@ -101,15 +81,9 @@ def init_jinja_filters(app):
         app: Flask application instance
     """
     # Register filters
-    app.jinja_env.filters["event_category_name"] = lambda u: get_event_category_name(u)
     app.jinja_env.filters["loc_enum"] = lambda u: get_localized_enum_name(u)
     app.jinja_env.filters["env_override"] = env_override
-    app.jinja_env.filters["quote_plus"] = lambda u: quote_plus(u)
     app.jinja_env.filters["is_list"] = is_list
-    app.jinja_env.filters["any_dict_value_true"] = any_dict_value_true
-    app.jinja_env.filters["ensure_link_scheme"] = lambda s: ensure_link_scheme(s)
-    app.jinja_env.filters["place_str"] = lambda p: get_place_str(p)
-    app.jinja_env.filters["location_str"] = lambda location: get_location_str(location)
     app.jinja_env.filters["human_file_size"] = lambda size: human_file_size(size)
 
     # Register globals

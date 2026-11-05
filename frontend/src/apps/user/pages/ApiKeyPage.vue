@@ -5,6 +5,7 @@ import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AuditLine from "@/shared/AuditLine.vue";
 import { boot } from "@/shared/boot";
+import { takeCreatedKey } from "@/shared/createdKey";
 import { formatDate } from "@/shared/format";
 import { errorMessage } from "@/shared/apiError";
 import ProfileBreadcrumb from "../components/ProfileBreadcrumb.vue";
@@ -22,8 +23,9 @@ const apiKey = ref<UserApiKeyDetail | null>(null);
 const error = ref<string | null>(null);
 
 // The key is only known right after the creation (the create page hands it over through
-// the history state); a reload or any later visit never shows it.
-const createdKey = computed<string | null>(() => history.state?.key ?? null);
+// the history state). It is taken out of the state, so a reload or any later visit never
+// shows it.
+const createdKey = takeCreatedKey();
 
 const title = computed(() => `${t("API key")} ${props.id}`);
 

@@ -293,3 +293,155 @@ class PublicOrganizerRefPage(BaseModel):
     per_page: int
     total: int
     pages: int
+
+
+class PublicImage(BaseModel):
+    url: str
+    copyright_text: Optional[str] = None
+    license_code: Optional[str] = None
+    license_url: Optional[str] = None
+
+
+class PublicEventPlace(BaseModel):
+    id: int
+    organization_id: int
+    name: str
+    description: Optional[str] = None
+    url: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    photo: Optional[PublicImage] = None
+    directions_query: str
+
+
+class PublicEventOrganizer(BaseModel):
+    id: int
+    name: str
+    url: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    fax: Optional[str] = None
+    logo: Optional[PublicImage] = None
+
+
+class PublicEventOrganization(BaseModel):
+    id: int
+    name: str
+    is_verified: bool = False
+    url: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    fax: Optional[str] = None
+    address: Optional[str] = None
+    logo: Optional[PublicImage] = None
+
+
+class PublicOrganizationBadge(BaseModel):
+    id: int
+    name: str
+    is_verified: bool = False
+
+
+class PublicEventReferrer(BaseModel):
+    id: int
+    organization: PublicOrganizationBadge
+
+
+class PublicEventReferenceRequest(BaseModel):
+    id: int
+    review_status: Optional[str] = None
+    review_status_label: Optional[str] = None
+    organization: PublicOrganizationBadge
+
+
+class PublicEventDateRow(BaseModel):
+    id: int
+    start: datetime
+    end: Optional[datetime] = None
+    allday: bool = False
+
+
+class PublicEventRights(BaseModel):
+    can_duplicate_event: bool
+    can_verify_event: bool
+    can_reference_event: bool
+    can_create_reference_request: bool
+    can_create_event: bool
+    can_view_actions: bool
+    can_update_event: bool
+
+
+class PublicShareLinks(BaseModel):
+    url: str
+    facebook: str
+    twitter: str
+    email: str
+    whatsapp: str
+    telegram: str
+
+
+class PublicCalendarLinks(BaseModel):
+    ics: str
+    google: Optional[str] = None
+
+
+class PublicEventCategoryGroup(BaseModel):
+    label: str
+    names: List[str]
+
+
+class PublicEventAudit(BaseModel):
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    created_by_label: Optional[str] = None
+    updated_by_label: Optional[str] = None
+
+
+class PublicEventDetail(BaseModel):
+    id: int
+    name: str
+    organization_id: int
+    description: Optional[str] = None
+    external_link: Optional[str] = None
+    ticket_link: Optional[str] = None
+    price_info: Optional[str] = None
+    tags: Optional[str] = None
+    internal_tags: Optional[str] = None
+    kid_friendly: Optional[bool] = None
+    accessible_for_free: Optional[bool] = None
+    age_from: Optional[int] = None
+    age_to: Optional[int] = None
+    target_group_origin_label: Optional[str] = None
+    attendance_mode: Optional[str] = None
+    attendance_mode_label: Optional[str] = None
+    status: Optional[str] = None
+    status_label: Optional[str] = None
+    public_status: str
+    booked_up: Optional[bool] = None
+    registration_required: Optional[bool] = None
+    expected_participants: Optional[int] = None
+    rating: Optional[int] = None
+    start: Optional[datetime] = None
+    end: Optional[datetime] = None
+    allday: bool = False
+    photo: Optional[PublicImage] = None
+    place: PublicEventPlace
+    organizer: PublicEventOrganizer
+    co_organizers: List[PublicEventOrganizer] = []
+    organization: PublicEventOrganization
+    categories: List[PublicEventCategoryGroup] = []
+    references: List[PublicEventReferrer] = []
+    reference_requests: List[PublicEventReferenceRequest] = []
+    dates: List[PublicEventDateRow] = []
+    rights: PublicEventRights
+    share_links: PublicShareLinks
+    calendar_links: PublicCalendarLinks
+    audit: PublicEventAudit
+
+
+class PublicEventDateDetail(BaseModel):
+    id: int
+    start: datetime
+    end: Optional[datetime] = None
+    allday: bool = False
+    event: PublicEventDetail

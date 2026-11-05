@@ -126,9 +126,26 @@ test.describe("Event", () => {
     const eventId = createEvent(adminUnitId);
 
     await page.goto(`/event/${eventId}`);
+    await expect(page.locator("h1")).toContainText("Name");
     await screenshot(page, "read");
 
+    await page.getByRole("button", { name: "Teilen" }).click();
+    await expect(page.locator(".modal input[name=shareUrl]")).toBeVisible();
+    await page.locator(".modal.show .btn-close").click();
+    await expect(page.locator(".modal.show")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Zum Kalender" }).click();
+    await expect(page.locator(".modal.show")).toContainText("Outlook");
+    await page.locator(".modal.show .btn-close").click();
+    await expect(page.locator(".modal.show")).toHaveCount(0);
+
+    await page.locator("#event-dates a").first().click();
+    await expect(page).toHaveURL(/\/eventdate\/\d+/);
+    await expect(page.locator("h1")).toContainText("Name");
+    await screenshot(page, "read-date");
+
     await page.goto(`/event/${eventId}/actions`);
+    await expect(page.getByRole("link", { name: "Veranstaltung bearbeiten" })).toBeVisible();
     await screenshot(page, "actions");
   });
 

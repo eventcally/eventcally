@@ -20,6 +20,7 @@ test.describe("Event Date", () => {
 
     await page.locator(".text-body").filter({ visible: true }).first().click();
     await expect(page).toHaveURL(/\/eventdate\/\d+/);
+    await expect(page.locator("h1")).toContainText("Name");
     await screenshot(page, "event-date");
   });
 

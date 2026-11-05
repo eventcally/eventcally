@@ -1,26 +1,16 @@
 from dependency_injector.wiring import Provide, inject
 from flask import Response, current_app, render_template, url_for
 from flask_babel import gettext
-from flask_security import current_user
 
 from project.application.queries import GetEventDetailQuery, ListUpcomingEventDatesQuery
 from project.application.query_bus import QueryBus
 from project.container import Application
-from project.presentation.shared.access import (
-    can_reference_event,
-    can_request_event_reference,
-    has_access,
-)
 from project.presentation.shared.query_results import result_or_404
 from project.presentation.web.boot import build_boot_data
 from project.presentation.web.ical import create_ical_events_for_event
 from project.presentation.web.jsonld import get_sd_for_event_date
 from project.presentation.web.views.main_blueprint import main_bp
-from project.presentation.web.views.utils import (
-    get_calendar_links_for_event,
-    get_meta_data,
-    get_share_links,
-)
+from project.presentation.web.views.utils import get_meta_data
 from project.shared.dateutils import create_icalendar
 
 
@@ -28,11 +18,7 @@ from project.shared.dateutils import create_icalendar
 @inject
 def event(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
     event = result_or_404(query_bus.handle(GetEventDetailQuery(id=event_id)))
-    user_rights = get_user_rights(event)
     dates = query_bus.handle(ListUpcomingEventDatesQuery(event_id=event.id))
-    url = url_for("main.event", event_id=event_id, _external=True)
-    share_links = get_share_links(url, event.name)
-    calendar_links = get_calendar_links_for_event(event)
 
     structured_datas = list()
     for event_date in dates:
@@ -41,32 +27,33 @@ def event(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
         )
         structured_datas.append(structured_data)
 
+    definition = event.min_start_definition
+
     return render_template(
-        "event/read.html",
+        "event/shell.html",
+        entry="public",
+        title=event.name,
+        boot=build_boot_data(base="/"),
         event=event,
-        dates=dates,
+        start=definition.start,
+        end=definition.end,
+        allday=definition.allday,
         structured_datas=structured_datas,
         meta=get_meta_data(event),
-        user_rights=user_rights,
         canonical_url=url_for("main.event", event_id=event_id, _external=True),
-        share_links=share_links,
-        calendar_links=calendar_links,
     )
 
 
 @main_bp.route("/event/<int:event_id>/actions")
 @inject
 def event_actions(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
-    event = result_or_404(query_bus.handle(GetEventDetailQuery(id=event_id)))
-    user_rights = get_user_rights(event)
-    url = url_for("main.event", event_id=event_id, _external=True)
-    share_links = get_share_links(url, event.name)
+    result_or_404(query_bus.handle(GetEventDetailQuery(id=event_id)))
 
     return render_template(
-        "event/actions.html",
-        event=event,
-        user_rights=user_rights,
-        share_links=share_links,
+        "layout_vue3.html",
+        entry="public",
+        title=gettext("Actions for event"),
+        boot=build_boot_data(base="/"),
     )
 
 
@@ -81,18 +68,6 @@ def event_report(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_
         title=gettext("Report event"),
         boot=build_boot_data(base="/"),
     )
-
-
-def get_user_rights(event):
-    return {
-        "can_duplicate_event": has_access(event.admin_unit, "events:write"),
-        "can_verify_event": has_access(event.admin_unit, "event:verify"),
-        "can_reference_event": can_reference_event(event),
-        "can_create_reference_request": can_request_event_reference(event),
-        "can_create_event": has_access(event.admin_unit, "events:write"),
-        "can_view_actions": current_user.is_authenticated,
-        "can_update_event": has_access(event.admin_unit, "events:write"),
-    }
 
 
 @main_bp.route("/event/<int:id>/ical")

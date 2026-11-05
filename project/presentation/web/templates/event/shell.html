@@ -1,0 +1,17 @@
+{% extends "layout_vue3.html" %}
+{% from "_macros.html" import render_event_date %}
+
+{% block content_container_attribs %}{% endblock %}
+
+{% block content %}
+{{ super() }}
+{% if event %}
+<noscript>
+  <div class="p-3">
+    <h1>{{ event.name }}</h1>
+    {% if start %}<div>{{ render_event_date(start, end, allday) }}</div>{% endif %}
+    {% if event.description %}<p style="white-space:pre-wrap;">{{ event.description }}</p>{% endif %}
+  </div>
+</noscript>
+{% endif %}
+{% endblock %}

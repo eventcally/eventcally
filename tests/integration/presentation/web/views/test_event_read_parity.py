@@ -1,4 +1,7 @@
-"""Page and feed parity of the event reads (detail pages, iCal, manage list).
+"""Feed parity of the event reads (iCal feeds).
+
+The event, event-date and actions pages are Vue shells now (their payloads are
+tested in `tests/integration/presentation/bff/public/test_event_details.py`).
 
 `data/event_read_parity.json.gz` was captured from the ORM read path before event reads
 moved to the query bus (`UPDATE_READ_PARITY=1`). HTML is compared after removing CSRF
@@ -61,21 +64,13 @@ def _requests(utils: UtilActions, ids):
         "other",
         "unverified",
     ):
-        requests[f"event_{name}"] = url("main.event", event_id=ids[name])
-        requests[f"event_{name}_actions"] = url(
-            "main.event_actions", event_id=ids[name]
-        )
         requests[f"event_{name}_ical"] = url("main.event_ical", id=ids[name])
 
-    requests["event_unknown"] = url("main.event", event_id=4711)
     requests["event_unknown_ical"] = url("main.event_ical", id=4711)
-    requests["event_unknown_actions"] = url("main.event_actions", event_id=4711)
 
     for date_id in range(1, 21):
-        requests[f"event_date_{date_id}"] = url("main.event_date", id=date_id)
         requests[f"event_date_{date_id}_ical"] = url("main.event_date_ical", id=date_id)
 
-    requests["event_date_unknown"] = url("main.event_date", id=4711)
     requests["event_date_unknown_ical"] = url("main.event_date_ical", id=4711)
 
     for name in ("a", "b", "c"):

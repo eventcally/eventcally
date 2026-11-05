@@ -65,6 +65,8 @@ describe("OrganizationApiKeyPage", () => {
 
     expect(wrapper.find("[data-test=created-key]").text()).toContain("secret-key");
     expect(wrapper.find(".alert-success").exists()).toBe(true);
+    // Taken out of the history state: a reload does not show it again.
+    expect(history.state?.key).toBeUndefined();
   });
 
   it("offers no actions without permission", async () => {

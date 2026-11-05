@@ -70,3 +70,9 @@ export function formatFileSize(bytes: number): string {
   }
   return `${value}${FILE_SIZE_UNITS[unit]}`;
 }
+
+/** Like the Jinja filter `ensure_link_scheme`: stored links may lack the scheme. */
+export function ensureLinkScheme(link: string): string {
+  if (link.startsWith("http://") || link.startsWith("https://")) return link;
+  return `https://${link}`;
+}

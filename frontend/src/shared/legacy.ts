@@ -24,6 +24,8 @@ export const publicPages = {
   eventDate: (id: number) => `/eventdate/${id}`,
   eventDates: (organizerId: number) => `/eventdates?organizer_id=${organizerId}`,
   eventActions: (id: number) => `/event/${id}/actions`,
+  eventReport: (id: number) => `/event/${id}/report`,
+  eventReference: (id: number) => `/event/${id}/reference`,
 };
 
 // Jinja manage area the admin links to.
@@ -38,6 +40,12 @@ export const manage = {
   eventCreate: (organizationId: number) => `/manage/admin_unit/${organizationId}/event/create`,
   eventUpdate: (organizationId: number, id: number) =>
     `/manage/admin_unit/${organizationId}/event/${id}/update`,
+  eventDelete: (organizationId: number, id: number) =>
+    `/manage/admin_unit/${organizationId}/event/${id}/delete`,
+  eventDuplicate: (organizationId: number, id: number) =>
+    `/manage/admin_unit/${organizationId}/event/create?template_id=${id}`,
+  outgoingEventReferenceRequest: (organizationId: number, id: number) =>
+    `/manage/admin_unit/${organizationId}/outgoing_event_reference_request/${id}`,
   eventPlaceUpdate: (organizationId: number, id: number) =>
     `/manage/admin_unit/${organizationId}/event_place/${id}/update`,
   eventOrganizerUpdate: (organizationId: number, id: number) =>
