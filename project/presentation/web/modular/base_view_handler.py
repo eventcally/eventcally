@@ -1,19 +1,13 @@
 from typing import Annotated, Optional
 
 from dependency_injector.providers import Factory
-from dependency_injector.wiring import Provide, Provider
+from dependency_injector.wiring import Provider
 from flask import Blueprint, abort, current_app, url_for
 from flask_babel import gettext
 
-from project.application.message_bus import MessageBus
-from project.application.queries.page_request import PageRequest
 from project.application.query_bus import QueryBus
-from project.application.services.abstract_app_context_provider import (
-    AbstractAppContextProvider,
-)
 from project.container import Application
 from project.presentation.web.modular.base_blueprint import BaseBlueprint
-from project.presentation.web.modular.base_form import BaseDeleteForm
 from project.presentation.web.modular.base_views import (
     BaseCreateView,
     BaseDeleteView,
@@ -26,14 +20,8 @@ from project.presentation.web.modular.base_views import (
 
 class BaseViewHandler:
     decorators = []
-    message_bus_factory: Annotated[
-        Factory[MessageBus], Provider[Application.cqrs.message_bus]
-    ]
     query_bus_factory: Annotated[
         Factory[QueryBus], Provider[Application.cqrs.query_bus]
-    ]
-    app_context_provider: Annotated[
-        AbstractAppContextProvider, Provide[Application.context.app_context_provider]
     ]
     # These name the entity (URLs, endpoints, permissions, titles). Display names are
     # English msgids, translated at call time.
@@ -42,20 +30,14 @@ class BaseViewHandler:
     display_name = None
     display_name_plural = None
     create_view_class = BaseCreateView
-    create_form_class = None
     create_decorators = []
     read_view_class = BaseReadView
-    read_display_class = None
     read_decorators = []
     update_view_class = BaseUpdateView
-    update_form_class = None
-    update_display_class = None
     update_decorators = []
     delete_view_class = BaseDeleteView
-    delete_form_class = BaseDeleteForm
     delete_decorators = []
     list_view_class = BaseListView
-    list_display_class = None
     list_decorators = []
     generic_prefix = ""
 
@@ -64,12 +46,7 @@ class BaseViewHandler:
         self.parent: Optional[BaseViewHandler] = kwargs.get("parent", None)
         self.app = None
         self.endpoints = dict()
-        self.template_pathes = list()
         self.permissions = set()
-
-    @property
-    def message_bus(self) -> MessageBus:
-        return self.message_bus_factory()
 
     @property
     def query_bus(self) -> QueryBus:
@@ -106,16 +83,6 @@ class BaseViewHandler:
     def check_access(self, **kwargs):
         return None
 
-    def create_list_query(self, page_request: PageRequest, **kwargs):
-        """The Query whose result is a `Page` of the list's read models."""
-        raise NotImplementedError  # pragma: no cover
-
-    def can_object_be_deleted(self, form, object):  # pragma: no cover
-        return True
-
-    def get_list_per_page(self):
-        return 20
-
     def get_endpoint_url(self, endpoint_key, **kwargs):
         endpoint = self.endpoints.get(endpoint_key)
         if endpoint:
@@ -130,111 +97,8 @@ class BaseViewHandler:
             return url_for(app_endpoint, **kwargs)
         return None  # pragma: no cover
 
-    def _get_object_url(self, endpoint_key, object, **kwargs):
-        if not object:  # pragma: no cover
-            return None
-
-        kwargs.setdefault(self.get_id_query_arg_name(), object.id)
-        return self.get_endpoint_url(endpoint_key, **kwargs)
-
-    def get_read_url(self, object, **kwargs):
-        return self._get_object_url("read", object, **kwargs)
-
-    def get_create_url(self, **kwargs):
-        return self.get_endpoint_url("create", **kwargs)
-
-    def get_update_url(self, object, **kwargs):
-        return self._get_object_url("update", object, **kwargs)
-
-    def get_delete_url(self, object, **kwargs):
-        return self._get_object_url("delete", object, **kwargs)
-
     def get_list_url(self, **kwargs):
         return self.get_endpoint_url("list")
-
-    def _create_breadcrumb(self, url, title):
-        if url:
-            return {
-                "url": url,
-                "title": title,
-            }
-
-        return None  # pragma: no cover
-
-    def get_breadcrumbs(self):
-        result = list()
-
-        if self.parent:
-            result.extend(self.parent.get_breadcrumbs())
-
-        return result
-
-    def _create_action(self, url, title):
-        if url:
-            return {
-                "url": url,
-                "title": title,
-            }
-
-        return None
-
-    def get_read_action(self, object):
-        return self._create_action(self.get_read_url(object=object), gettext("View"))
-
-    def get_update_action(self, object):
-        return self._create_action(self.get_update_url(object=object), gettext("Edit"))
-
-    def get_delete_action(self, object):
-        return self._create_action(
-            self.get_delete_url(object=object), gettext("Delete")
-        )
-
-    def get_default_list_action(self, object):
-        return self.get_read_action(object)
-
-    def get_additional_list_actions(self, object):
-        result = list()
-
-        update_action = self.get_update_action(object=object)
-        if update_action:
-            result.append(update_action)
-
-        delete_action = self.get_delete_action(object=object)
-        if delete_action:
-            result.append(delete_action)
-
-        return result
-
-    def get_all_list_actions(self, object):
-        result = list()
-
-        default_action = self.get_default_list_action(object)
-        if default_action:
-            result.append(default_action)
-
-        result.extend(self.get_additional_list_actions(object))
-
-        return result
-
-    def get_additional_read_actions(self, object):
-        result = list()
-
-        update_action = self.get_update_action(object=object)
-        if update_action:
-            result.append(update_action)
-
-        delete_action = self.get_delete_action(object=object)
-        if delete_action:
-            result.append(delete_action)
-
-        return result
-
-    def get_read_actions(self, object):
-        result = list()
-
-        result.extend(self.get_additional_read_actions(object))
-
-        return result
 
     def _add_view(self, key, url, view_class, endpoint, app, **kwargs):
         if not issubclass(view_class, BaseView):  # pragma: no cover
@@ -300,7 +164,6 @@ class BaseViewHandler:
 
             class CreateView(self.create_view_class):
                 decorators = self.create_decorators
-                form_class = self.create_view_class.form_class or self.create_form_class
 
             self._add_view(
                 "create",
@@ -314,7 +177,6 @@ class BaseViewHandler:
 
             class ReadView(self.read_view_class):
                 decorators = self.read_decorators
-                display_class = self.read_display_class
 
             self._add_view(
                 "read",
@@ -328,8 +190,6 @@ class BaseViewHandler:
 
             class UpdateView(self.update_view_class):
                 decorators = self.update_decorators
-                form_class = self.update_view_class.form_class or self.update_form_class
-                display_class = self.update_display_class
 
             self._add_view(
                 "update",
@@ -343,7 +203,6 @@ class BaseViewHandler:
 
             class DeleteView(self.delete_view_class):
                 decorators = self.delete_decorators
-                form_class = self.delete_view_class.form_class or self.delete_form_class
 
             self._add_view(
                 "delete",
@@ -357,7 +216,6 @@ class BaseViewHandler:
 
             class ListView(self.list_view_class):
                 decorators = self.list_decorators
-                display_class = self.list_display_class
 
             self._add_view(
                 "list",
@@ -367,19 +225,9 @@ class BaseViewHandler:
                 app,
             )
 
-    def get_template_folder(self):
-        return f"{self.generic_prefix}{self.get_model_name()}"
-
-    def _init_template_pathes(self):
-        if isinstance(self.app, Blueprint):
-            self.template_pathes.append(f"{self.app.name}/")
-
-        self.template_pathes.append("")
-
     def init_app(self, app):
         if isinstance(app, BaseBlueprint):
             app.view_handlers.append(self)
 
         self.app = app
-        self._init_template_pathes()
         self.add_views(app)

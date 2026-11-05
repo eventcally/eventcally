@@ -47,6 +47,15 @@ export const testRoutes = [
   { path: `${base}/oauth2_client/create`, name: "organization-oauth2-client-create", component: Blank },
   { path: `${base}/oauth2_client/:id`, name: "organization-oauth2-client", component: Blank },
   { path: `${base}/oauth2_client/:id/update`, name: "organization-oauth2-client-update", component: Blank },
+  { path: `${base}/apps`, name: "apps", component: Blank },
+  { path: `${base}/app/create`, name: "app-create", component: Blank },
+  { path: `${base}/app/:id`, name: "app", component: Blank },
+  { path: `${base}/app/:id/update`, name: "app-update", component: Blank },
+  { path: `${base}/app/:appId/webhook_deliveries`, name: "webhook-deliveries", component: Blank },
+  { path: `${base}/app/:appId/webhook_delivery/:id`, name: "webhook-delivery", component: Blank },
+  { path: `${base}/app_installations`, name: "app-installations", component: Blank },
+  { path: `${base}/app_installation/:id`, name: "app-installation", component: Blank },
+  { path: `${base}/app_installations/install/:appId`, name: "app-install", component: Blank },
   { path: "/manage/organization/create", name: "organization-create", component: Blank },
 ];
 

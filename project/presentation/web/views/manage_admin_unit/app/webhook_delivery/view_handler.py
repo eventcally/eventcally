@@ -1,9 +1,4 @@
-from flask import g
-
-from project.application.queries import (
-    GetAppWebhookDeliveryQuery,
-    ListAppWebhookDeliveriesQuery,
-)
+from project.application.queries import GetAppWebhookDeliveryQuery
 from project.presentation.web.views.manage_admin_unit.app import app_bp
 from project.presentation.web.views.manage_admin_unit.app.child_view_handler import (
     AppChildViewHandler,
@@ -11,10 +6,19 @@ from project.presentation.web.views.manage_admin_unit.app.child_view_handler imp
 from project.presentation.web.views.manage_admin_unit.app.view_handler import (
     handler as app_view_handler,
 )
-from project.presentation.web.views.manage_admin_unit.app.webhook_delivery.displays import (
-    ListDisplay,
-    ReadDisplay,
+from project.presentation.web.views.manage_admin_unit.shell_views import (
+    ListShellView,
+    ReadShellView,
 )
+
+
+class ListView(ListShellView):
+    """A shell: the Vue page lists through `/bff/manage`."""
+
+
+class ReadView(ReadShellView):
+    """A shell: the Vue page shows the delivery and its attempts through
+    `/bff/manage`."""
 
 
 class WebhookDeliveryViewHandler(AppChildViewHandler):
@@ -26,11 +30,8 @@ class WebhookDeliveryViewHandler(AppChildViewHandler):
     create_view_class = None
     update_view_class = None
     delete_view_class = None
-    list_display_class = ListDisplay
-    read_display_class = ReadDisplay
-
-    def create_list_query(self, page_request, **kwargs):
-        return ListAppWebhookDeliveriesQuery(app_id=g.current_app.id, page=page_request)
+    list_view_class = ListView
+    read_view_class = ReadView
 
     def create_get_query(self, object_id):
         return GetAppWebhookDeliveryQuery(id=object_id)

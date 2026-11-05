@@ -37,7 +37,7 @@ class ShellViewMixin:
 
         title_kwargs = {}
 
-        # The create views have no object (they are object views by inheritance only).
+        # The create views have no object.
         if isinstance(self, (BaseReadView, BaseObjectFormView)):
             object = self.get_object_from_kwargs(**kwargs)
             response = self.check_object_access(object)

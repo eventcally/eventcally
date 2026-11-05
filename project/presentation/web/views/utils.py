@@ -1,7 +1,7 @@
 from functools import wraps
 from urllib.parse import quote_plus
 
-from flask import current_app, flash, g, redirect, request, url_for
+from flask import current_app, flash, g, redirect, url_for
 from flask_babel import format_date, format_time, gettext
 from flask_security import current_user
 from markupsafe import Markup
@@ -55,33 +55,6 @@ def handleBaseError(e: BaseError) -> str:
     return message  # pragma: no cover
 
 
-def get_pagination_urls(pagination, **kwargs):
-    result = {}
-
-    if pagination:
-        result["page"] = pagination.page
-        result["pages"] = pagination.pages
-        result["total"] = pagination.total
-
-        if pagination.has_prev:
-            args = request.args.copy()
-            args.update(kwargs)
-            args["page"] = pagination.prev_num
-            result["prev_url"] = url_for(request.endpoint, **args)
-            args["page"] = 1
-            result["first_url"] = url_for(request.endpoint, **args)
-
-        if pagination.has_next:
-            args = request.args.copy()
-            args.update(kwargs)
-            args["page"] = pagination.next_num
-            result["next_url"] = url_for(request.endpoint, **args)
-            args["page"] = pagination.pages
-            result["last_url"] = url_for(request.endpoint, **args)
-
-    return result
-
-
 def flash_errors(form, prefix=None):
     for field_name, errors in form.errors.items():
         field = getattr(form, field_name)
@@ -111,17 +84,6 @@ def permission_missing(redirect_location, message=None):
 
     flash(message, "danger")
     return redirect(redirect_location)
-
-
-def non_match_for_deletion(str1: str, str2: str) -> bool:
-    return str1 != str2 and str1.casefold() != str2.casefold()
-
-
-def flash_non_match_for_deletion(str1: str, str2: str, message: str) -> bool:
-    if non_match_for_deletion(str1, str2):
-        flash(message, "danger")
-        return False
-    return True
 
 
 def truncate(data: str, length: int) -> str:
@@ -276,14 +238,3 @@ def get_docs_url(path: str, **kwargs):  # pragma: no cover
         return None
 
     return f"{base_url}{path}"
-
-
-def handle_base_error(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except BaseError as e:
-            flash(handleBaseError(e), "danger")
-
-    return wrapper

@@ -1,5 +1,5 @@
-"""The opt-in query-backed object loading of the modular update/delete views, and
-view handlers without an ORM `model`.
+"""The query-backed object loading of the modular shell views, and view handlers
+without an ORM `model`.
 
 Uses the organizer manage handler as the vehicle: the query handler factory is
 overridden with a fake, so the pages render whatever read model the fake returns.
@@ -113,22 +113,3 @@ def test_handler_without_model_keeps_names_and_permissions(app):
     with app.test_request_context(headers={"Accept-Language": "de"}):
         assert handler.get_model_display_name() == "Veranstalter"
         assert handler.get_model_display_name_plural() == "Veranstalter"
-
-
-def test_display_audit_of_read_models(app):
-    from datetime import datetime
-
-    from project.application.read_models.audit_read_model import AuditReadModel
-    from project.presentation.web.modular.base_display import BaseDisplay
-
-    class Display(BaseDisplay):
-        pass
-
-    display = Display()
-    read_model = EventOrganizerEditReadModel(id=1, admin_unit_id=1, name="X")
-    audited = read_model.model_copy(
-        update={"audit": AuditReadModel(created_at=datetime(2026, 1, 1))}
-    )
-
-    assert not display.should_show_audit(read_model)
-    assert display.should_show_audit(audited)

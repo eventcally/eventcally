@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-04 20:41+0100\n"
+"POT-Creation-Date: 2026-11-04 21:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,15 +54,17 @@ msgid ""
 "%(admin_unit_name)s."
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:101
 #: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:80
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:43
+#: project/presentation/bff/manage/apps.py:245
+#: project/presentation/bff/manage/apps.py:659
 #: project/presentation/bff/manage/event_organizers.py:199
 #: project/presentation/bff/manage/event_places.py:190
 #: project/presentation/bff/manage/member_invitations.py:160
 #: project/presentation/bff/manage/oauth2_clients.py:161
 #: project/presentation/bff/manage/organization_invitations.py:213
 #: project/presentation/bff/manage/outgoing_relations.py:213
-#: project/presentation/web/modular/base_views.py:242
 #, python-format
 msgid "%(model_display_name)s successfully created"
 msgstr ""
@@ -70,6 +72,9 @@ msgstr ""
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:47
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:42
 #: project/presentation/bff/manage/api_keys.py:217
+#: project/presentation/bff/manage/app_installations.py:203
+#: project/presentation/bff/manage/apps.py:405
+#: project/presentation/bff/manage/apps.py:485
 #: project/presentation/bff/manage/event_organizers.py:335
 #: project/presentation/bff/manage/event_places.py:320
 #: project/presentation/bff/manage/event_references.py:275
@@ -80,7 +85,6 @@ msgstr ""
 #: project/presentation/bff/manage/organization_invitations.py:282
 #: project/presentation/bff/manage/outgoing_relations.py:337
 #: project/presentation/bff/manage/verification_requests.py:263
-#: project/presentation/web/modular/base_views.py:356
 #, python-format
 msgid "%(model_display_name)s successfully deleted"
 msgstr ""
@@ -92,6 +96,8 @@ msgstr ""
 
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:71
 #: project/presentation/bff/manage/api_keys.py:181
+#: project/presentation/bff/manage/app_installations.py:178
+#: project/presentation/bff/manage/apps.py:371
 #: project/presentation/bff/manage/event_forms.py:583
 #: project/presentation/bff/manage/event_organizers.py:247
 #: project/presentation/bff/manage/event_places.py:236
@@ -101,7 +107,6 @@ msgstr ""
 #: project/presentation/bff/manage/oauth2_clients.py:229
 #: project/presentation/bff/manage/organization_invitations.py:255
 #: project/presentation/bff/manage/outgoing_relations.py:251
-#: project/presentation/web/modular/base_views.py:308
 #, python-format
 msgid "%(model_display_name)s successfully updated"
 msgstr ""
@@ -137,6 +142,9 @@ msgstr ""
 msgid "%(user_email)s is scheduled for deletion."
 msgstr ""
 
+#: project/presentation/bff/manage/apps.py:116
+#: project/presentation/bff/manage/apps.py:129
+#: project/presentation/bff/manage/apps.py:142
 #: project/presentation/bff/manage/oauth2_clients.py:76
 #: project/presentation/bff/user/oauth2_clients.py:49
 #, python-format
@@ -241,7 +249,7 @@ msgstr ""
 msgid "Accept"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app_installation/view_handler.py:84
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:118
 msgid "Accept permissions"
 msgstr ""
 
@@ -272,7 +280,6 @@ msgid "Action violates database constraint."
 msgstr ""
 
 #: frontend/src/shared/ReadActions.vue:14
-#: project/presentation/web/templates/generic/read.html:15
 msgid "Actions"
 msgstr ""
 
@@ -494,33 +501,48 @@ msgstr ""
 msgid "Announcement"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:13
-#: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:20
-#: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:25
+#: frontend/src/apps/manage/pages/AppEditPage.vue:51
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:106
+#: frontend/src/apps/manage/pages/AppInstallationsPage.vue:54
+#: frontend/src/apps/manage/pages/AppPage.vue:44
+#: frontend/src/apps/manage/pages/AppsPage.vue:33
+#: project/presentation/bff/manage/apps.py:84
 msgid "App"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppInstallPage.vue:37
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:46
+#: frontend/src/apps/manage/pages/AppInstallationsPage.vue:35
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/bff/manage/app_installations.py:49
 msgid "App installation"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppInstallPage.vue:69
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:93
+#: frontend/src/apps/manage/pages/AppInstallationsPage.vue:80
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:171
 msgid "App installations"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:101
+#: frontend/src/apps/manage/pages/AppPage.vue:188
+#: frontend/src/apps/manage/pages/AppPage.vue:223
+#: frontend/src/apps/manage/pages/AppPage.vue:227
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/bff/manage/apps.py:478
+#: project/presentation/bff/manage/apps.py:486
 msgid "App key"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:176
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:137
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:27
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:38
 msgid "App keys"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app_installation/views.py:73
+#: project/presentation/bff/manage/app_installations.py:261
 msgid "App successfully installed"
 msgstr ""
 
@@ -536,6 +558,11 @@ msgstr ""
 msgid "Applications"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppEditPage.vue:152
+#: frontend/src/apps/manage/pages/AppPage.vue:133
+#: frontend/src/apps/manage/pages/AppsPage.vue:71
+#: frontend/src/apps/manage/pages/WebhookDeliveriesPage.vue:57
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:100
 #: project/presentation/shared/permissions.py:136
 msgid "Apps"
 msgstr ""
@@ -662,7 +689,7 @@ msgstr ""
 msgid "Change password"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/app_key/displays.py:9
+#: frontend/src/apps/manage/pages/AppPage.vue:120
 msgid "Checksum"
 msgstr ""
 
@@ -781,14 +808,14 @@ msgstr ""
 msgid "Click the link below to view the status"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:146
 #: frontend/src/shared/OAuth2ClientDetails.vue:23
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:14
 msgid "Client ID"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppsPage.vue:52
 #: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:52
 #: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:27
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:51
 msgid "Client Name"
 msgstr ""
 
@@ -797,12 +824,11 @@ msgid "Client URI"
 msgstr ""
 
 #: frontend/src/shared/OAuth2ClientFormFields.vue:23
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:13
 msgid "Client name"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:147
 #: frontend/src/shared/OAuth2ClientDetails.vue:25
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:15
 msgid "Client secret"
 msgstr ""
 
@@ -885,10 +911,12 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OrganizationInvitationEditPage.vue:197
 #: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:201
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:104
-#: project/presentation/web/modular/base_form.py:61
 msgid "Create"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppInstallPage.vue:37
+#: frontend/src/apps/manage/pages/AppPage.vue:188
+#: frontend/src/apps/manage/pages/AppsPage.vue:79
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:141
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:138
 #: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:30
@@ -901,10 +929,10 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:81
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:153
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:111
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:137
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:46
 #: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:38
-#: project/presentation/web/modular/base_views.py:236
-#: project/presentation/web/templates/generic/list.html:17
+#: project/presentation/web/modular/base_views.py:83
 #, python-format
 msgid "Create %(model_display_name)s"
 msgstr ""
@@ -954,6 +982,8 @@ msgstr ""
 #: frontend/src/apps/admin/pages/UsersPage.vue:35
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:101
 #: frontend/src/apps/manage/components/ManageEventSearchForm.vue:272
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:108
+#: frontend/src/apps/manage/pages/AppInstallationsPage.vue:55
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:78
 #: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:66
 #: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:111
@@ -965,15 +995,12 @@ msgstr ""
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:85
 #: frontend/src/apps/user/pages/ApiKeysPage.vue:34
 #: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:32
-#: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:16
-#: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:21
 msgid "Created at"
 msgstr ""
 
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:68
 #: frontend/src/shared/AuditLine.vue:28
 #: project/presentation/web/templates/_macros.html:349
-#: project/presentation/web/templates/macros/display.html.j2:32
 #, python-format
 msgid "Created at %(created_at)s by %(created_by)s."
 msgstr ""
@@ -982,7 +1009,6 @@ msgstr ""
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:141
 #: frontend/src/shared/AuditLine.vue:32
 #: project/presentation/web/templates/_macros.html:351
-#: project/presentation/web/templates/macros/display.html.j2:35
 #, python-format
 msgid "Created at %(created_at)s."
 msgstr ""
@@ -992,10 +1018,6 @@ msgstr ""
 #: frontend/src/shared/LocationFilter.vue:88
 #: frontend/src/shared/LocationFilter.vue:132
 msgid "Current location"
-msgstr ""
-
-#: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:26
-msgid "Current permissions"
 msgstr ""
 
 #: frontend/src/apps/manage/pages/EventEditPage.vue:628
@@ -1073,6 +1095,16 @@ msgstr ""
 #: frontend/src/apps/admin/pages/UsersPage.vue:93
 #: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:39
 #: frontend/src/apps/manage/components/EventDeleteForm.vue:76
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:84
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:133
+#: frontend/src/apps/manage/pages/AppInstallationsPage.vue:69
+#: frontend/src/apps/manage/pages/AppInstallationsPage.vue:116
+#: frontend/src/apps/manage/pages/AppPage.vue:114
+#: frontend/src/apps/manage/pages/AppPage.vue:124
+#: frontend/src/apps/manage/pages/AppPage.vue:213
+#: frontend/src/apps/manage/pages/AppPage.vue:224
+#: frontend/src/apps/manage/pages/AppsPage.vue:61
+#: frontend/src/apps/manage/pages/AppsPage.vue:113
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:125
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:115
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:112
@@ -1100,12 +1132,15 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:157
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:74
 #: frontend/src/apps/user/pages/OAuth2ClientPage.vue:55
-#: project/presentation/web/modular/base_form.py:70
-#: project/presentation/web/modular/base_view_handler.py:189
 msgid "Delete"
 msgstr ""
 
 #: frontend/src/apps/manage/components/EventDeleteModal.vue:20
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:132
+#: frontend/src/apps/manage/pages/AppInstallationsPage.vue:115
+#: frontend/src/apps/manage/pages/AppPage.vue:212
+#: frontend/src/apps/manage/pages/AppPage.vue:223
+#: frontend/src/apps/manage/pages/AppsPage.vue:112
 #: frontend/src/apps/manage/pages/EventDeletePage.vue:13
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:195
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:195
@@ -1123,7 +1158,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:97
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:156
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:23
-#: project/presentation/web/modular/base_views.py:344
+#: project/presentation/web/modular/base_views.py:107
 #, python-format
 msgid "Delete %(model_display_name)s"
 msgstr ""
@@ -1192,10 +1227,10 @@ msgstr ""
 
 #: frontend/src/apps/manage/components/EventPlaceFormFields.vue:165
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:146
+#: frontend/src/apps/manage/pages/AppEditPage.vue:192
+#: frontend/src/apps/manage/pages/AppInstallPage.vue:85
+#: frontend/src/apps/manage/pages/AppPage.vue:160
 #: frontend/src/apps/manage/pages/EventEditPage.vue:238
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:25
-#: project/presentation/web/views/manage_admin_unit/app/forms.py:29
-#: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:31
 msgid "Description"
 msgstr ""
 
@@ -1215,7 +1250,7 @@ msgstr ""
 msgid "Developer"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:20
+#: frontend/src/apps/manage/pages/AppEditPage.vue:234
 msgid "Disabled"
 msgstr ""
 
@@ -1233,6 +1268,11 @@ msgid "Do you really want to delete the widget?"
 msgstr ""
 
 #: frontend/src/apps/manage/components/EventDeleteForm.vue:25
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:134
+#: frontend/src/apps/manage/pages/AppInstallationsPage.vue:118
+#: frontend/src/apps/manage/pages/AppPage.vue:214
+#: frontend/src/apps/manage/pages/AppPage.vue:226
+#: frontend/src/apps/manage/pages/AppsPage.vue:115
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:198
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:198
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:122
@@ -1249,12 +1289,11 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:159
 #: frontend/src/apps/user/pages/ApiKeyDeletePage.vue:91
 #: frontend/src/apps/user/pages/OAuth2ClientDeletePage.vue:86
-#: project/presentation/web/modular/base_views.py:350
 #, python-format
 msgid "Do you want to delete '%(object_title)s'?"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app_installation/views.py:41
+#: frontend/src/apps/manage/pages/AppInstallPage.vue:79
 #, python-format
 msgid "Do you want to install '%(app_name)s'?"
 msgstr ""
@@ -1281,10 +1320,10 @@ msgstr ""
 msgid "Docs"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:181
 #: frontend/src/apps/manage/pages/OrganizationExportPage.vue:52
 #: frontend/src/shared/IcalExportModal.vue:39
 #: project/presentation/web/templates/developer/read.html:25
-#: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:41
 msgid "Download"
 msgstr ""
 
@@ -1313,6 +1352,8 @@ msgstr ""
 #: frontend/src/apps/admin/components/SettingCard.vue:81
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:141
 #: frontend/src/apps/admin/pages/UsersPage.vue:90
+#: frontend/src/apps/manage/pages/AppPage.vue:111
+#: frontend/src/apps/manage/pages/AppsPage.vue:60
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:117
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:109
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:106
@@ -1326,7 +1367,6 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:60
 #: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:62
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:129
-#: project/presentation/web/modular/base_view_handler.py:185
 #: project/presentation/web/templates/_macros.html:591
 #: project/presentation/web/templates/_macros.html:634
 #: project/presentation/web/templates/_macros.html:766
@@ -1385,8 +1425,7 @@ msgstr ""
 msgid "End"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:10
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:19
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:88
 msgid "End at"
 msgstr ""
 
@@ -1434,8 +1473,8 @@ msgid ""
 msgstr ""
 
 #: project/presentation/bff/manage/api_keys.py:209
+#: project/presentation/bff/manage/apps.py:477
 #: project/presentation/bff/user/api_keys.py:153
-#: project/presentation/web/modular/base_views.py:334
 #, python-format
 msgid ""
 "Entered %(property_name)s does not match %(model_display_name)s "
@@ -1455,7 +1494,7 @@ msgstr ""
 msgid "Entered name does not match OAuth2 client name"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/view_handler.py:54
+#: project/presentation/bff/manage/apps.py:400
 msgid "Entered name does not match app client name"
 msgstr ""
 
@@ -1509,6 +1548,17 @@ msgstr ""
 #: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:82
 #: frontend/src/apps/manage/composables/useExportJob.ts:42
 #: frontend/src/apps/manage/composables/useExportJob.ts:63
+#: frontend/src/apps/manage/pages/AppEditPage.vue:63
+#: frontend/src/apps/manage/pages/AppEditPage.vue:79
+#: frontend/src/apps/manage/pages/AppEditPage.vue:142
+#: frontend/src/apps/manage/pages/AppInstallPage.vue:33
+#: frontend/src/apps/manage/pages/AppInstallPage.vue:60
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:41
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:73
+#: frontend/src/apps/manage/pages/AppInstallationsPage.vue:32
+#: frontend/src/apps/manage/pages/AppPage.vue:39
+#: frontend/src/apps/manage/pages/AppPage.vue:94
+#: frontend/src/apps/manage/pages/AppsPage.vue:30
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:73
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:111
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:59
@@ -1563,6 +1613,10 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:34
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:34
 #: frontend/src/apps/manage/pages/PlanningPage.vue:75
+#: frontend/src/apps/manage/pages/WebhookDeliveriesPage.vue:30
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:42
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:59
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:75
 #: frontend/src/apps/public/pages/EventDatesPage.vue:59
 #: frontend/src/apps/public/pages/EventDatesPage.vue:73
 #: frontend/src/apps/public/pages/EventDatesPage.vue:130
@@ -1615,7 +1669,7 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: project/presentation/web/views/utils.py:95
+#: project/presentation/web/views/utils.py:68
 #, python-format
 msgid "Error in the %s field - %s"
 msgstr ""
@@ -1658,8 +1712,8 @@ msgstr ""
 msgid "Event Planning"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:10
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:35
+#: frontend/src/apps/manage/pages/WebhookDeliveriesPage.vue:34
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:119
 msgid "Event Type"
 msgstr ""
 
@@ -1787,7 +1841,7 @@ msgstr ""
 msgid "Event successfully reported"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:25
+#: frontend/src/apps/manage/pages/AppEditPage.vue:237
 msgid "Event types"
 msgstr ""
 
@@ -2149,7 +2203,7 @@ msgstr ""
 msgid "Font family"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:87
+#: project/presentation/web/forms/common.py:43
 msgid "Friday"
 msgstr ""
 
@@ -2174,8 +2228,8 @@ msgstr ""
 msgid "Google calendar"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:148
 #: frontend/src/shared/OAuth2ClientDetails.vue:29
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:16
 msgid "Grant types"
 msgstr ""
 
@@ -2226,32 +2280,31 @@ msgstr ""
 msgid "Hi there"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:22
-#: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:30
+#: frontend/src/apps/manage/pages/AppInstallPage.vue:84
+#: frontend/src/apps/manage/pages/AppPage.vue:157
 msgid "Homepage"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/forms.py:23
+#: frontend/src/apps/manage/pages/AppEditPage.vue:172
 msgid "Homepage URL"
 msgstr ""
 
 #: frontend/src/shared/TosAcceptLabel.vue:36
-#: project/presentation/web/forms/common.py:73
+#: project/presentation/web/forms/common.py:29
 #, python-format
 msgid "I read and accept %(privacy_open)sPrivacy%(privacy_close)s."
 msgstr ""
 
 #: frontend/src/shared/TosAcceptLabel.vue:33
-#: project/presentation/web/forms/common.py:63
+#: project/presentation/web/forms/common.py:19
 #, python-format
 msgid ""
 "I read and accept %(tos_open)sTerms of Service%(tos_close)s and "
 "%(privacy_open)sPrivacy%(privacy_close)s."
 msgstr ""
 
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:86
 #: frontend/src/apps/user/pages/OAuth2TokensPage.vue:30
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:8
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:17
 msgid "ID"
 msgstr ""
 
@@ -2388,7 +2441,7 @@ msgstr ""
 msgid "Information about new features and improvements."
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app_installation/forms.py:19
+#: frontend/src/apps/manage/pages/AppInstallPage.vue:99
 msgid "Install"
 msgstr ""
 
@@ -2458,9 +2511,9 @@ msgstr ""
 msgid "Issued"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/app_key/displays.py:8
-#: project/presentation/web/views/manage_admin_unit/app/app_key/displays.py:13
-#: project/presentation/web/views/manage_admin_unit/app/app_key/forms.py:11
+#: frontend/src/apps/manage/pages/AppPage.vue:119
+#: frontend/src/apps/manage/pages/AppPage.vue:230
+#: project/presentation/bff/manage/apps.py:479
 msgid "KID"
 msgstr ""
 
@@ -2527,7 +2580,6 @@ msgstr ""
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:78
 #: frontend/src/shared/AuditLine.vue:38
 #: project/presentation/web/templates/_macros.html:358
-#: project/presentation/web/templates/macros/display.html.j2:42
 #, python-format
 msgid "Last updated at %(updated_at)s by %(updated_by)s."
 msgstr ""
@@ -2536,7 +2588,6 @@ msgstr ""
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:143
 #: frontend/src/shared/AuditLine.vue:42
 #: project/presentation/web/templates/_macros.html:360
-#: project/presentation/web/templates/macros/display.html.j2:45
 #, python-format
 msgid "Last updated at %(updated_at)s."
 msgstr ""
@@ -2593,7 +2644,6 @@ msgstr ""
 #: frontend/src/apps/manage/components/OrganizationFormFields.vue:176
 #: frontend/src/apps/manage/pages/EventEditPage.vue:610
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:97
-#: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:14
 msgid "Link URL"
 msgstr ""
 
@@ -2690,7 +2740,7 @@ msgstr ""
 msgid "Mobile"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:83
+#: project/presentation/web/forms/common.py:39
 msgid "Monday"
 msgstr ""
 
@@ -2718,6 +2768,8 @@ msgstr ""
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:55
 #: frontend/src/apps/manage/components/EventOrganizerFormFields.vue:100
 #: frontend/src/apps/manage/components/EventPlaceFormFields.vue:104
+#: frontend/src/apps/manage/pages/AppPage.vue:215
+#: frontend/src/apps/manage/pages/AppsPage.vue:119
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:139
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:143
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:40
@@ -2749,7 +2801,6 @@ msgstr ""
 #: project/presentation/bff/manage/api_keys.py:211
 #: project/presentation/bff/user/api_keys.py:155
 #: project/presentation/web/templates/_macros.html:847
-#: project/presentation/web/views/manage_admin_unit/app/forms.py:69
 #: project/templates/email/referenced_event_changed_notice.txt:11
 msgid "Name"
 msgstr ""
@@ -2785,7 +2836,7 @@ msgstr ""
 msgid "New organization's name"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app_installation/forms.py:33
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:119
 msgid "New permissions"
 msgstr ""
 
@@ -2915,6 +2966,8 @@ msgstr ""
 msgid "OAuth connections"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:46
+#: frontend/src/apps/manage/pages/AppsPage.vue:35
 #: frontend/src/apps/manage/pages/OrganizationOAuth2ClientEditPage.vue:26
 #: frontend/src/apps/manage/pages/OrganizationOAuth2ClientPage.vue:40
 #: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:33
@@ -2923,8 +2976,9 @@ msgstr ""
 #: frontend/src/apps/user/pages/OAuth2ClientPage.vue:37
 #: frontend/src/apps/user/pages/OAuth2ClientsPage.vue:39
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/bff/manage/apps.py:108
 #: project/presentation/bff/manage/oauth2_clients.py:48
-#: project/presentation/web/views/manage_admin_unit/app/view_handler.py:48
+#: project/presentation/web/views/manage_admin_unit/app/view_handler.py:35
 #: project/presentation/web/views/user_blueprint/shells.py:156
 #: project/presentation/web/views/user_blueprint/shells.py:172
 #: project/presentation/web/views/user_blueprint/shells.py:181
@@ -2996,6 +3050,8 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OutgoingEventReferencesPage.vue:48
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:82
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:71
+#: frontend/src/apps/manage/pages/WebhookDeliveriesPage.vue:36
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:121
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:127
 #: frontend/src/apps/user/pages/MemberInvitationsPage.vue:25
 #: frontend/src/apps/user/pages/MembershipsPage.vue:25
@@ -3008,8 +3064,6 @@ msgstr ""
 #: project/presentation/web/templates/_macros.html:665
 #: project/presentation/web/templates/_macros.html:813
 #: project/presentation/web/templates/_managebar.html:47
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:16
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:41
 #: project/templates/email/referenced_event_changed_notice.txt:6
 msgid "Organization"
 msgstr ""
@@ -3273,10 +3327,10 @@ msgstr ""
 msgid "Paste the following code into the head of the page."
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:21
-#: project/presentation/web/views/manage_admin_unit/app/forms.py:18
-#: project/presentation/web/views/manage_admin_unit/app_installation/displays.py:15
-#: project/presentation/web/views/manage_admin_unit/app_installation/forms.py:15
+#: frontend/src/apps/manage/pages/AppEditPage.vue:168
+#: frontend/src/apps/manage/pages/AppInstallPage.vue:89
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:107
+#: frontend/src/apps/manage/pages/AppPage.vue:156
 msgid "Permissions"
 msgstr ""
 
@@ -3341,7 +3395,7 @@ msgstr ""
 msgid "Please choose an image file."
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/app_key/views.py:36
+#: frontend/src/apps/manage/pages/AppPage.vue:179
 msgid "Please download the private key. It will only be available once."
 msgstr ""
 
@@ -3479,10 +3533,9 @@ msgstr ""
 msgid "Recurring event"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:149
 #: frontend/src/shared/OAuth2ClientDetails.vue:31
 #: frontend/src/shared/OAuth2ClientFormFields.vue:38
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:17
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:15
 msgid "Redirect URIs"
 msgstr ""
 
@@ -3691,8 +3744,8 @@ msgstr ""
 msgid "Reset acceptance of terms of service and privacy"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:150
 #: frontend/src/shared/OAuth2ClientDetails.vue:33
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:18
 msgid "Response types"
 msgstr ""
 
@@ -3756,19 +3809,19 @@ msgstr ""
 msgid "Roles users"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:88
+#: project/presentation/web/forms/common.py:44
 msgid "Saturday"
 msgstr ""
 
 #: frontend/src/apps/admin/components/SettingCard.vue:99
 #: frontend/src/apps/manage/components/RecurrenceRuleModal.vue:452
+#: frontend/src/apps/manage/pages/AppEditPage.vue:247
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:152
 #: frontend/src/apps/manage/pages/OrganizationOAuth2ClientEditPage.vue:123
 #: frontend/src/apps/user/pages/ApiKeyEditPage.vue:104
 #: frontend/src/apps/user/pages/GeneralSettingsPage.vue:60
 #: frontend/src/apps/user/pages/NotificationSettingsPage.vue:66
 #: frontend/src/apps/user/pages/OAuth2ClientEditPage.vue:133
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:24
 msgid "Save"
 msgstr ""
 
@@ -3784,8 +3837,8 @@ msgstr ""
 msgid "Save reference"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:151
 #: frontend/src/shared/OAuth2ClientDetails.vue:35
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:19
 msgid "Scope"
 msgstr ""
 
@@ -3799,7 +3852,6 @@ msgstr ""
 
 #: frontend/src/apps/user/pages/OAuth2TokensPage.vue:32
 #: frontend/src/shared/OAuth2ClientFormFields.vue:51
-#: project/presentation/web/views/manage_admin_unit/oauth2_client/forms.py:18
 msgid "Scopes"
 msgstr ""
 
@@ -3812,7 +3864,7 @@ msgstr ""
 msgid "Search location on Google"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:17
+#: frontend/src/apps/manage/pages/AppEditPage.vue:215
 msgid "Secret"
 msgstr ""
 
@@ -3878,12 +3930,12 @@ msgstr ""
 msgid "Settings successfully updated"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app_installation/views.py:79
+#: project/presentation/bff/manage/app_installations.py:267
 msgid "Setup"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:23
-#: project/presentation/web/views/manage_admin_unit/app/forms.py:26
+#: frontend/src/apps/manage/pages/AppEditPage.vue:182
+#: frontend/src/apps/manage/pages/AppPage.vue:158
 msgid "Setup URL"
 msgstr ""
 
@@ -3909,7 +3961,7 @@ msgstr ""
 
 #: frontend/src/apps/admin/components/SettingCard.vue:78
 #: project/presentation/bff/manage/event_forms.py:406
-#: project/presentation/web/views/utils.py:102
+#: project/presentation/web/views/utils.py:75
 msgid "Show"
 msgstr ""
 
@@ -3950,8 +4002,7 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:9
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:18
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:87
 msgid "Start at"
 msgstr ""
 
@@ -3968,16 +4019,14 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventEditPage.vue:279
 #: frontend/src/apps/manage/pages/EventEditPage.vue:294
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:75
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:90
 #: frontend/src/apps/user/pages/OAuth2TokensPage.vue:35
 #: project/presentation/web/templates/_macros.html:850
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:12
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:21
 #: project/templates/email/referenced_event_changed_notice.txt:14
 msgid "Status"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:13
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:22
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:91
 msgid "Status code"
 msgstr ""
 
@@ -3993,7 +4042,7 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:89
+#: project/presentation/web/forms/common.py:45
 msgid "Sunday"
 msgstr ""
 
@@ -4101,7 +4150,7 @@ msgstr ""
 msgid "The full name of the organization"
 msgstr ""
 
-#: project/presentation/web/views/utils.py:242
+#: project/presentation/web/views/utils.py:204
 msgid ""
 "The invitation was issued to another user. Sign in with the email address"
 " the invitation was sent to."
@@ -4258,7 +4307,7 @@ msgstr ""
 msgid "This will allow \"%(client_name)s\" to:"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:86
+#: project/presentation/web/forms/common.py:42
 msgid "Thursday"
 msgstr ""
 
@@ -4266,8 +4315,8 @@ msgstr ""
 msgid "Ticket Link URL"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:13
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:38
+#: frontend/src/apps/manage/pages/WebhookDeliveriesPage.vue:35
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:120
 msgid "Timestamp"
 msgstr ""
 
@@ -4280,12 +4329,12 @@ msgstr ""
 msgid "Today"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:153
 #: frontend/src/shared/OAuth2ClientDetails.vue:37
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:20
 msgid "Token endpoint auth method"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:84
+#: project/presentation/web/forms/common.py:40
 msgid "Tueday"
 msgstr ""
 
@@ -4302,9 +4351,8 @@ msgstr ""
 msgid "Typical Age to"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:15
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:11
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/webhook_delivery_attempt/displays.py:20
+#: frontend/src/apps/manage/pages/AppEditPage.vue:205
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:89
 msgid "URL"
 msgstr ""
 
@@ -4314,6 +4362,7 @@ msgstr ""
 
 #: frontend/src/apps/manage/components/ApiKeyNameModal.vue:68
 #: frontend/src/apps/manage/components/MemberRolesModal.vue:76
+#: frontend/src/apps/manage/pages/AppInstallationPage.vue:126
 #: frontend/src/apps/manage/pages/EventEditPage.vue:695
 #: frontend/src/apps/manage/pages/OrganizationInvitationEditPage.vue:197
 #: frontend/src/apps/manage/pages/OrganizationRelationEditPage.vue:201
@@ -4321,14 +4370,13 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OrganizationWidgetsPage.vue:149
 #: frontend/src/apps/user/pages/ApiKeyPage.vue:68
 #: frontend/src/apps/user/pages/OAuth2ClientPage.vue:49
-#: project/presentation/web/modular/base_form.py:65
 msgid "Update"
 msgstr ""
 
 #: frontend/src/apps/manage/components/ApiKeyNameModal.vue:67
 #: frontend/src/apps/manage/components/EventReferenceRatingModal.vue:63
 #: frontend/src/apps/manage/components/MemberRolesModal.vue:71
-#: project/presentation/web/modular/base_views.py:302
+#: project/presentation/web/modular/base_views.py:97
 #, python-format
 msgid "Update %(model_display_name)s"
 msgstr ""
@@ -4455,15 +4503,17 @@ msgstr ""
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:136
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:108
 #: frontend/src/apps/manage/components/PlanningEventDetailsModal.vue:78
+#: frontend/src/apps/manage/pages/AppInstallationsPage.vue:63
+#: frontend/src/apps/manage/pages/AppsPage.vue:56
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:104
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:84
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:213
 #: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:88
 #: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:57
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:79
+#: frontend/src/apps/manage/pages/WebhookDeliveriesPage.vue:42
 #: frontend/src/apps/user/pages/MemberInvitationsPage.vue:45
 #: frontend/src/apps/user/pages/OrganizationInvitationsPage.vue:55
-#: project/presentation/web/modular/base_view_handler.py:182
 #: project/presentation/web/views/flask_admin.py:145
 msgid "View"
 msgstr ""
@@ -4496,32 +4546,35 @@ msgid ""
 " course it works without it."
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppEditPage.vue:203
 #: project/infrastructure/babel_extract.py:1
-#: project/presentation/web/views/manage_admin_unit/app/forms.py:32
 msgid "Webhook"
 msgstr ""
 
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:24
+#: frontend/src/apps/manage/pages/AppPage.vue:159
 msgid "Webhook URL"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/AppPage.vue:169
+#: frontend/src/apps/manage/pages/WebhookDeliveriesPage.vue:62
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:106
 #: project/infrastructure/babel_extract.py:1
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:32
-#: project/presentation/web/views/manage_admin_unit/app/displays.py:44
 msgid "Webhook deliveries"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:83
 #: project/infrastructure/babel_extract.py:1
 msgid "Webhook delivery"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:138
 #: project/infrastructure/babel_extract.py:1
+#: project/presentation/bff/manage/apps.py:660
 msgid "Webhook delivery attempt"
 msgstr ""
 
+#: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:126
 #: project/infrastructure/babel_extract.py:1
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:19
-#: project/presentation/web/views/manage_admin_unit/app/webhook_delivery/displays.py:25
 msgid "Webhook delivery attempts"
 msgstr ""
 
@@ -4537,7 +4590,7 @@ msgstr ""
 msgid "Webhooks"
 msgstr ""
 
-#: project/presentation/web/forms/common.py:85
+#: project/presentation/web/forms/common.py:41
 msgid "Wednesday"
 msgstr ""
 
@@ -4641,7 +4694,7 @@ msgstr ""
 msgid "You do not have an account yet? Not a problem!"
 msgstr ""
 
-#: project/presentation/web/views/utils.py:110
+#: project/presentation/web/views/utils.py:83
 msgid "You do not have permission for this action"
 msgstr ""
 

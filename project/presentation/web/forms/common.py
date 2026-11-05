@@ -1,53 +1,9 @@
 from flask import current_app, url_for
 from flask_babel import lazy_gettext
 from markupsafe import Markup
-from wtforms import BooleanField, StringField
-from wtforms.validators import Length, Optional
 
 from project.application.queries import GetSiteNoticesQuery
-from project.domain.models.value_objects.webhook_value_object import WebhookValueObject
 from project.presentation.shared.event_rating import event_rating_choices  # noqa: F401
-from project.presentation.web.forms.widgets import MultiCheckboxField
-from project.presentation.web.modular.base_form import BaseForm
-
-
-class WebhookForm(BaseForm):
-    url = StringField(lazy_gettext("URL"), validators=[Optional(), Length(max=255)])
-    secret = StringField(
-        lazy_gettext("Secret"), validators=[Optional(), Length(max=255)]
-    )
-    disabled = BooleanField(
-        lazy_gettext("Disabled"),
-        validators=[Optional()],
-        render_kw={"ri": "switch"},
-    )
-    event_types = MultiCheckboxField(
-        lazy_gettext("Event types"),
-        validators=[Optional()],
-        render_kw={"ri": "multicheckbox"},
-    )
-
-    def create_create_command(self):
-        if not self.url.data:
-            return None
-
-        return WebhookValueObject(
-            url=self.url.data,
-            secret=self.secret.data,
-            disabled=self.disabled.data,
-            event_types=self.event_types.data,
-        )
-
-    def create_update_command(self):
-        if not self.url.data:
-            return None
-
-        return WebhookValueObject(
-            url=self.url.data,
-            secret=self.secret.data,
-            disabled=self.disabled.data,
-            event_types=self.event_types.data,
-        )
 
 
 def get_accept_tos_markup():

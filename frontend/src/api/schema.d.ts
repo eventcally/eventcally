@@ -387,6 +387,248 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/app-installations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the apps installed by the organization */
+        get: operations["bff_manage_list_organization_app_installations"];
+        put?: never;
+        /** Install an app for the organization */
+        post: operations["bff_manage_install_organization_app"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/app-installations/{installation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get an app installation of the organization */
+        get: operations["bff_manage_get_organization_app_installation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/app-installations/{installation_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Uninstall an app of the organization */
+        post: operations["bff_manage_delete_organization_app_installation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/app-installations/{installation_id}/permissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Accept the permissions the app requests now */
+        put: operations["bff_manage_accept_organization_app_installation_permissions"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/apps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the apps of the organization */
+        get: operations["bff_manage_list_organization_apps"];
+        put?: never;
+        /** Create an app of the organization */
+        post: operations["bff_manage_create_organization_app"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/apps/form": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the choices of the app form */
+        get: operations["bff_manage_get_organization_app_form"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/apps/{app_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get an app of the organization with its keys */
+        get: operations["bff_manage_get_organization_app"];
+        /** Update an app of the organization */
+        put: operations["bff_manage_update_organization_app"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/apps/{app_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete an app of the organization after typing its name */
+        post: operations["bff_manage_delete_organization_app"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/apps/{app_id}/form": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the values of the app form */
+        get: operations["bff_manage_get_organization_app_values"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/apps/{app_id}/keys": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a key of the app; the private key is only part of this answer */
+        post: operations["bff_manage_create_organization_app_key"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/apps/{app_id}/keys/{key_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete a key of the app after typing its KID */
+        post: operations["bff_manage_delete_organization_app_key"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/apps/{app_id}/webhook-deliveries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the webhook deliveries of the app */
+        get: operations["bff_manage_list_organization_app_webhook_deliveries"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/apps/{app_id}/webhook-deliveries/{delivery_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a webhook delivery of the app */
+        get: operations["bff_manage_get_organization_app_webhook_delivery"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/apps/{app_id}/webhook-deliveries/{delivery_id}/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the attempts to deliver a webhook */
+        get: operations["bff_manage_list_organization_app_webhook_delivery_attempts"];
+        put?: never;
+        /** Deliver a webhook again */
+        post: operations["bff_manage_create_organization_app_webhook_delivery_attempt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/custom-event-categories": {
         parameters: {
             query?: never;
@@ -1084,6 +1326,23 @@ export interface paths {
         };
         /** Get an incoming verification request to review */
         get: operations["bff_manage_get_incoming_verification_request_review"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/installable-apps/{app_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get what an organization sees of an app before installing it */
+        get: operations["bff_manage_get_installable_app"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2753,6 +3012,271 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** AppFormOptions */
+        AppFormOptions: {
+            /** App Permissions */
+            app_permissions: components["schemas"]["AppPermissionChoice"][];
+            /** Event Types */
+            event_types: string[];
+            /** Scopes */
+            scopes: string[];
+        };
+        /** AppInstallSave */
+        AppInstallSave: {
+            /** App Id */
+            app_id: number;
+        };
+        /** AppInstallationListItem */
+        AppInstallationListItem: {
+            /**
+             * App
+             * @default null
+             */
+            app: string | null;
+            /**
+             * Created At
+             * @default null
+             */
+            created_at: string | null;
+            /** Id */
+            id: number;
+        };
+        /** AppInstallationListPage */
+        AppInstallationListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["AppInstallationListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** AppInstallationRead */
+        AppInstallationRead: {
+            /**
+             * App
+             * @default null
+             */
+            app: string | null;
+            /** @default null */
+            audit: components["schemas"]["ManageAudit"] | null;
+            /** Can Write */
+            can_write: boolean;
+            /**
+             * Created At
+             * @default null
+             */
+            created_at: string | null;
+            /** Id */
+            id: number;
+            /** Needs Permission Update */
+            needs_permission_update: boolean;
+            /** Permissions */
+            permissions: string[];
+            /** Requested Permissions */
+            requested_permissions: string[];
+        };
+        /** AppInstallationSaved */
+        AppInstallationSaved: {
+            /** Id */
+            id: number;
+            /** Redirect Url */
+            redirect_url: string;
+        };
+        /** AppKeyCreated */
+        AppKeyCreated: {
+            /** Id */
+            id: number;
+            /** Kid */
+            kid: string;
+            /** Private Pem */
+            private_pem: string;
+        };
+        /** AppKeyItem */
+        AppKeyItem: {
+            /** Checksum */
+            checksum: string;
+            /** Id */
+            id: number;
+            /** Kid */
+            kid: string;
+        };
+        /** AppListItem */
+        AppListItem: {
+            /**
+             * Client Name
+             * @default null
+             */
+            client_name: string | null;
+            /** Id */
+            id: number;
+        };
+        /** AppListPage */
+        AppListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["AppListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** AppPermissionChoice */
+        AppPermissionChoice: {
+            /** Label */
+            label: string;
+            /** Permission */
+            permission: string;
+        };
+        /** AppRead */
+        AppRead: {
+            /** App Permissions */
+            app_permissions: string[];
+            /** @default null */
+            audit: components["schemas"]["ManageAudit"] | null;
+            /** Can Read Deliveries */
+            can_read_deliveries: boolean;
+            /** Can Read Keys */
+            can_read_keys: boolean;
+            /** Can Write */
+            can_write: boolean;
+            /** Can Write Keys */
+            can_write_keys: boolean;
+            /** Client Id */
+            client_id: string;
+            /**
+             * Client Name
+             * @default null
+             */
+            client_name: string | null;
+            /**
+             * Client Secret
+             * @default null
+             */
+            client_secret: string | null;
+            /**
+             * Client Uri
+             * @default null
+             */
+            client_uri: string | null;
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /** Grant Types */
+            grant_types: string[];
+            /**
+             * Homepage Url
+             * @default null
+             */
+            homepage_url: string | null;
+            /** Id */
+            id: number;
+            /** Keys */
+            keys: components["schemas"]["AppKeyItem"][];
+            /** Redirect Uris */
+            redirect_uris: string[];
+            /** Response Types */
+            response_types: string[];
+            /** Scope */
+            scope: string;
+            /** Scopes */
+            scopes: string[];
+            /**
+             * Setup Url
+             * @default null
+             */
+            setup_url: string | null;
+            /** Token Endpoint Auth Method */
+            token_endpoint_auth_method: string[];
+            /**
+             * Webhook Url
+             * @default null
+             */
+            webhook_url: string | null;
+        };
+        /** AppSave */
+        AppSave: {
+            /** App Permissions */
+            app_permissions: string[];
+            /** Client Name */
+            client_name: string;
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Homepage Url
+             * @default null
+             */
+            homepage_url: string | null;
+            /**
+             * Redirect Uris
+             * @default []
+             */
+            redirect_uris: string[];
+            /**
+             * Scopes
+             * @default []
+             */
+            scopes: string[];
+            /**
+             * Setup Url
+             * @default null
+             */
+            setup_url: string | null;
+            /**
+             * @default {
+             *       "disabled": false,
+             *       "event_types": [],
+             *       "secret": null,
+             *       "url": null
+             *     }
+             */
+            webhook: components["schemas"]["AppWebhookFields"];
+        };
+        /** AppSaved */
+        AppSaved: {
+            /** Id */
+            id: number;
+            /** Redirect Url */
+            redirect_url: string;
+        };
+        /** AppWebhookFields */
+        AppWebhookFields: {
+            /**
+             * Disabled
+             * @default false
+             */
+            disabled: boolean;
+            /**
+             * Event Types
+             * @default []
+             */
+            event_types: string[];
+            /**
+             * Secret
+             * @default null
+             */
+            secret: string | null;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+        };
         /** CustomEventCategorySetChoice */
         CustomEventCategorySetChoice: {
             /** Id */
@@ -3936,6 +4460,28 @@ export interface components {
             review_status_choices: components["schemas"]["ManageIntChoice"][];
             /** Total */
             total: number;
+        };
+        /** InstallableAppRead */
+        InstallableAppRead: {
+            /**
+             * Client Name
+             * @default null
+             */
+            client_name: string | null;
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Homepage Url
+             * @default null
+             */
+            homepage_url: string | null;
+            /** Id */
+            id: number;
+            /** Permissions */
+            permissions: string[];
         };
         /** ManageAudit */
         ManageAudit: {
@@ -6206,6 +6752,108 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** WebhookDeliveryAttemptItem */
+        WebhookDeliveryAttemptItem: {
+            /**
+             * End At
+             * @default null
+             */
+            end_at: string | null;
+            /** Id */
+            id: number;
+            /**
+             * Start At
+             * Format: date-time
+             */
+            start_at: string;
+            /**
+             * Status
+             * @default null
+             */
+            status: string | null;
+            /**
+             * Status Code
+             * @default null
+             */
+            status_code: string | null;
+            /**
+             * Url
+             * @default null
+             */
+            url: string | null;
+        };
+        /** WebhookDeliveryAttemptListPage */
+        WebhookDeliveryAttemptListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["WebhookDeliveryAttemptItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** WebhookDeliveryItem */
+        WebhookDeliveryItem: {
+            /** Event Type */
+            event_type: string;
+            /** Id */
+            id: number;
+            /**
+             * Organization
+             * @default null
+             */
+            organization: string | null;
+            /**
+             * Timestamp
+             * @default null
+             */
+            timestamp: string | null;
+        };
+        /** WebhookDeliveryListPage */
+        WebhookDeliveryListPage: {
+            /** App Title */
+            app_title: string;
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["WebhookDeliveryItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** WebhookDeliveryRead */
+        WebhookDeliveryRead: {
+            /** App Id */
+            app_id: number;
+            /** App Title */
+            app_title: string;
+            /** Can Attempt */
+            can_attempt: boolean;
+            /** Event Type */
+            event_type: string;
+            /** Id */
+            id: number;
+            /**
+             * Organization
+             * @default null
+             */
+            organization: string | null;
+            /**
+             * Timestamp
+             * @default null
+             */
+            timestamp: string | null;
+        };
         /** WidgetCategory */
         WidgetCategory: {
             /** Id */
@@ -8292,6 +8940,1184 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ManageDeleted"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_organization_app_installations: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppInstallationListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_install_organization_app: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AppInstallSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppInstallationSaved"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_organization_app_installation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                installation_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppInstallationRead"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_delete_organization_app_installation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                installation_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManageDeleteSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageDeleted"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_accept_organization_app_installation_permissions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                installation_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageMessage"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_organization_apps: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_create_organization_app: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AppSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppSaved"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_organization_app_form: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppFormOptions"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_organization_app: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppRead"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_update_organization_app: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AppSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppSaved"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_delete_organization_app: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManageNameDeleteSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageDeleted"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_organization_app_values: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppSave"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_create_organization_app_key: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppKeyCreated"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_delete_organization_app_key: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+                key_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManageNameDeleteSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageDeleted"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_organization_app_webhook_deliveries: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebhookDeliveryListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_organization_app_webhook_delivery: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+                delivery_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebhookDeliveryRead"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_organization_app_webhook_delivery_attempts: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+                delivery_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WebhookDeliveryAttemptListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_create_organization_app_webhook_delivery_attempt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+                delivery_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageMessage"];
                 };
             };
             /** @description Bad Request */
@@ -11509,6 +13335,65 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrganizationVerificationRequestReview"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_installable_app: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                app_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InstallableAppRead"];
                 };
             };
             /** @description Unauthorized */

@@ -1,19 +1,9 @@
-from flask_babel import gettext
-
-from project.application.queries import (
-    GetAppInstallationQuery,
-    ListAppInstallationsQuery,
-)
-from project.presentation.shared.current_admin_unit import current_admin_unit
+from project.application.queries import GetAppInstallationQuery
 from project.presentation.web.views.manage_admin_unit import manage_admin_unit_bp
-from project.presentation.web.views.manage_admin_unit.app_installation.displays import (
-    ListDisplay,
-    ReadDisplay,
-)
 from project.presentation.web.views.manage_admin_unit.app_installation.views import (
-    AcceptPermissionsView,
-    DeleteView,
     InstallView,
+    ListView,
+    ReadView,
 )
 from project.presentation.web.views.manage_admin_unit.child_view_handler import (
     ManageAdminUnitChildViewHandler,
@@ -21,20 +11,18 @@ from project.presentation.web.views.manage_admin_unit.child_view_handler import 
 
 
 class AppInstallationViewHandler(ManageAdminUnitChildViewHandler):
+    """Shells: the list, the read page (with accepting new permissions) and the install
+    page are Vue pages (`/bff/manage`); uninstalling is a modal."""
+
     model_name = "app_installation"
     model_name_plural = "app_installations"
     display_name = "App installation"
     display_name_plural = "App installations"
     create_view_class = None
     update_view_class = None
-    delete_view_class = DeleteView
-    read_display_class = ReadDisplay
-    list_display_class = ListDisplay
-
-    def create_list_query(self, page_request, **kwargs):
-        return ListAppInstallationsQuery(
-            admin_unit_id=current_admin_unit.id, page=page_request
-        )
+    delete_view_class = None
+    list_view_class = ListView
+    read_view_class = ReadView
 
     def create_get_query(self, object_id):
         return GetAppInstallationQuery(id=object_id)
@@ -68,23 +56,6 @@ class AppInstallationViewHandler(ManageAdminUnitChildViewHandler):
             f"{plural_endpoint_name}_install",
             app,
         )
-        self._add_view(
-            "accept_permissions",
-            f"/{single_url_folder}/<int:{id_query_arg_name}>/accept_permissions",
-            AcceptPermissionsView,
-            f"{single_endpoint_name}_accept_permissions",
-            app,
-        )
-
-    def get_additional_read_actions(self, object):
-        result = super().get_additional_read_actions(object)
-        result.append(
-            self._create_action(
-                self._get_object_url("accept_permissions", object),
-                gettext("Accept permissions"),
-            )
-        )
-        return result
 
 
 handler = AppInstallationViewHandler()
