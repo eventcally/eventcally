@@ -382,43 +382,43 @@ msgstr ""
 
 #: project/presentation/bff/manage/request_reviews.py:97
 msgid "AdminUnitVerificationRequestRejectionReason.illegal"
-msgstr ""
+msgstr "Illegal"
 
 #: project/presentation/bff/manage/request_reviews.py:101
 msgid "AdminUnitVerificationRequestRejectionReason.irrelevant"
-msgstr ""
+msgstr "Irrelevant"
 
 #: project/presentation/bff/manage/request_reviews.py:85
 msgid "AdminUnitVerificationRequestRejectionReason.missinginformation"
-msgstr ""
+msgstr "Missing information"
 
 #: project/presentation/bff/manage/request_reviews.py:78
 msgid "AdminUnitVerificationRequestRejectionReason.noreason"
-msgstr ""
+msgstr "No reason"
 
 #: project/presentation/bff/manage/request_reviews.py:81
 msgid "AdminUnitVerificationRequestRejectionReason.notresponsible"
-msgstr ""
+msgstr "Not responsible"
 
 #: project/presentation/bff/manage/request_reviews.py:89
 msgid "AdminUnitVerificationRequestRejectionReason.unknown"
-msgstr ""
+msgstr "Unknown"
 
 #: project/presentation/bff/manage/request_reviews.py:93
 msgid "AdminUnitVerificationRequestRejectionReason.untrustworthy"
-msgstr ""
+msgstr "Untrustworthy"
 
 #: project/infrastructure/babel_extract.py:1
 msgid "AdminUnitVerificationRequestReviewStatus.inbox"
-msgstr ""
+msgstr "Inbox"
 
 #: project/infrastructure/babel_extract.py:1
 msgid "AdminUnitVerificationRequestReviewStatus.rejected"
-msgstr ""
+msgstr "Rejected"
 
 #: project/infrastructure/babel_extract.py:1
 msgid "AdminUnitVerificationRequestReviewStatus.verified"
-msgstr ""
+msgstr "Verified"
 
 #: project/presentation/shared/i10n.py:59
 msgid "Administrator"
@@ -1886,7 +1886,7 @@ msgstr "Online and offline"
 
 #: project/presentation/bff/manage/event_forms.py:136
 msgid "EventAttendanceMode.offline"
-msgstr ""
+msgstr "Normal (Offline)"
 
 #: frontend/src/shared/EventWarningPills.vue:54
 #: project/presentation/web/templates/layout.html:110
@@ -1905,7 +1905,7 @@ msgstr "Planned"
 
 #: project/presentation/bff/manage/event_forms.py:137
 msgid "EventPublicStatus.published"
-msgstr ""
+msgstr "Published"
 
 #: project/presentation/bff/manage/request_reviews.py:62
 msgid "EventReferenceRequestRejectionReason.duplicate"
@@ -1977,19 +1977,19 @@ msgstr "Rescheduled"
 
 #: project/presentation/bff/manage/event_forms.py:138
 msgid "EventStatus.scheduled"
-msgstr ""
+msgstr "Scheduled"
 
 #: project/presentation/bff/manage/event_forms.py:139
 msgid "EventTargetGroupOrigin.both"
-msgstr ""
+msgstr "For tourists and residents"
 
 #: project/presentation/bff/manage/event_forms.py:140
 msgid "EventTargetGroupOrigin.resident"
-msgstr ""
+msgstr "Mainly for residents"
 
 #: project/presentation/bff/manage/event_forms.py:141
 msgid "EventTargetGroupOrigin.tourist"
-msgstr ""
+msgstr "Mainly for tourists"
 
 #: project/shared/utils.py:20
 msgid "Event_"
@@ -5444,24 +5444,6 @@ msgstr ""
 
 #~ msgid "Enter new place"
 #~ msgstr ""
-
-#~ msgid "EventAttendanceMode.offline"
-#~ msgstr "Normal (Offline)"
-
-#~ msgid "EventPublicStatus.published"
-#~ msgstr "Published"
-
-#~ msgid "EventStatus.scheduled"
-#~ msgstr "Scheduled"
-
-#~ msgid "EventTargetGroupOrigin.both"
-#~ msgstr "For tourists and residents"
-
-#~ msgid "EventTargetGroupOrigin.resident"
-#~ msgstr "Mainly for residents"
-
-#~ msgid "EventTargetGroupOrigin.tourist"
-#~ msgstr "Mainly for tourists"
 
 #~ msgid "Just use %(term)s"
 #~ msgstr ""
