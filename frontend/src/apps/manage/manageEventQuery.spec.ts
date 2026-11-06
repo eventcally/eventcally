@@ -3,6 +3,7 @@ import {
   emptyFilter,
   fromRouteQuery,
   hasExtendedFilter,
+  toBffDateParams,
   toBffParams,
   toRouteQuery,
 } from "./manageEventQuery";
@@ -118,5 +119,73 @@ describe("manageEventQuery", () => {
       false,
     );
     expect(hasExtendedFilter({ ...emptyFilter(defaults), is_recurring: "0" })).toBe(true);
+  });
+
+  it("keeps the calendar position in the URL and drops the page", () => {
+    const filter = {
+      ...emptyFilter(defaults),
+      keyword: "Jam",
+      page: 3,
+      view: "calendar" as const,
+      calendar_view: "timeGridWeek" as const,
+      calendar_date: "2030-11-04",
+    };
+
+    const query = toRouteQuery(filter, defaults);
+
+    expect(query).toEqual({
+      keyword: "Jam",
+      view: "calendar",
+      calendar_view: "timeGridWeek",
+      calendar_date: "2030-11-04",
+    });
+    expect(fromRouteQuery(query as Record<string, string>, defaults)).toEqual({
+      ...filter,
+      page: 1,
+    });
+  });
+
+  it("leaves the default calendar view out of the URL", () => {
+    const filter = { ...emptyFilter(defaults), view: "calendar" as const };
+    expect(toRouteQuery(filter, defaults)).toEqual({ view: "calendar" });
+  });
+
+  it("falls back for unusable calendar values and ignores them in the list", () => {
+    const calendar = fromRouteQuery(
+      { view: "calendar", calendar_view: "year", calendar_date: "04.11.2030" },
+      defaults,
+    );
+    expect(calendar.calendar_view).toBe("dayGridMonth");
+    expect(calendar.calendar_date).toBe("");
+
+    const list = fromRouteQuery(
+      { view: "grid", calendar_view: "timeGridWeek", calendar_date: "2030-11-04" },
+      defaults,
+    );
+    expect(list.view).toBe("list");
+    expect(list.calendar_view).toBe("dayGridMonth");
+    expect(list.calendar_date).toBe("");
+  });
+
+  it("builds the event-dates params over the visible range", () => {
+    const filter = {
+      ...emptyFilter(defaults),
+      keyword: "Jam",
+      date_to: "2030-12-31",
+      sort: "-created_at" as const,
+      page: 2,
+    };
+
+    const params = toBffDateParams(filter, { date_from: "2030-10-27", date_to: "2030-12-07" });
+
+    expect(params).toEqual({
+      ...toBffParams(filter),
+      page: undefined,
+      sort: undefined,
+      date_from: "2030-10-27",
+      date_to: "2030-12-07",
+    });
+    expect("page" in params).toBe(false);
+    expect("sort" in params).toBe(false);
   });
 });

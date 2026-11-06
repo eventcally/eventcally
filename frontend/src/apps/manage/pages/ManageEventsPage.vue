@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  BButtonGroup,
   BDropdown,
   BDropdownDivider,
   BDropdownItem,
@@ -20,9 +21,13 @@ import { manage, publicPages } from "@/shared/legacy";
 import { useNotify } from "@/shared/notify";
 import { takeFlash } from "@/shared/flash";
 import EventDeleteModal from "../components/EventDeleteModal.vue";
+import ManageEventCalendar from "../components/ManageEventCalendar.vue";
+import type { CalendarView } from "../components/PlanningCalendar.vue";
 import ManageEventSearchForm from "../components/ManageEventSearchForm.vue";
+import { publicStatusVariant, statusLabel, statusVariant } from "../manageEventCalendar";
 import {
   type ManageEventFilter,
+  type ManageEventView,
   fromRouteQuery,
   toBffParams,
   toRouteQuery,
@@ -45,6 +50,7 @@ const error = ref<string | null>(null);
 
 const deleting = ref<number | null>(null);
 const showDelete = ref(false);
+const calendar = ref<InstanceType<typeof ManageEventCalendar> | null>(null);
 
 function askDelete(id: number) {
   deleting.value = id;
@@ -54,7 +60,7 @@ function askDelete(id: number) {
 async function onDeleted(answer: { message: string }) {
   notify.success(answer.message);
   showDelete.value = false;
-  await search();
+  await reload();
 }
 
 const defaults = computed(() => ({ date_from: options.value?.default_date_from ?? "" }));
@@ -84,17 +90,7 @@ const fields = computed<TableFieldRaw[]>(() => [
 const nameHead = (name: string) => name.slice(0, name.lastIndexOf(" ") + 1);
 const nameTail = (name: string) => name.slice(name.lastIndexOf(" ") + 1);
 
-const publicStatusVariant: Record<string, string> = {
-  draft: "light",
-  published: "success",
-  planned: "secondary",
-};
-const statusVariant = (name: string) =>
-  name === "scheduled" ? "success" : name === "cancelled" ? "danger" : "warning";
-
-function statusLabel(list: { name: string; label: string }[] | undefined, name: string) {
-  return list?.find((s) => s.name === name)?.label ?? name;
-}
+const isCalendar = computed(() => filter.value?.view === "calendar");
 
 async function loadOptions() {
   const { data, error: err } = await api.GET("/bff/manage/organizations/{id}/events/options", {
@@ -120,14 +116,43 @@ async function search() {
   loading.value = false;
 }
 
+/** Reloads what the current view shows. */
+async function reload() {
+  if (isCalendar.value) await calendar.value?.reload();
+  else await search();
+}
+
 function onSearch(next: ManageEventFilter) {
   const query = toRouteQuery(next, defaults.value);
   const same =
     JSON.stringify(query) ===
     JSON.stringify(toRouteQuery(filter.value ?? next, defaults.value));
-  // An unchanged filter does not change the route, so search directly.
-  if (same) search();
+  // An unchanged filter does not change the route, so reload directly.
+  if (same) reload();
   else router.push({ name: "manage-events", query });
+}
+
+function setView(view: ManageEventView) {
+  if (!filter.value || filter.value.view === view) return;
+  // The calendar opens at the list's start date; the list keeps its own date range.
+  onSearch({
+    ...filter.value,
+    view,
+    page: 1,
+    calendar_view: "dayGridMonth",
+    calendar_date: view === "calendar" ? filter.value.date_from : "",
+  });
+}
+
+/** The calendar moved: keep its position in the URL without a history entry. */
+function onPosition(position: { view: CalendarView; date: string }) {
+  if (!filter.value) return;
+  const query = toRouteQuery(
+    { ...filter.value, calendar_view: position.view, calendar_date: position.date },
+    defaults.value,
+  );
+  if (JSON.stringify(query) === JSON.stringify(toRouteQuery(filter.value, defaults.value))) return;
+  router.replace({ name: "manage-events", query });
 }
 
 const currentPage = computed({
@@ -137,17 +162,18 @@ const currentPage = computed({
   },
 });
 
+// The calendar loads by itself (on its range and on filter changes).
 watch(
   () => route.query,
   () => {
-    if (options.value) search();
+    if (options.value && !isCalendar.value) search();
   },
 );
 
 onMounted(async () => {
   const message = takeFlash();
   if (message) notify.success(message);
-  if (await loadOptions()) await search();
+  if ((await loadOptions()) && !isCalendar.value) await search();
 });
 </script>
 
@@ -171,86 +197,123 @@ onMounted(async () => {
       @search="onSearch"
     />
 
-    <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
-
-    <BOverlay :show="loading">
-      <BTable
-        :items="page?.items ?? []"
-        :fields="fields"
-        show-empty
-        :empty-text="t('No events found')"
-        responsive
-        stacked="sm"
-        striped
-        bordered
-      >
-        <template #head(is_recurring)><i class="fas fa-history" :title="t('Recurring event')"></i></template>
-        <template #head(number_of_dates)><i class="fa fa-calendar-alt" :title="t('Event dates')"></i></template>
-        <template #head(has_photo)><i class="fa fa-image" :title="t('Photo')"></i></template>
-        <template #head(number_of_references)><i class="fa fa-share" :title="t('References')"></i></template>
-        <template #head(number_of_reference_requests)><i class="fa fa-question" :title="t('Reference requests')"></i></template>
-        <template #head(last_modified_at)><i class="fa fa-save" :title="t('Last modified at')"></i></template>
-
-        <template #cell(start)="{ item }"
-          ><span class="text-nowrap">{{
-            formatStart(item.start, item.allday, boot.locale)
-          }}</span></template
+    <div v-if="filter" class="d-flex justify-content-end mb-3">
+      <BButtonGroup :aria-label="t('View')">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          :class="{ active: !isCalendar }"
+          :aria-pressed="!isCalendar"
+          data-test="view-list"
+          @click="setView('list')"
         >
-        <template #cell(is_recurring)="{ item }">
-          <i v-if="item.is_recurring" class="fa fa-check-circle" :title="t('Recurring event')"></i>
-        </template>
-        <template #cell(name)="{ item }">
-          <BDropdown
-            variant="link"
-            no-caret
-            toggle-class="p-0 border-0 text-start align-baseline"
-            class="event-actions"
-            teleport-to="body"
-          >
-            <template #button-content>
-              {{ nameHead(item.name) }}<span class="text-nowrap">{{ nameTail(item.name) }}<i class="fa fa-caret-down ms-1"></i></span>
-            </template>
-            <BDropdownItem :href="publicPages.event(item.id)">{{ t("View") }}</BDropdownItem>
-            <BDropdownItem :href="manage.eventUpdate(organizationId, item.id)">
-              {{ t("Edit") }}
-            </BDropdownItem>
-            <BDropdownItem @click="askDelete(item.id)">
-              {{ t("Delete") }}
-            </BDropdownItem>
-            <BDropdownItem
-              v-if="options?.can_request_reference"
-              :href="manage.eventReferenceRequestCreate(organizationId, item.id)"
-            >
-              {{ t("Request reference") }}
-            </BDropdownItem>
-            <BDropdownDivider />
-            <BDropdownItem :href="publicPages.eventActions(item.id)">{{ t("More") }}</BDropdownItem>
-          </BDropdown>
-        </template>
-        <template #cell(category_names)="{ item }">{{ item.category_names.join(", ") }}</template>
-        <template #cell(status)="{ item }">
-          <span v-if="item.status" class="badge" :class="`text-bg-${statusVariant(item.status)}`">{{
-            statusLabel(options?.statuses, item.status)
-          }}</span>
-        </template>
-        <template #cell(public_status)="{ item }">
-          <span class="badge" :class="`text-bg-${publicStatusVariant[item.public_status] ?? 'light'}`">{{
-            statusLabel(options?.public_statuses, item.public_status)
-          }}</span>
-        </template>
-        <template #cell(has_photo)="{ item }">
-          <i v-if="item.has_photo" class="fa fa-check-circle" :title="t('Photo')"></i>
-        </template>
-        <template #cell(last_modified_at)="{ item }">{{ formatDate(item.last_modified_at, boot.locale) }}</template>
-      </BTable>
-    </BOverlay>
+          <i class="fa fa-list me-1"></i>{{ t("List") }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          :class="{ active: isCalendar }"
+          :aria-pressed="isCalendar"
+          data-test="view-calendar"
+          @click="setView('calendar')"
+        >
+          <i class="fa fa-calendar-alt me-1"></i>{{ t("Calendar") }}
+        </button>
+      </BButtonGroup>
+    </div>
 
-    <AppPager
-      v-if="page && page.total > 0"
-      v-model:page="currentPage"
-      :pages="page.pages"
-      :total="page.total"
+    <ManageEventCalendar
+      v-if="isCalendar && filter && options"
+      ref="calendar"
+      :organization-id="organizationId"
+      :filter="filter"
+      :options="options"
+      @position="onPosition"
+      @delete="askDelete"
     />
+
+    <template v-else>
+      <div v-if="error" class="alert alert-danger" role="alert">{{ error }}</div>
+
+      <BOverlay :show="loading">
+        <BTable
+          :items="page?.items ?? []"
+          :fields="fields"
+          show-empty
+          :empty-text="t('No events found')"
+          responsive
+          stacked="sm"
+          striped
+          bordered
+        >
+          <template #head(is_recurring)><i class="fas fa-history" :title="t('Recurring event')"></i></template>
+          <template #head(number_of_dates)><i class="fa fa-calendar-alt" :title="t('Event dates')"></i></template>
+          <template #head(has_photo)><i class="fa fa-image" :title="t('Photo')"></i></template>
+          <template #head(number_of_references)><i class="fa fa-share" :title="t('References')"></i></template>
+          <template #head(number_of_reference_requests)><i class="fa fa-question" :title="t('Reference requests')"></i></template>
+          <template #head(last_modified_at)><i class="fa fa-save" :title="t('Last modified at')"></i></template>
+
+          <template #cell(start)="{ item }"
+            ><span class="text-nowrap">{{
+              formatStart(item.start, item.allday, boot.locale)
+            }}</span></template
+          >
+          <template #cell(is_recurring)="{ item }">
+            <i v-if="item.is_recurring" class="fa fa-check-circle" :title="t('Recurring event')"></i>
+          </template>
+          <template #cell(name)="{ item }">
+            <BDropdown
+              variant="link"
+              no-caret
+              toggle-class="p-0 border-0 text-start align-baseline"
+              class="event-actions"
+              teleport-to="body"
+            >
+              <template #button-content>
+                {{ nameHead(item.name) }}<span class="text-nowrap">{{ nameTail(item.name) }}<i class="fa fa-caret-down ms-1"></i></span>
+              </template>
+              <BDropdownItem :href="publicPages.event(item.id)">{{ t("View") }}</BDropdownItem>
+              <BDropdownItem :href="manage.eventUpdate(organizationId, item.id)">
+                {{ t("Edit") }}
+              </BDropdownItem>
+              <BDropdownItem @click="askDelete(item.id)">
+                {{ t("Delete") }}
+              </BDropdownItem>
+              <BDropdownItem
+                v-if="options?.can_request_reference"
+                :href="manage.eventReferenceRequestCreate(organizationId, item.id)"
+              >
+                {{ t("Request reference") }}
+              </BDropdownItem>
+              <BDropdownDivider />
+              <BDropdownItem :href="publicPages.eventActions(item.id)">{{ t("More") }}</BDropdownItem>
+            </BDropdown>
+          </template>
+          <template #cell(category_names)="{ item }">{{ item.category_names.join(", ") }}</template>
+          <template #cell(status)="{ item }">
+            <span v-if="item.status" class="badge" :class="`text-bg-${statusVariant(item.status)}`">{{
+              statusLabel(options?.statuses, item.status)
+            }}</span>
+          </template>
+          <template #cell(public_status)="{ item }">
+            <span class="badge" :class="`text-bg-${publicStatusVariant[item.public_status] ?? 'light'}`">{{
+              statusLabel(options?.public_statuses, item.public_status)
+            }}</span>
+          </template>
+          <template #cell(has_photo)="{ item }">
+            <i v-if="item.has_photo" class="fa fa-check-circle" :title="t('Photo')"></i>
+          </template>
+          <template #cell(last_modified_at)="{ item }">{{ formatDate(item.last_modified_at, boot.locale) }}</template>
+        </BTable>
+      </BOverlay>
+
+      <AppPager
+        v-if="page && page.total > 0"
+        v-model:page="currentPage"
+        :pages="page.pages"
+        :total="page.total"
+      />
+    </template>
 
     <EventDeleteModal
       v-model="showDelete"

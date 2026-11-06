@@ -698,6 +698,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/event-dates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Event dates of the events of an organization in a date range */
+        get: operations["bff_manage_list_event_dates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/event-organizers": {
         parameters: {
             query?: never;
@@ -4563,6 +4580,57 @@ export interface components {
             message: string;
             /** Redirect Url */
             redirect_url: string;
+        };
+        /** ManageEventDate */
+        ManageEventDate: {
+            /** Allday */
+            allday: boolean;
+            /**
+             * End
+             * @default null
+             */
+            end: string | null;
+            event: components["schemas"]["ManageEventDateEvent"];
+            /** Id */
+            id: number;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+        };
+        /** ManageEventDateEvent */
+        ManageEventDateEvent: {
+            /** Id */
+            id: number;
+            /** Is Recurring */
+            is_recurring: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Organizer Name
+             * @default null
+             */
+            organizer_name: string | null;
+            /**
+             * Place Label
+             * @default null
+             */
+            place_label: string | null;
+            /** Public Status */
+            public_status: string;
+            /**
+             * Status
+             * @default null
+             */
+            status: string | null;
+        };
+        /** ManageEventDateList */
+        ManageEventDateList: {
+            /** Items */
+            items: components["schemas"]["ManageEventDate"][];
+            /** Truncated */
+            truncated: boolean;
         };
         /** ManageEventListItem */
         ManageEventListItem: {
@@ -10919,6 +10987,84 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_event_dates: {
+        parameters: {
+            query: {
+                page?: number;
+                per_page?: number;
+                keyword?: string | null;
+                date_from: string;
+                date_to: string;
+                category_id?: number | null;
+                tag?: string | null;
+                internal_tag?: string | null;
+                organizer_id?: number | null;
+                event_place_id?: number | null;
+                postal_code?: string | null;
+                radius_coordinate?: string | null;
+                radius_distance?: number | null;
+                status?: number | null;
+                public_status?: number | null;
+                created_at_from?: string | null;
+                created_at_to?: string | null;
+                is_recurring?: ("0" | "1") | null;
+                sort?: "min_start" | "-last_modified_at" | "-created_at";
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageEventDateList"];
                 };
             };
             /** @description Unauthorized */

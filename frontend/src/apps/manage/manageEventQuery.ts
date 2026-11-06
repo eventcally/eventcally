@@ -1,6 +1,8 @@
 import type { LocationQuery, LocationQueryRaw } from "vue-router";
+import type { CalendarView } from "./components/PlanningCalendar.vue";
 
 export type ManageEventSort = "min_start" | "-last_modified_at" | "-created_at";
+export type ManageEventView = "list" | "calendar";
 
 /** The filter state of the manage event list; the URL keeps the names of the legacy form. */
 export interface ManageEventFilter {
@@ -25,6 +27,11 @@ export interface ManageEventFilter {
   is_recurring: "" | "1" | "0";
   sort: ManageEventSort;
   page: number;
+  /** List or calendar; the calendar ignores date range, sort and page. */
+  view: ManageEventView;
+  calendar_view: CalendarView;
+  /** The first day of the period the calendar shows; "" opens it at `date_from`. */
+  calendar_date: string;
 }
 
 export interface ManageEventDefaults {
@@ -34,6 +41,7 @@ export interface ManageEventDefaults {
 const COORDINATE = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const SORTS: ManageEventSort[] = ["min_start", "-last_modified_at", "-created_at"];
+const CALENDAR_VIEWS: CalendarView[] = ["dayGridMonth", "timeGridWeek", "timeGridDay"];
 
 export function emptyFilter(defaults: ManageEventDefaults): ManageEventFilter {
   return {
@@ -56,6 +64,9 @@ export function emptyFilter(defaults: ManageEventDefaults): ManageEventFilter {
     is_recurring: "",
     sort: "min_start",
     page: 1,
+    view: "list",
+    calendar_view: "dayGridMonth",
+    calendar_date: "",
   };
 }
 
@@ -105,6 +116,12 @@ export function fromRouteQuery(
   filter.is_recurring = recurring === "1" || recurring === "0" ? recurring : "";
   filter.sort = SORTS.includes(sort) ? sort : "min_start";
   filter.page = positiveInt(query.page) ?? 1;
+  if (text(query.view) === "calendar") {
+    const calendarView = text(query.calendar_view) as CalendarView;
+    filter.view = "calendar";
+    filter.calendar_view = CALENDAR_VIEWS.includes(calendarView) ? calendarView : "dayGridMonth";
+    filter.calendar_date = date(query.calendar_date);
+  }
   return filter;
 }
 
@@ -138,7 +155,11 @@ export function toRouteQuery(
   set("created_at_to", filter.created_at_to);
   set("is_recurring", filter.is_recurring);
   if (filter.sort !== "min_start") set("sort", filter.sort);
-  if (filter.page > 1) set("page", filter.page);
+  if (filter.view === "calendar") {
+    set("view", "calendar");
+    if (filter.calendar_view !== "dayGridMonth") set("calendar_view", filter.calendar_view);
+    set("calendar_date", filter.calendar_date);
+  } else if (filter.page > 1) set("page", filter.page);
   return query;
 }
 
@@ -165,6 +186,16 @@ export function toBffParams(filter: ManageEventFilter) {
     is_recurring: filter.is_recurring || undefined,
     sort: filter.sort,
   };
+}
+
+/** The query of `GET /bff/manage/organizations/{id}/event-dates`: the list filter without
+ * page and sort, over the calendar's visible range. */
+export function toBffDateParams(
+  filter: ManageEventFilter,
+  range: { date_from: string; date_to: string },
+) {
+  const { page: _page, sort: _sort, ...params } = toBffParams(filter);
+  return { ...params, date_from: range.date_from, date_to: range.date_to };
 }
 
 /** Whether a filter outside the always visible row (keyword, date range, sort) is set. */

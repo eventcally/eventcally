@@ -6,6 +6,9 @@ LIST_URL = "/bff/manage/organizations/{}/events"
 OPTIONS_URL = "/bff/manage/organizations/{}/events/options"
 ORGANIZERS_URL = "/bff/manage/organizations/{}/event-organizers"
 PLACES_URL = "/bff/manage/organizations/{}/event-places"
+DATES_URL = (
+    "/bff/manage/organizations/{}/event-dates?date_from=2030-10-01&date_to=2030-10-31"
+)
 FUTURE = create_berlin_date(2030, 10, 3, 10)
 PAST = create_berlin_date(2020, 10, 3, 10)
 
@@ -37,6 +40,7 @@ def test_anonymous_is_401(client, seeder, utils):
         OPTIONS_URL,
         ORGANIZERS_URL,
         PLACES_URL,
+        DATES_URL,
     ):
         assert utils.get_json(url.format(admin_unit_id)).status_code == 401
 
@@ -46,7 +50,7 @@ def test_non_member_is_denied(client, seeder, utils):
     seeder.create_user(email="member@test.de")
     utils.login(email="member@test.de")
 
-    for url in (LIST_URL, OPTIONS_URL, ORGANIZERS_URL, PLACES_URL):
+    for url in (LIST_URL, OPTIONS_URL, ORGANIZERS_URL, PLACES_URL, DATES_URL):
         assert utils.get_json(url.format(other_id)).status_code in (401, 403, 404)
 
 
@@ -299,6 +303,172 @@ def test_list_ignores_refs_of_other_organizations(client, seeder, utils):
     response = _list(utils, admin_unit_id, event_place_id=foreign_place_id).json
 
     assert response["event_place"] is None
+
+
+# event dates
+
+
+def _dates(
+    utils, admin_unit_id, date_from="2030-10-01", date_to="2030-10-31", **params
+):
+    url = (
+        f"/bff/manage/organizations/{admin_unit_id}/event-dates"
+        f"?date_from={date_from}&date_to={date_to}"
+    )
+    query = "&".join(f"{k}={v}" for k, v in params.items())
+    return utils.get_json(f"{url}&{query}" if query else url)
+
+
+def _date_names(response):
+    assert response.status_code == 200, response.json
+    return [i["event"]["name"] for i in response.json["items"]]
+
+
+def test_dates_returns_own_dates_of_every_public_status(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    seeder.create_event(
+        admin_unit_id, name="Late", start=create_berlin_date(2030, 10, 20, 10)
+    )
+    seeder.create_event(admin_unit_id, name="Draft", start=FUTURE, draft=True)
+    seeder.create_event(
+        admin_unit_id,
+        name="Planned",
+        start=create_berlin_date(2030, 10, 10, 10),
+        planned=True,
+    )
+    seeder.create_event(
+        admin_unit_id, name="Outside", start=create_berlin_date(2030, 11, 5, 10)
+    )
+    other_id = _foreign_admin_unit(seeder)
+    seeder.create_event(other_id, name="Foreign", start=FUTURE)
+
+    response = _dates(utils, admin_unit_id)
+
+    assert _date_names(response) == ["Draft", "Planned", "Late"]
+    assert response.json["truncated"] is False
+
+
+def test_dates_item(client, seeder, utils):
+    from project.infrastructure.models import Location
+
+    _, admin_unit_id = seeder.setup_base()
+    place_id = seeder.upsert_event_place(
+        admin_unit_id, "Rathaus", location=Location(postalCode="38640", city="Goslar")
+    )
+    seeder.create_event(
+        admin_unit_id,
+        name="Weekly",
+        start=FUTURE,
+        place_id=place_id,
+        recurrence_rule="RRULE:FREQ=WEEKLY;COUNT=3",
+    )
+
+    response = _dates(utils, admin_unit_id)
+
+    assert _date_names(response) == ["Weekly", "Weekly", "Weekly"]
+    item = response.json["items"][0]
+    assert item["allday"] is False
+    assert item["start"] == "2030-10-03T08:00:00Z"
+    assert item["event"]["is_recurring"] is True
+    assert item["event"]["status"] == "scheduled"
+    assert item["event"]["public_status"] == "published"
+    assert item["event"]["organizer_name"]
+    assert item["event"]["place_label"] == "Rathaus 38640 Goslar"
+
+
+def test_dates_in_the_past(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    seeder.create_event(admin_unit_id, name="Past", start=PAST)
+
+    response = _dates(
+        utils, admin_unit_id, date_from="2020-10-01", date_to="2020-10-31"
+    )
+
+    assert _date_names(response) == ["Past"]
+
+
+def test_dates_overlapping_the_range_start(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    seeder.create_event(
+        admin_unit_id,
+        name="Festival",
+        start=create_berlin_date(2030, 9, 28, 10),
+        end=create_berlin_date(2030, 10, 2, 18),
+    )
+
+    assert _date_names(_dates(utils, admin_unit_id)) == ["Festival"]
+
+
+def test_dates_apply_the_list_filters(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    seeder.create_event(
+        admin_unit_id, name="Lesung", start=FUTURE, internal_tags="geheim"
+    )
+    seeder.create_event(admin_unit_id, name="Entwurf", start=FUTURE, draft=True)
+    seeder.create_event(
+        admin_unit_id,
+        name="Weekly",
+        start=FUTURE,
+        recurrence_rule="RRULE:FREQ=WEEKLY;COUNT=2",
+    )
+
+    assert _date_names(_dates(utils, admin_unit_id, keyword="Les")) == ["Lesung"]
+    assert _date_names(_dates(utils, admin_unit_id, internal_tag="geheim")) == [
+        "Lesung"
+    ]
+    assert _date_names(_dates(utils, admin_unit_id, public_status=1)) == ["Entwurf"]
+    assert sorted(_date_names(_dates(utils, admin_unit_id, is_recurring="0"))) == [
+        "Entwurf",
+        "Lesung",
+    ]
+
+
+def test_dates_ignore_the_list_sort(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    seeder.create_event(
+        admin_unit_id, name="Second", start=create_berlin_date(2030, 10, 20, 10)
+    )
+    seeder.create_event(admin_unit_id, name="First", start=FUTURE)
+
+    response = _dates(utils, admin_unit_id, sort="-created_at")
+
+    assert _date_names(response) == ["First", "Second"]
+
+
+def test_dates_truncated(client, seeder, utils, monkeypatch):
+    from project.presentation.bff.manage import event_dates, events
+
+    monkeypatch.setattr(events, "MAX_DATES", 2)
+    monkeypatch.setattr(event_dates, "PAGE_SIZE", 1)
+    _, admin_unit_id = seeder.setup_base()
+
+    for day in (3, 4, 5):
+        seeder.create_event(
+            admin_unit_id, name=f"E{day}", start=create_berlin_date(2030, 10, day, 10)
+        )
+
+    response = _dates(utils, admin_unit_id)
+
+    assert _date_names(response) == ["E3", "E4"]
+    assert response.json["truncated"] is True
+
+
+@pytest.mark.parametrize(
+    "params",
+    [
+        dict(date_to="2030-10-31"),
+        dict(date_from="2030-10-01"),
+        dict(date_from="2030-10-31", date_to="2030-10-01"),
+        dict(date_from="2030-10-01", date_to="2031-01-30"),
+        dict(date_from="2030-10-01", date_to="2030-10-31", status=99),
+    ],
+)
+def test_dates_invalid_params_are_422(client, seeder, utils, params):
+    _, admin_unit_id = seeder.setup_base()
+    query = "&".join(f"{k}={v}" for k, v in params.items())
+    url = f"/bff/manage/organizations/{admin_unit_id}/event-dates?{query}"
+
+    assert utils.get_json(url).status_code == 422
 
 
 # options

@@ -15,7 +15,29 @@ vi.mock("@/shared/api", () => ({
 const success = vi.hoisted(() => vi.fn());
 vi.mock("@/shared/notify", () => ({ useNotify: () => ({ success, error: vi.fn() }) }));
 
+const calendarCalls = vi.hoisted(() => ({ next: vi.fn(), changeView: vi.fn(), today: vi.fn() }));
+
+// FullCalendar does not render reliably in jsdom; the stub only emits what the real one would.
+vi.mock("../components/PlanningCalendar.vue", async () => {
+  const { defineComponent, h } = await import("vue");
+  return {
+    default: defineComponent({
+      props: {
+        events: { type: Array, default: () => [] },
+        initialView: { type: String, default: "dayGridMonth" },
+        initialDate: { type: String, default: undefined },
+      },
+      emits: ["range", "select"],
+      setup(_, { expose }) {
+        expose({ prev: vi.fn(), scrollToHour: vi.fn(), ...calendarCalls });
+        return () => h("div", { class: "calendar-stub" });
+      },
+    }),
+  };
+});
+
 import { setFlash } from "@/shared/flash";
+import CalendarStub from "../components/PlanningCalendar.vue";
 import ManageEventsPage from "./ManageEventsPage.vue";
 
 const options = {
@@ -92,6 +114,50 @@ async function mountPage(url = "/manage/admin_unit/3/events") {
 
 const listCalls = () =>
   GET.mock.calls.filter(([path]) => path === "/bff/manage/organizations/{id}/events");
+const dateCalls = () =>
+  GET.mock.calls.filter(([path]) => path === "/bff/manage/organizations/{id}/event-dates");
+
+const dateRow = (over = {}) => ({
+  id: 7,
+  start: "2030-11-04T09:00:00Z",
+  end: null,
+  allday: false,
+  event: {
+    id: 11,
+    name: "Jam Session",
+    is_recurring: false,
+    status: "scheduled",
+    public_status: "published",
+    organizer_name: null,
+    place_label: null,
+  },
+  ...over,
+});
+
+const month = {
+  date_from: "2030-10-28",
+  date_to: "2030-12-08",
+  title: "November 2030",
+  view: "dayGridMonth",
+  current: "2030-11-01",
+};
+
+function respond(dates: unknown = { data: { items: [dateRow()], truncated: false } }) {
+  GET.mockReset().mockImplementation((path: string) =>
+    Promise.resolve(
+      path.endsWith("/options")
+        ? { data: options }
+        : path.endsWith("/event-dates")
+          ? dates
+          : listPage(),
+    ),
+  );
+}
+
+async function emitRange(wrapper: ReturnType<typeof mount>, over = {}) {
+  wrapper.findComponent(CalendarStub).vm.$emit("range", { ...month, ...over });
+  await flushPromises();
+}
 
 describe("ManageEventsPage", () => {
   beforeEach(() => {
@@ -235,5 +301,220 @@ describe("ManageEventsPage", () => {
     await mountPage();
 
     expect(success).toHaveBeenCalledWith("Event deleted");
+  });
+
+  describe("calendar", () => {
+    const CALENDAR_URL = "/manage/admin_unit/3/events?view=calendar&calendar_date=2030-11-01";
+
+    beforeEach(() => {
+      respond();
+      Object.values(calendarCalls).forEach((f) => f.mockReset());
+    });
+
+    it("switches from the list to the calendar at the list's start date", async () => {
+      const { wrapper, router } = await mountPage("/manage/admin_unit/3/events?keyword=Jam&page=2");
+      expect(wrapper.find('[data-test="view-list"]').classes()).toContain("active");
+
+      await wrapper.find('[data-test="view-calendar"]').trigger("click");
+      await flushPromises();
+
+      expect(router.currentRoute.value.query).toEqual({
+        keyword: "Jam",
+        view: "calendar",
+        calendar_date: "2030-10-01",
+      });
+      expect(wrapper.find("table").exists()).toBe(false);
+      const stub = wrapper.findComponent(CalendarStub);
+      expect(stub.props("initialDate")).toBe("2030-10-01");
+      expect(stub.props("initialView")).toBe("dayGridMonth");
+      expect(listCalls()).toHaveLength(1);
+    });
+
+    it("switches back to the list without the calendar keys", async () => {
+      const { wrapper, router } = await mountPage(`${CALENDAR_URL}&keyword=Jam`);
+
+      await wrapper.find('[data-test="view-list"]').trigger("click");
+      await flushPromises();
+
+      expect(router.currentRoute.value.query).toEqual({ keyword: "Jam" });
+      expect(wrapper.find("table").exists()).toBe(true);
+      expect(listCalls()).toHaveLength(1);
+      expect(listCalls()[0][1].params.query.keyword).toBe("Jam");
+    });
+
+    it("ignores a click on the active view", async () => {
+      const { wrapper, router } = await mountPage(CALENDAR_URL);
+      const push = vi.spyOn(router, "push");
+
+      await wrapper.find('[data-test="view-calendar"]').trigger("click");
+
+      expect(push).not.toHaveBeenCalled();
+    });
+
+    it("opens at the position of the URL and queries the dates of the visible range", async () => {
+      const { wrapper } = await mountPage(
+        "/manage/admin_unit/3/events?view=calendar&calendar_view=timeGridWeek&calendar_date=2030-11-04&keyword=Jam&sort=-created_at&page=3",
+      );
+      const stub = wrapper.findComponent(CalendarStub);
+      expect(stub.props("initialView")).toBe("timeGridWeek");
+      expect(stub.props("initialDate")).toBe("2030-11-04");
+      expect(listCalls()).toHaveLength(0);
+
+      await emitRange(wrapper, {
+        date_from: "2030-11-04",
+        date_to: "2030-11-10",
+        view: "timeGridWeek",
+        current: "2030-11-04",
+      });
+
+      expect(dateCalls()).toHaveLength(1);
+      expect(dateCalls()[0][1]).toEqual({
+        params: {
+          path: { id: 3 },
+          query: { keyword: "Jam", date_from: "2030-11-04", date_to: "2030-11-10" },
+        },
+      });
+      expect(stub.props("events")).toHaveLength(1);
+      expect(wrapper.find('[data-test="count"]').exists()).toBe(true);
+      expect(calendarCalls.today).not.toHaveBeenCalled();
+    });
+
+    it("keeps the calendar position in the URL without a history entry", async () => {
+      const { wrapper, router } = await mountPage(CALENDAR_URL);
+      const replace = vi.spyOn(router, "replace");
+
+      await emitRange(wrapper);
+      expect(replace).not.toHaveBeenCalled();
+
+      await emitRange(wrapper, { current: "2030-12-01", view: "timeGridWeek" });
+      await flushPromises();
+
+      expect(replace).toHaveBeenCalledTimes(1);
+      expect(router.currentRoute.value.query).toEqual({
+        view: "calendar",
+        calendar_view: "timeGridWeek",
+        calendar_date: "2030-12-01",
+      });
+      // One load per range, none for the URL update.
+      expect(dateCalls()).toHaveLength(2);
+      expect(listCalls()).toHaveLength(0);
+    });
+
+    it("reloads the dates when the filter changes", async () => {
+      const { wrapper, router } = await mountPage(CALENDAR_URL);
+      await emitRange(wrapper);
+
+      await router.push({ query: { ...router.currentRoute.value.query, keyword: "Jam" } });
+      await flushPromises();
+
+      expect(dateCalls()).toHaveLength(2);
+      expect(dateCalls()[1][1].params.query.keyword).toBe("Jam");
+      expect(listCalls()).toHaveLength(0);
+    });
+
+    it("reloads the dates when an unchanged filter is searched again", async () => {
+      const { wrapper } = await mountPage(CALENDAR_URL);
+      await emitRange(wrapper);
+
+      await wrapper.find('[data-test="form"]').trigger("submit");
+      await flushPromises();
+
+      expect(dateCalls()).toHaveLength(2);
+    });
+
+    it("forwards navigation and view changes to the calendar", async () => {
+      const { wrapper } = await mountPage(CALENDAR_URL);
+      await emitRange(wrapper);
+
+      await wrapper.find('[data-test="next"]').trigger("click");
+      await wrapper.find('[data-test="today"]').trigger("click");
+      await wrapper.find('[data-test="view-timeGridDay"]').trigger("click");
+
+      expect(calendarCalls.next).toHaveBeenCalled();
+      expect(calendarCalls.today).toHaveBeenCalled();
+      expect(calendarCalls.changeView).toHaveBeenCalledWith("timeGridDay");
+      expect(wrapper.find('[data-test="view-dayGridMonth"]').classes()).toContain("active");
+      expect(wrapper.find('[data-test="title"]').text()).toBe("November 2030");
+    });
+
+    it("warns when the dates were truncated", async () => {
+      respond({ data: { items: [dateRow()], truncated: true } });
+      const { wrapper } = await mountPage(CALENDAR_URL);
+      await emitRange(wrapper);
+
+      expect(wrapper.find('[data-test="truncated"]').exists()).toBe(true);
+    });
+
+    it("shows the error when the dates cannot be loaded", async () => {
+      respond({ error: { message: "Boom" } });
+      const { wrapper } = await mountPage(CALENDAR_URL);
+      await emitRange(wrapper);
+
+      expect(wrapper.find('[data-test="calendar-error"]').text()).toBe("Boom");
+      expect(wrapper.findComponent(CalendarStub).props("events")).toHaveLength(0);
+    });
+
+    it("ignores out-of-order responses", async () => {
+      let resolveFirst: (value: unknown) => void = () => {};
+      GET.mockReset().mockImplementation((path: string, init: { params: { query: { date_from: string } } }) => {
+        if (path.endsWith("/options")) return Promise.resolve({ data: options });
+        if (init.params.query.date_from === "2030-10-28") {
+          return new Promise((resolve) => (resolveFirst = resolve));
+        }
+        return Promise.resolve({ data: { items: [dateRow({ id: 8 })], truncated: false } });
+      });
+      const { wrapper } = await mountPage(CALENDAR_URL);
+
+      wrapper.findComponent(CalendarStub).vm.$emit("range", month);
+      await emitRange(wrapper, { date_from: "2030-12-01", date_to: "2031-01-11", current: "2030-12-01" });
+      resolveFirst({ data: { items: [dateRow({ id: 7 })], truncated: false } });
+      await flushPromises();
+
+      const events = wrapper.findComponent(CalendarStub).props("events") as { id: string }[];
+      expect(events.map((e) => e.id)).toEqual(["d8"]);
+    });
+
+    it("scrolls to the earliest date outside the month view", async () => {
+      const { wrapper } = await mountPage(CALENDAR_URL);
+      await emitRange(wrapper, { view: "timeGridWeek" });
+
+      const exposed = wrapper.findComponent(CalendarStub).vm as unknown as {
+        scrollToHour: ReturnType<typeof vi.fn>;
+      };
+      expect(exposed.scrollToHour).toHaveBeenCalled();
+    });
+
+    it("opens a date and deletes its event, then reloads the dates", async () => {
+      POST.mockResolvedValue({ data: { message: "Event successfully deleted", redirect_url: "/x" } });
+      GET.mockImplementation((path: string) => {
+        if (path.endsWith("/delete-form")) {
+          return Promise.resolve({ data: { id: 11, name: "Jam Session", has_multiple_dates: false } });
+        }
+        return Promise.resolve(
+          path.endsWith("/options")
+            ? { data: options }
+            : { data: { items: [dateRow()], truncated: false } },
+        );
+      });
+      const { wrapper } = await mountPage(CALENDAR_URL);
+      await emitRange(wrapper);
+
+      wrapper.findComponent(CalendarStub).vm.$emit("select", { row: dateRow() });
+      await flushPromises();
+      document.body.querySelector<HTMLElement>('[data-test="delete"]')!.click();
+      await flushPromises();
+
+      expect(document.body.textContent).toContain("Do you want to delete 'Jam Session'?");
+      document.querySelector<HTMLButtonElement>("#submit")!.click();
+      await flushPromises();
+
+      expect(POST).toHaveBeenCalledWith("/bff/manage/organizations/{id}/events/{event_id}/delete", {
+        params: { path: { id: 3, event_id: 11 } },
+        body: { inline: true },
+      });
+      expect(success).toHaveBeenCalledWith("Event successfully deleted");
+      expect(dateCalls()).toHaveLength(2);
+      expect(listCalls()).toHaveLength(0);
+    });
   });
 });

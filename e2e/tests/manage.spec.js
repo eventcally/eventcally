@@ -59,6 +59,21 @@ test.describe("Manage", () => {
     await page.getByRole("button", { name: "Zurücksetzen" }).click();
     await expect(page.getByRole("cell", { name: "Name" }).first()).toBeVisible();
 
+    // The calendar shows the dates of the same events; the fixture event starts now.
+    await page.locator("[data-test=view-calendar]").click();
+    await expect(page).toHaveURL(/view=calendar/);
+    await expect(page.locator("#date_from")).toHaveCount(0);
+    const date = page.locator("[data-test=calendar]").getByRole("button", { name: /Name/ }).first();
+    await expect(date).toBeVisible();
+    await screenshot(page, "events-calendar");
+    await date.click();
+    await expect(page.locator("[data-test=details]")).toBeVisible();
+    await expect(page.locator("[data-test=edit]")).toHaveAttribute("href", /\/event\/\d+\/update/);
+    await page.getByRole("button", { name: "Schließen" }).click();
+    await page.locator("[data-test=view-list]").click();
+    await expect(page).not.toHaveURL(/view=calendar/);
+    await expect(page.getByRole("cell", { name: "Name" }).first()).toBeVisible();
+
     // The name opens the action menu, which leads to the (Jinja) edit page.
     await page.getByRole("button", { name: "Name" }).first().click();
     await page.locator("a.dropdown-item", { hasText: "Bearbeiten" }).click();

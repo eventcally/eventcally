@@ -25,12 +25,17 @@ from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_status import EventStatus
 from project.presentation.bff.manage import bff_manage_bp
+from project.presentation.bff.manage.event_dates import collect_event_dates
 from project.presentation.bff.manage.organization_form import actor
 from project.presentation.bff.manage.schemas import (
     EventDeleted,
     EventDeleteForm,
     EventDeleteSave,
     ManageChoice,
+    ManageEventDate,
+    ManageEventDateEvent,
+    ManageEventDateList,
+    ManageEventDateParams,
     ManageEventListItem,
     ManageEventListOptions,
     ManageEventListParams,
@@ -57,6 +62,7 @@ from project.shared.utils import (
 )
 
 PER_PAGE = 50
+MAX_DATES = 500
 LOOKUP_PER_PAGE = 10
 
 _SORTS = {
@@ -256,6 +262,49 @@ def list_events(
         pages=page.pages,
         organizer=organizer,
         event_place=place,
+    )
+
+
+def to_date_item(hit) -> ManageEventDate:
+    event = hit.event
+
+    return ManageEventDate(
+        id=hit.id,
+        start=hit.start,
+        end=hit.end,
+        allday=hit.allday,
+        event=ManageEventDateEvent(
+            id=event.id,
+            name=event.name,
+            is_recurring=event.is_recurring,
+            status=event.status.name if event.status else None,
+            public_status=event.public_status.name,
+            organizer_name=event.organizer.name if event.organizer else None,
+            place_label=_place_label(event.event_place),
+        ),
+    )
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations/<int:id>/event-dates",
+    query=ManageEventDateParams,
+    response=ManageEventDateList,
+    summary="Event dates of the events of an organization in a date range",
+)
+@inject
+def list_event_dates(
+    id: int,
+    query: ManageEventDateParams,
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    _authorize(id)
+    # The calendar shows the dates in start order, whatever the list sorts by.
+    criteria = _criteria(id, query).model_copy(update={"sort": None})
+    hits, truncated = collect_event_dates(query_bus, criteria, MAX_DATES)
+
+    return ManageEventDateList(
+        items=[to_date_item(h) for h in hits], truncated=truncated
     )
 
 

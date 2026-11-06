@@ -236,6 +236,41 @@ class ManageEventListParams(PageParams):
         return self
 
 
+class ManageEventDateParams(ManageEventListParams):
+    """The list filter with a required date range; `page` and `sort` are ignored."""
+
+    date_from: date
+    date_to: date
+
+    @model_validator(mode="after")
+    def _validate_range(self):
+        _check_range(self.date_from, self.date_to)
+        return self
+
+
+class ManageEventDateEvent(BaseModel):
+    id: int
+    name: str
+    is_recurring: bool
+    status: Optional[str] = None
+    public_status: str
+    organizer_name: Optional[str] = None
+    place_label: Optional[str] = None
+
+
+class ManageEventDate(BaseModel):
+    id: int
+    start: datetime
+    end: Optional[datetime] = None
+    allday: bool
+    event: ManageEventDateEvent
+
+
+class ManageEventDateList(BaseModel):
+    items: List[ManageEventDate]
+    truncated: bool
+
+
 class ManageRef(BaseModel):
     id: int
     name: str

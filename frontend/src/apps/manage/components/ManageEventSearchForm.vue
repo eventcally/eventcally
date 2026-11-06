@@ -28,15 +28,17 @@ const organizer = ref<Ref | null>(null);
 const eventPlace = ref<Ref | null>(null);
 const extended = ref(hasExtendedFilter(props.filter));
 
-/** Whether the URL sets any filter beyond the defaults (the form starts collapsed otherwise). */
+/** Whether the URL sets any filter beyond the defaults (the form starts collapsed otherwise).
+ * The calendar ignores date range and sort, so they do not count there. */
 function isActive(filter: ManageEventFilter): boolean {
-  return Boolean(
-    hasExtendedFilter(filter) ||
-      filter.keyword ||
+  const listOnly =
+    filter.view !== "calendar" &&
+    Boolean(
       filter.date_to ||
-      filter.date_from !== props.options.default_date_from ||
-      filter.sort !== "min_start",
-  );
+        filter.date_from !== props.options.default_date_from ||
+        filter.sort !== "min_start",
+    );
+  return Boolean(hasExtendedFilter(filter) || filter.keyword || listOnly);
 }
 
 const open = ref(isActive(props.filter));
@@ -95,7 +97,13 @@ function submit() {
 }
 
 function reset() {
-  emit("search", emptyFilter({ date_from: props.options.default_date_from }));
+  const { view, calendar_view, calendar_date } = props.filter;
+  emit("search", {
+    ...emptyFilter({ date_from: props.options.default_date_from }),
+    view,
+    calendar_view,
+    calendar_date,
+  });
 }
 </script>
 
@@ -134,7 +142,7 @@ function reset() {
       </div>
     </div>
 
-    <div class="row g-2 mb-3">
+    <div v-if="filter.view !== 'calendar'" class="row g-2 mb-3" data-test="date-range">
       <label class="col-sm-2 col-form-label" for="date_from">{{ t("Date") }}</label>
       <div class="col-sm-5">
         <div class="input-group">
@@ -150,7 +158,7 @@ function reset() {
       </div>
     </div>
 
-    <div class="row g-2 mb-3">
+    <div v-if="filter.view !== 'calendar'" class="row g-2 mb-3" data-test="sort">
       <label class="col-sm-2 col-form-label" for="sort">{{ t("Sort") }}</label>
       <div class="col-sm-10">
         <select id="sort" v-model="draft.sort" class="form-select">
