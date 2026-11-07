@@ -194,6 +194,9 @@ class ManageEventListOptions(BaseModel):
     default_date_from: date
     can_write: bool
     can_request_reference: bool
+    # Whether the list may include the events the organization references.
+    can_read_references: bool
+    can_write_references: bool
 
 
 class ManageEventListParams(PageParams):
@@ -214,11 +217,19 @@ class ManageEventListParams(PageParams):
     created_at_to: Optional[date] = None
     is_recurring: Optional[Literal["0", "1"]] = None
     sort: Literal["min_start", "-last_modified_at", "-created_at"] = "min_start"
+    # Also the events of other organizations this organization references.
+    include_references: bool = False
 
     @field_validator("*", mode="before")
     @classmethod
     def _empty_to_none(cls, value):
         return None if value == "" else value
+
+    # "Before" validators run last-defined first, so this one sees the raw "".
+    @field_validator("include_references", mode="before")
+    @classmethod
+    def _empty_to_false(cls, value):
+        return False if value in ("", None) else value
 
     @model_validator(mode="after")
     def _validate(self):
@@ -234,6 +245,45 @@ class ManageEventListParams(PageParams):
             raise ValueError("public_status is unknown")
 
         return self
+
+
+class ManageEventDateParams(ManageEventListParams):
+    """The list filter with a required date range; `page` and `sort` are ignored."""
+
+    date_from: date
+    date_to: date
+
+    @model_validator(mode="after")
+    def _validate_range(self):
+        _check_range(self.date_from, self.date_to)
+        return self
+
+
+class ManageEventDateEvent(BaseModel):
+    id: int
+    name: str
+    is_recurring: bool
+    status: Optional[str] = None
+    public_status: str
+    organizer_name: Optional[str] = None
+    place_label: Optional[str] = None
+    # A referenced event of another organization (`organization_name` is its owner).
+    is_reference: bool = False
+    reference_id: Optional[int] = None
+    organization_name: Optional[str] = None
+
+
+class ManageEventDate(BaseModel):
+    id: int
+    start: datetime
+    end: Optional[datetime] = None
+    allday: bool
+    event: ManageEventDateEvent
+
+
+class ManageEventDateList(BaseModel):
+    items: List[ManageEventDate]
+    truncated: bool
 
 
 class ManageRef(BaseModel):
@@ -267,6 +317,11 @@ class ManageEventListItem(BaseModel):
     number_of_references: Optional[int] = None
     number_of_reference_requests: Optional[int] = None
     last_modified_at: Optional[datetime] = None
+    # A referenced event of another organization (`organization_name` is its owner);
+    # its internal tags and reference counts are left out.
+    is_reference: bool = False
+    reference_id: Optional[int] = None
+    organization_name: Optional[str] = None
 
 
 class ManageEventPage(BaseModel):

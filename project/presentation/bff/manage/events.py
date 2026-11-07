@@ -25,12 +25,17 @@ from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_status import EventStatus
 from project.presentation.bff.manage import bff_manage_bp
+from project.presentation.bff.manage.event_dates import collect_event_dates
 from project.presentation.bff.manage.organization_form import actor
 from project.presentation.bff.manage.schemas import (
     EventDeleted,
     EventDeleteForm,
     EventDeleteSave,
     ManageChoice,
+    ManageEventDate,
+    ManageEventDateEvent,
+    ManageEventDateList,
+    ManageEventDateParams,
     ManageEventListItem,
     ManageEventListOptions,
     ManageEventListParams,
@@ -57,6 +62,7 @@ from project.shared.utils import (
 )
 
 PER_PAGE = 50
+MAX_DATES = 500
 LOOKUP_PER_PAGE = 10
 
 _SORTS = {
@@ -97,9 +103,14 @@ def _criteria(id: int, query: ManageEventListParams) -> EventSearchCriteria:
         EventPublicStatus(query.public_status) if query.public_status else None
     )
 
+    include_references = query.include_references and has_access(
+        SimpleNamespace(id=id), "incoming_event_references:read"
+    )
+
     return EventSearchCriteria(
         admin_unit_id=id,
         include_private=True,
+        include_admin_unit_references=include_references,
         name=query.keyword or None,
         date_from=date_from,
         date_to=_start_of_day(query.date_to, end_of_day=True),
@@ -139,8 +150,23 @@ def _place_label(place) -> str:
     return " ".join(parts)
 
 
-def to_item(event) -> ManageEventListItem:
+def _reference_fields(event, id: int) -> dict:
+    """What marks a referenced event of another organization."""
+    if event.admin_unit_id == id:
+        return {}
+
+    return dict(
+        is_reference=True,
+        reference_id=event.reference_id,
+        organization_name=event.admin_unit.name,
+    )
+
+
+def to_item(event, id: int) -> ManageEventListItem:
     definition = event.min_start_definition
+    reference = _reference_fields(event, id)
+    # Internal fields of another organization's event stay hidden.
+    own = not reference
 
     return ManageEventListItem(
         id=event.id,
@@ -153,13 +179,16 @@ def to_item(event) -> ManageEventListItem:
         place_label=_place_label(event.event_place),
         category_names=[str(get_event_category_name(c)) for c in event.categories],
         tags=event.tags,
-        internal_tags=event.internal_tags,
+        internal_tags=event.internal_tags if own else None,
         status=event.status.name if event.status else None,
         public_status=event.public_status.name,
         has_photo=event.photo is not None,
-        number_of_references=event.number_of_references,
-        number_of_reference_requests=event.number_of_reference_requests,
+        number_of_references=event.number_of_references if own else None,
+        number_of_reference_requests=(
+            event.number_of_reference_requests if own else None
+        ),
         last_modified_at=event.last_modified_at,
+        **reference,
     )
 
 
@@ -208,6 +237,12 @@ def get_event_list_options(
         can_request_reference=bool(
             admin_unit and can_request_event_reference_from_admin_unit(admin_unit)
         ),
+        can_read_references=has_access(
+            SimpleNamespace(id=id), "incoming_event_references:read"
+        ),
+        can_write_references=has_access(
+            SimpleNamespace(id=id), "incoming_event_references:write"
+        ),
     )
 
 
@@ -249,13 +284,59 @@ def list_events(
         place = ManageRef(id=found.id, name=get_place_str(found)) if found else None
 
     return ManageEventPage(
-        items=[to_item(e) for e in page.items],
+        items=[to_item(e, id) for e in page.items],
         page=page.page,
         per_page=page.per_page,
         total=page.total,
         pages=page.pages,
         organizer=organizer,
         event_place=place,
+    )
+
+
+def to_date_item(hit, id: int) -> ManageEventDate:
+    event = hit.event
+
+    return ManageEventDate(
+        id=hit.id,
+        start=hit.start,
+        end=hit.end,
+        allday=hit.allday,
+        event=ManageEventDateEvent(
+            id=event.id,
+            name=event.name,
+            is_recurring=event.is_recurring,
+            status=event.status.name if event.status else None,
+            public_status=event.public_status.name,
+            organizer_name=event.organizer.name if event.organizer else None,
+            place_label=_place_label(event.event_place),
+            **_reference_fields(event, id),
+        ),
+    )
+
+
+@bff_route(
+    bff_manage_bp,
+    "/organizations/<int:id>/event-dates",
+    query=ManageEventDateParams,
+    response=ManageEventDateList,
+    summary="Event dates of the events of an organization in a date range",
+)
+@inject
+def list_event_dates(
+    id: int,
+    query: ManageEventDateParams,
+    query_bus: QueryBus = Provide[Application.cqrs.query_bus],
+):
+    _authorize(id)
+    # The calendar shows the dates in start order, whatever the list sorts by.
+    criteria = _criteria(id, query).model_copy(update={"sort": None})
+    hits, truncated = collect_event_dates(
+        query_bus, criteria, MAX_DATES, reference_admin_unit_id=id
+    )
+
+    return ManageEventDateList(
+        items=[to_date_item(h, id) for h in hits], truncated=truncated
     )
 
 

@@ -7,7 +7,7 @@ import timeGridPlugin from "@fullcalendar/vue3/timegrid";
 import type { CalendarOptions, DatesSetInfo, EventClickInfo, EventInput } from "@fullcalendar/vue3";
 import { computed, ref } from "vue";
 import { boot } from "@/shared/boot";
-import { rangeFromDatesSet, type CalendarEventProps } from "../planning";
+import { localDate, rangeFromDatesSet } from "../planning";
 
 import "@fullcalendar/vue3/skeleton.css";
 import "@fullcalendar/bootstrap5/theme.css";
@@ -19,12 +19,19 @@ export interface CalendarRange {
   date_to: string;
   title: string;
   view: CalendarView;
+  /** The first day of the period the view shows (e.g. the 1st of the month). */
+  current: string;
 }
 
-defineProps<{ events: EventInput[] }>();
+// `initialView` / `initialDate` are read once, when the calendar mounts.
+const props = withDefaults(
+  defineProps<{ events: EventInput[]; initialView?: CalendarView; initialDate?: string }>(),
+  { initialView: "dayGridMonth", initialDate: undefined },
+);
 const emit = defineEmits<{
   range: [range: CalendarRange];
-  select: [props: CalendarEventProps];
+  // The `extendedProps` of the clicked event: what the page put there.
+  select: [props: Record<string, unknown>];
 }>();
 
 const calendar = ref<InstanceType<typeof FullCalendar> | null>(null);
@@ -33,7 +40,8 @@ const options = computed<CalendarOptions>(() => ({
   // The Bootstrap 5 theme brings icon-font glyphs for its own toolbar, which is off here:
   // the page renders its own toolbar with Font Awesome icons.
   plugins: [bootstrap5Plugin, dayGridPlugin, timeGridPlugin],
-  initialView: "dayGridMonth",
+  initialView: props.initialView,
+  initialDate: props.initialDate || undefined,
   headerToolbar: false,
   locale: boot.locale === "de" ? deLocale : "en",
   firstDay: 1,
@@ -47,11 +55,12 @@ const options = computed<CalendarOptions>(() => ({
       ...rangeFromDatesSet(info),
       title: info.view.title,
       view: info.view.type as CalendarView,
+      current: localDate(info.view.currentStart),
     });
   },
   eventClick: (info: EventClickInfo) => {
     info.jsEvent.preventDefault();
-    emit("select", info.event.extendedProps as CalendarEventProps);
+    emit("select", info.event.extendedProps);
   },
 }));
 

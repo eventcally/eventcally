@@ -141,8 +141,8 @@ function onExternalApply(active: string[]) {
   if (changed) loadExternal();
 }
 
-function onSelect(props: CalendarEventProps) {
-  selected.value = props;
+function onSelect(props: Record<string, unknown>) {
+  selected.value = props as CalendarEventProps;
   detailsVisible.value = true;
 }
 

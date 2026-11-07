@@ -698,6 +698,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/event-dates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Event dates of the events of an organization in a date range */
+        get: operations["bff_manage_list_event_dates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/event-organizers": {
         parameters: {
             query?: never;
@@ -4564,6 +4581,72 @@ export interface components {
             /** Redirect Url */
             redirect_url: string;
         };
+        /** ManageEventDate */
+        ManageEventDate: {
+            /** Allday */
+            allday: boolean;
+            /**
+             * End
+             * @default null
+             */
+            end: string | null;
+            event: components["schemas"]["ManageEventDateEvent"];
+            /** Id */
+            id: number;
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+        };
+        /** ManageEventDateEvent */
+        ManageEventDateEvent: {
+            /** Id */
+            id: number;
+            /** Is Recurring */
+            is_recurring: boolean;
+            /**
+             * Is Reference
+             * @default false
+             */
+            is_reference: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Organization Name
+             * @default null
+             */
+            organization_name: string | null;
+            /**
+             * Organizer Name
+             * @default null
+             */
+            organizer_name: string | null;
+            /**
+             * Place Label
+             * @default null
+             */
+            place_label: string | null;
+            /** Public Status */
+            public_status: string;
+            /**
+             * Reference Id
+             * @default null
+             */
+            reference_id: number | null;
+            /**
+             * Status
+             * @default null
+             */
+            status: string | null;
+        };
+        /** ManageEventDateList */
+        ManageEventDateList: {
+            /** Items */
+            items: components["schemas"]["ManageEventDate"][];
+            /** Truncated */
+            truncated: boolean;
+        };
         /** ManageEventListItem */
         ManageEventListItem: {
             /**
@@ -4584,6 +4667,11 @@ export interface components {
             internal_tags: string | null;
             /** Is Recurring */
             is_recurring: boolean;
+            /**
+             * Is Reference
+             * @default false
+             */
+            is_reference: boolean;
             /**
              * Last Modified At
              * @default null
@@ -4607,6 +4695,11 @@ export interface components {
              */
             number_of_references: number | null;
             /**
+             * Organization Name
+             * @default null
+             */
+            organization_name: string | null;
+            /**
              * Organizer Name
              * @default null
              */
@@ -4618,6 +4711,11 @@ export interface components {
             place_label: string | null;
             /** Public Status */
             public_status: string;
+            /**
+             * Reference Id
+             * @default null
+             */
+            reference_id: number | null;
             /**
              * Start
              * @default null
@@ -4636,10 +4734,14 @@ export interface components {
         };
         /** ManageEventListOptions */
         ManageEventListOptions: {
+            /** Can Read References */
+            can_read_references: boolean;
             /** Can Request Reference */
             can_request_reference: boolean;
             /** Can Write */
             can_write: boolean;
+            /** Can Write References */
+            can_write_references: boolean;
             /** Categories */
             categories: components["schemas"]["PlanningChoice"][];
             /**
@@ -10959,6 +11061,85 @@ export interface operations {
             };
         };
     };
+    bff_manage_list_event_dates: {
+        parameters: {
+            query: {
+                page?: number;
+                per_page?: number;
+                keyword?: string | null;
+                date_from: string;
+                date_to: string;
+                category_id?: number | null;
+                tag?: string | null;
+                internal_tag?: string | null;
+                organizer_id?: number | null;
+                event_place_id?: number | null;
+                postal_code?: string | null;
+                radius_coordinate?: string | null;
+                radius_distance?: number | null;
+                status?: number | null;
+                public_status?: number | null;
+                created_at_from?: string | null;
+                created_at_to?: string | null;
+                is_recurring?: ("0" | "1") | null;
+                sort?: "min_start" | "-last_modified_at" | "-created_at";
+                include_references?: boolean;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageEventDateList"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_lookup_event_organizers: {
         parameters: {
             query?: {
@@ -12084,6 +12265,7 @@ export interface operations {
                 created_at_to?: string | null;
                 is_recurring?: ("0" | "1") | null;
                 sort?: "min_start" | "-last_modified_at" | "-created_at";
+                include_references?: boolean;
             };
             header?: never;
             path: {

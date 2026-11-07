@@ -6,8 +6,6 @@ from project.application.queries import (
     GetSettingsQuery,
     ListAllEventCategoriesQuery,
     ListExternalCalendarEventsQuery,
-    PageRequest,
-    SearchEventDatesQuery,
 )
 from project.application.queries.event_search_criteria import EventSearchCriteria
 from project.application.query_bus import QueryBus
@@ -16,6 +14,7 @@ from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_status import EventStatus
 from project.presentation.bff.manage import bff_manage_bp
+from project.presentation.bff.manage.event_dates import collect_event_dates
 from project.presentation.bff.manage.schemas import (
     ExternalCalendarEvent,
     ExternalCalendarEventList,
@@ -36,7 +35,6 @@ from project.shared.dateutils import form_input_to_date
 from project.shared.utils import get_event_category_name
 
 MAX_DATES = 200
-PAGE_SIZE = 100
 
 
 def _external_calendars(raw) -> list:
@@ -155,27 +153,11 @@ def list_planning_event_dates(
     if not can_use_planning():
         raise UnauthorizedError()
 
-    criteria = _criteria(query)
-    hits = []
-    page_number = 1
-
-    while True:
-        page = query_bus.handle(
-            SearchEventDatesQuery(
-                criteria=criteria,
-                page=PageRequest(page=page_number, per_page=PAGE_SIZE),
-            )
-        )
-        hits.extend(page.items)
-
-        if not page.has_next or len(hits) >= MAX_DATES:
-            break
-
-        page_number += 1
+    hits, truncated = collect_event_dates(query_bus, _criteria(query), MAX_DATES)
 
     return PlanningEventDateList(
-        items=[_to_planning_date(h) for h in hits[:MAX_DATES]],
-        truncated=page.total > MAX_DATES,
+        items=[_to_planning_date(h) for h in hits],
+        truncated=truncated,
     )
 
 

@@ -393,11 +393,33 @@ def _event_filters(
     if criteria.status:
         filters.append(Event.status.in_(criteria.status))
 
-    filters.append(
-        Event.public_status.in_(
-            _public_statuses(criteria, can_read_private_events, can_read_planned_events)
-        )
+    statuses = _public_statuses(
+        criteria, can_read_private_events, can_read_planned_events
     )
+
+    if reference is not None and criteria.admin_unit_id:
+        # The private statuses are the organization's own: a referenced event of
+        # another organization that went back to draft (or planned) stays hidden.
+        foreign = [
+            status
+            for status in statuses
+            if status == EventPublicStatus.published
+            or (status == EventPublicStatus.planned and can_read_planned_events)
+        ]
+        filters.append(
+            or_(
+                and_(
+                    Event.admin_unit_id == criteria.admin_unit_id,
+                    Event.public_status.in_(statuses),
+                ),
+                and_(
+                    Event.admin_unit_id != criteria.admin_unit_id,
+                    Event.public_status.in_(foreign),
+                ),
+            )
+        )
+    else:
+        filters.append(Event.public_status.in_(statuses))
 
     if not can_read_private_events or not criteria.admin_unit_id:
         filters.append(AdminUnit.is_verified)
@@ -426,12 +448,16 @@ def _event_filters(
 
     filters.extend(_tag_filters(Event.tags, criteria.tags))
 
-    if (
-        can_read_private_events
-        and criteria.admin_unit_id
-        and not criteria.include_admin_unit_references
-    ):
-        filters.extend(_tag_filters(Event.internal_tags, criteria.internal_tags))
+    if can_read_private_events and criteria.admin_unit_id and criteria.internal_tags:
+        tag_filters = _tag_filters(Event.internal_tags, criteria.internal_tags)
+
+        if reference is None:
+            filters.extend(tag_filters)
+        else:
+            # Internal tags are the organization's own: references never match.
+            filters.append(
+                and_(Event.admin_unit_id == criteria.admin_unit_id, *tag_filters)
+            )
 
     if criteria.not_referenced_by_admin_unit_id:
         filters.append(Event.admin_unit_id != criteria.not_referenced_by_admin_unit_id)

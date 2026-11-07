@@ -157,19 +157,12 @@ def test_internal_tags_need_the_private_right_and_an_organization(read_repo, wor
     assert _names(_search(read_repo, private=True, **kwargs, tags=["live"])) == [
         "Full Event"
     ]
-    # Ignored without the right, and with the organization's references included.
+    # Ignored without the right.
     assert len(_search(read_repo, **kwargs).items) == 5
-    assert (
-        len(
-            _search(
-                read_repo,
-                private=True,
-                include_admin_unit_references=True,
-                **kwargs,
-            ).items
-        )
-        >= 2
-    )
+    # With the organization's references included it still only matches own events.
+    assert _names(
+        _search(read_repo, private=True, include_admin_unit_references=True, **kwargs)
+    ) == ["Full Event", "Cancelled Event"]
 
 
 def test_date_range_and_weekdays(read_repo, world):
@@ -234,6 +227,41 @@ def test_organization_references(read_repo, world):
     assert "Other Event" not in own
     assert included == PUBLIC
     assert only == ["Other Event"]
+
+
+@pytest.mark.parametrize("method", ["search_events", "search_event_dates"])
+def test_references_show_only_public_events_of_other_organizations(
+    read_repo, world, seeder, method
+):
+    start = create_berlin_date(2040, 3, 2, 12)
+    for name, kwargs in (
+        ("Other Draft", dict(draft=True)),
+        ("Other Planned", dict(planned=True)),
+    ):
+        event_id = seeder.create_event(world["b"], name=name, start=start, **kwargs)
+        seeder.create_reference(event_id, world["a"])
+
+    criteria = dict(
+        method=method, admin_unit_id=world["a"], include_admin_unit_references=True
+    )
+    private = _names(_search(read_repo, private=True, **criteria))
+    planner = _names(_search(read_repo, private=True, planned=True, **criteria))
+    asked = _names(
+        _search(
+            read_repo,
+            private=True,
+            public_status=[EventPublicStatus.draft, EventPublicStatus.planned],
+            **criteria,
+        )
+    )
+
+    # Own drafts and planned events, but only published references.
+    assert {"Draft Event", "Planned Event", "Other Event"} <= set(private)
+    assert "Other Draft" not in private and "Other Planned" not in private
+    # Planners see planned references, never drafts of other organizations.
+    assert "Other Planned" in planner and "Other Draft" not in planner
+    assert "Other Draft" not in asked and "Other Planned" not in asked
+    assert {"Draft Event", "Planned Event"} <= set(asked)
 
 
 def test_not_referenced_by(read_repo, world):

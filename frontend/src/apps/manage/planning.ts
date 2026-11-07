@@ -45,7 +45,8 @@ export function toExternalEvent(
   };
 }
 
-function localDate(d: Date): string {
+/** A date as `YYYY-MM-DD` in local time. */
+export function localDate(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
@@ -58,7 +59,7 @@ export function rangeFromDatesSet({ start, end }: { start: Date; end: Date }) {
 }
 
 /** The earliest start hour of the timed rows, or `null` when there are none. */
-export function earliestHour(rows: PlanningEventDate[]): number | null {
+export function earliestHour(rows: { allday: boolean; start: string }[]): number | null {
   const hours = rows.filter((r) => !r.allday).map((r) => new Date(r.start).getHours());
   return hours.length ? Math.min(...hours) : null;
 }

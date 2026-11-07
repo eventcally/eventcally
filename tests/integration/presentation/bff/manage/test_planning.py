@@ -204,10 +204,10 @@ def test_event_dates_postal_code(client, seeder, utils):
 
 
 def test_event_dates_truncated(client, seeder, utils, monkeypatch):
-    from project.presentation.bff.manage import planning
+    from project.presentation.bff.manage import event_dates, planning
 
     monkeypatch.setattr(planning, "MAX_DATES", 2)
-    monkeypatch.setattr(planning, "PAGE_SIZE", 1)
+    monkeypatch.setattr(event_dates, "PAGE_SIZE", 1)
     user_id, admin_unit_id = seeder.setup_base()
 
     for day in (3, 4, 5):
