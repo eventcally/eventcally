@@ -153,6 +153,27 @@ def test_event_date_search(
     assert response.json["items"][1]["event"]["public_status"] == "draft"
 
 
+def test_event_date_search_hides_referenced_drafts_of_other_organizations(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_api_access(user_access=False)
+    own_id = seeder.create_event(admin_unit_id, draft=True)
+    other_user_id = seeder.create_user("other@test.de")
+    other_id = seeder.create_admin_unit(other_user_id, "Other Crew")
+    referenced_id = seeder.create_event(other_id)
+    draft_id = seeder.create_event(other_id, draft=True)
+    seeder.create_reference(referenced_id, admin_unit_id)
+    seeder.create_reference(draft_id, admin_unit_id)
+    seeder.authorize_api_access(user_id, admin_unit_id)
+
+    url = utils.get_url("api_v1_organization_event_date_search", id=admin_unit_id)
+    response = utils.get_json(url)
+    utils.assert_response_ok(response)
+
+    ids = sorted(i["event"]["id"] for i in response.json["items"])
+    assert ids == sorted([own_id, referenced_id])
+
+
 @pytest.mark.parametrize("as_app_installation", [True, False])
 def test_event_search(
     client, seeder: Seeder, utils: UtilActions, as_app_installation: bool

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-06 15:26+0100\n"
+"POT-Creation-Date: 2026-11-06 16:03+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -35,7 +35,7 @@ msgstr "%(admin_unit_name)s hat dich eingeladen, eine Organisation zu erstellen.
 msgid "%(admin_unit_name)s is scheduled for deletion."
 msgstr "%(admin_unit_name)s ist zur Löschung vorgesehen."
 
-#: frontend/src/apps/manage/components/ManageEventCalendar.vue:138
+#: frontend/src/apps/manage/components/ManageEventCalendar.vue:143
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:48
 #: frontend/src/apps/manage/pages/PlanningPage.vue:218
 #: frontend/src/apps/public/components/EventDetailView.vue:69
@@ -82,7 +82,7 @@ msgstr "%(model_display_name)s erfolgreich erstellt"
 #: project/presentation/bff/manage/event_organizers.py:335
 #: project/presentation/bff/manage/event_places.py:320
 #: project/presentation/bff/manage/event_references.py:275
-#: project/presentation/bff/manage/events.py:415
+#: project/presentation/bff/manage/events.py:447
 #: project/presentation/bff/manage/member_invitations.py:220
 #: project/presentation/bff/manage/members.py:193
 #: project/presentation/bff/manage/oauth2_clients.py:263
@@ -428,9 +428,9 @@ msgstr "Verifiziert"
 msgid "Administrator"
 msgstr "Administrator:in"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:259
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:271
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:309
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:277
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:289
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:327
 #: frontend/src/shared/TriStateFilter.vue:17
 #: project/presentation/bff/manage/reference_requests.py:40
 #: project/presentation/bff/manage/verification_requests.py:71
@@ -654,7 +654,7 @@ msgstr ""
 
 #: frontend/src/apps/manage/pages/CustomWidgetEditPage.vue:55
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:45
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:220
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:236
 msgid "Calendar"
 msgstr "Kalender"
 
@@ -697,10 +697,10 @@ msgstr "Löschen abbrechen"
 msgid "Cards"
 msgstr "Karten"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:174
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:192
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:37
 #: frontend/src/apps/manage/pages/EventEditPage.vue:554
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:78
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:94
 msgid "Categories"
 msgstr "Kategorien"
 
@@ -869,7 +869,7 @@ msgstr "Client secret"
 
 #: frontend/src/apps/manage/components/CustomWidgetInstallModal.vue:24
 #: frontend/src/apps/manage/components/ExternalCalendarsModal.vue:52
-#: frontend/src/apps/manage/components/ManageEventDateModal.vue:96
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:136
 #: frontend/src/apps/manage/components/PlanningEventDetailsModal.vue:81
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:103
 #: frontend/src/apps/widget/pages/CalendarWidget.vue:172
@@ -988,7 +988,7 @@ msgstr "%(model_display_name)s erstellen"
 msgid "Create another event for %(admin_unit_name)s"
 msgstr "Erstelle eine weitere Veranstaltung für %(admin_unit_name)s"
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:186
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:202
 #: project/presentation/web/templates/_managebar.html:23
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
@@ -1027,7 +1027,7 @@ msgstr "Beziehung erstellen"
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:57
 #: frontend/src/apps/admin/pages/UsersPage.vue:35
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:101
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:280
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:298
 #: frontend/src/apps/manage/pages/AppInstallationPage.vue:108
 #: frontend/src/apps/manage/pages/AppInstallationsPage.vue:55
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:78
@@ -1097,7 +1097,7 @@ msgstr "Custom widgets"
 msgid "Daily"
 msgstr "Täglich"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:146
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:164
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:45
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:86
 msgid "Date"
@@ -1113,7 +1113,7 @@ msgstr "Termine (neu)"
 msgid "Dates (previously)"
 msgstr "Termine (bisher)"
 
-#: frontend/src/apps/manage/components/ManageEventCalendar.vue:40
+#: frontend/src/apps/manage/components/ManageEventCalendar.vue:45
 #: frontend/src/apps/manage/pages/PlanningPage.vue:49
 msgid "Day"
 msgstr "Tag"
@@ -1139,7 +1139,7 @@ msgstr "Standard"
 #: frontend/src/apps/admin/pages/UsersPage.vue:93
 #: frontend/src/apps/manage/components/CustomWidgetDeleteModal.vue:39
 #: frontend/src/apps/manage/components/EventDeleteForm.vue:76
-#: frontend/src/apps/manage/components/ManageEventDateModal.vue:80
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:119
 #: frontend/src/apps/manage/pages/AppInstallationPage.vue:84
 #: frontend/src/apps/manage/pages/AppInstallationPage.vue:133
 #: frontend/src/apps/manage/pages/AppInstallationsPage.vue:69
@@ -1155,7 +1155,7 @@ msgstr "Standard"
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:112
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:67
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:101
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:280
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:316
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:66
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:119
 #: frontend/src/apps/manage/pages/MembersPage.vue:71
@@ -1191,6 +1191,7 @@ msgstr "Löschen"
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:195
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:120
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:151
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:361
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:118
 #: frontend/src/apps/manage/pages/MembersPage.vue:127
 #: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:127
@@ -1242,8 +1243,11 @@ msgstr "Veranstalter löschen"
 msgid "Delete place"
 msgstr "Ort löschen"
 
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:103
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:121
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:152
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:308
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:362
 #: frontend/src/apps/public/components/EventDateCard.vue:128
 msgid "Delete reference"
 msgstr "Empfehlung löschen"
@@ -1323,6 +1327,7 @@ msgstr "Möchtest du das Widget wirklich löschen?"
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:198
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:122
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:154
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:364
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:121
 #: frontend/src/apps/manage/pages/MembersPage.vue:130
 #: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:130
@@ -1390,14 +1395,14 @@ msgstr "Doppelte Postleitzahl(en)"
 msgid "Duplicate tag(s)"
 msgstr "Doppelte Stichworte"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:165
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:183
 msgid "Earliest start first"
 msgstr "Frühester Beginn zuerst"
 
 #: frontend/src/apps/admin/components/SettingCard.vue:81
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:141
 #: frontend/src/apps/admin/pages/UsersPage.vue:90
-#: frontend/src/apps/manage/components/ManageEventDateModal.vue:77
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:111
 #: frontend/src/apps/manage/pages/AppPage.vue:111
 #: frontend/src/apps/manage/pages/AppsPage.vue:60
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:117
@@ -1405,7 +1410,7 @@ msgstr "Frühester Beginn zuerst"
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:106
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:66
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:95
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:277
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:313
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:60
 #: frontend/src/apps/manage/pages/MembersPage.vue:63
 #: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:72
@@ -1512,7 +1517,7 @@ msgstr ""
 msgid "Enter organization"
 msgstr "Organisation eingeben"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:210
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:228
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:148
 msgid "Enter organizer"
 msgstr "Veranstalter eingeben"
@@ -1597,7 +1602,7 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/manage/components/EventPlaceCreateModal.vue:81
 #: frontend/src/apps/manage/components/EventReferenceRatingModal.vue:50
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:59
-#: frontend/src/apps/manage/components/ManageEventCalendar.vue:62
+#: frontend/src/apps/manage/components/ManageEventCalendar.vue:67
 #: frontend/src/apps/manage/components/MemberRolesModal.vue:57
 #: frontend/src/apps/manage/components/RecurrenceRuleModal.vue:170
 #: frontend/src/apps/manage/components/VerificationRequestCreateModal.vue:46
@@ -1633,8 +1638,8 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:36
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:36
 #: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:46
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:100
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:114
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:116
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:130
 #: frontend/src/apps/manage/pages/MemberInvitationCreatePage.vue:38
 #: frontend/src/apps/manage/pages/MemberInvitationCreatePage.vue:76
 #: frontend/src/apps/manage/pages/MemberInvitationsPage.vue:31
@@ -1748,7 +1753,7 @@ msgstr "Fehler im Feld %s: %s"
 #: frontend/src/shared/customWidget.ts:152
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/bff/manage/event_forms.py:584
-#: project/presentation/bff/manage/events.py:416
+#: project/presentation/bff/manage/events.py:448
 #: project/presentation/web/views/manage_admin_unit/event/shells.py:20
 #: project/presentation/web/views/manage_admin_unit/event/shells.py:31
 #: project/presentation/web/views/manage_admin_unit/event/shells.py:42
@@ -1812,8 +1817,8 @@ msgid "Event date definitions"
 msgstr "Termin-Definitionen"
 
 #: frontend/src/apps/manage/pages/EventEditPage.vue:249
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:74
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:250
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:90
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:267
 #: project/infrastructure/babel_extract.py:1
 msgid "Event dates"
 msgstr "Termine"
@@ -2129,7 +2134,7 @@ msgstr "Führung"
 
 #: frontend/src/apps/manage/pages/EventDeletePage.vue:27
 #: frontend/src/apps/manage/pages/EventEditPage.vue:211
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:182
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:198
 #: frontend/src/apps/public/pages/OrganizationPage.vue:150
 #: frontend/src/apps/public/pages/OrganizerPage.vue:95
 #: project/infrastructure/babel_extract.py:1
@@ -2220,7 +2225,7 @@ msgstr "Fax"
 msgid "Features"
 msgstr "Features"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:120
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:122
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:35
 #: frontend/src/apps/manage/pages/PlanningPage.vue:229
 #: frontend/src/shared/customWidget.ts:201
@@ -2248,7 +2253,7 @@ msgstr "Filter"
 msgid "Find"
 msgstr "Finden"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:318
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:336
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:251
 msgid "Find events"
 msgstr "Veranstaltungen finden"
@@ -2265,8 +2270,8 @@ msgstr "Schriftart"
 msgid "Font family"
 msgstr "Schriftart"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:149
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:283
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:167
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:301
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:89
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:183
 #: frontend/src/apps/widget/pages/EventDatesWidget.vue:153
@@ -2494,9 +2499,14 @@ msgstr "Bilder"
 msgid "Include"
 msgstr "Einschließen"
 
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:157
+msgid "Include references"
+msgstr "Empfehlungen einbeziehen"
+
 #: frontend/src/apps/manage/components/EventReferenceRatingModal.vue:63
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:41
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:52
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:361
 #: project/presentation/bff/manage/event_references.py:122
 msgid "Incoming reference"
 msgstr "Eingehende Empfehlung"
@@ -2554,9 +2564,9 @@ msgstr ""
 msgid "Installation"
 msgstr "Installation"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:191
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:209
 #: frontend/src/apps/manage/pages/EventEditPage.vue:591
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:80
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:96
 #: frontend/src/apps/public/components/EventDetailView.vue:145
 msgid "Internal tags"
 msgstr "Interne Stichworte"
@@ -2622,7 +2632,7 @@ msgstr ""
 
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:105
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:106
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:133
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:135
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:147
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:144
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:159
@@ -2659,13 +2669,13 @@ msgstr "Zuletzt erstellt zuerst"
 
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:100
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:97
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:86
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:254
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:102
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:271
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:121
 msgid "Last modified at"
 msgstr "Zuletzt geändert am"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:166
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:184
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:154
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:151
 #: frontend/src/apps/manage/pages/OrganizationRelationsPage.vue:177
@@ -2759,7 +2769,7 @@ msgstr "Linkfarbe"
 msgid "Link copied"
 msgstr "Link kopiert"
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:210
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:226
 msgid "List"
 msgstr "Liste"
 
@@ -2848,7 +2858,7 @@ msgid "Mobile"
 msgstr "Mobil"
 
 #: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:41
-#: frontend/src/apps/manage/components/ManageEventCalendar.vue:42
+#: frontend/src/apps/manage/components/ManageEventCalendar.vue:47
 #: frontend/src/apps/manage/pages/PlanningPage.vue:51
 msgid "Month"
 msgstr "Monat"
@@ -2857,14 +2867,14 @@ msgstr "Monat"
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: frontend/src/apps/manage/components/ManageEventDateModal.vue:93
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:133
 #: frontend/src/apps/manage/components/RecurrenceRuleModal.vue:430
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:289
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:326
 #: frontend/src/apps/public/components/EventMenu.vue:42
 msgid "More"
 msgstr "Mehr"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:327
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:345
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:260
 msgid "More filters"
 msgstr "Weitere Filter"
@@ -2885,7 +2895,7 @@ msgstr "Weitere Filter"
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:92
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:150
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:202
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:75
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:91
 #: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:111
 #: frontend/src/apps/manage/pages/OrganizationApiKeyPage.vue:132
 #: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:81
@@ -2957,7 +2967,7 @@ msgstr "Neue Empfehlungsanfrage"
 msgid "New verification request"
 msgstr "Neue Verifizierungsanfrage"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:167
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:185
 msgid "Newest first"
 msgstr "Neuste zuerst"
 
@@ -2972,7 +2982,7 @@ msgstr "Newsletter"
 msgid "Newsletter from %(site_name)s"
 msgstr "Newsletter von %(site_name)s"
 
-#: frontend/src/apps/manage/components/ManageEventCalendar.vue:128
+#: frontend/src/apps/manage/components/ManageEventCalendar.vue:133
 #: frontend/src/apps/manage/pages/PlanningPage.vue:208
 #: frontend/src/apps/widget/pages/CalendarWidget.vue:146
 msgid "Next"
@@ -2980,13 +2990,13 @@ msgstr "Weiter"
 
 #: frontend/src/apps/admin/pages/EmailPage.vue:29
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:311
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:329
 #: frontend/src/shared/TriStateFilter.vue:25
 #: project/presentation/web/templates/_macros.html:149
 msgid "No"
 msgstr "Nein"
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:243
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:260
 #: frontend/src/apps/public/pages/EventDatesPage.vue:220
 msgid "No events found"
 msgstr "Keine Veranstaltungen gefunden"
@@ -3331,11 +3341,11 @@ msgstr ""
 " sich in einer geschlossenen Test-Phase. Bei Interesse kannst du uns "
 "kontaktieren."
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:204
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:222
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:186
 #: frontend/src/apps/manage/pages/EventEditPage.vue:305
 #: frontend/src/apps/manage/pages/EventEditPage.vue:308
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:76
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:92
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:140
 #: frontend/src/apps/public/components/EventDetailView.vue:218
 #: project/presentation/web/ical.py:37
@@ -3470,20 +3480,20 @@ msgstr "Telefon"
 #: frontend/src/apps/manage/pages/EventEditPage.vue:414
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:95
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:178
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:83
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:251
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:304
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:99
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:268
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:345
 msgid "Photo"
 msgstr "Foto"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:217
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:223
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:235
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:241
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:152
 #: frontend/src/apps/manage/pages/EventEditPage.vue:368
 #: frontend/src/apps/manage/pages/EventEditPage.vue:371
 #: frontend/src/apps/manage/pages/EventPlaceEditPage.vue:46
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:74
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:77
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:93
 #: frontend/src/apps/public/components/EventDetailView.vue:178
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/bff/manage/event_places.py:191
@@ -3554,7 +3564,7 @@ msgstr ""
 "Bitte auswählen, wenn die Veranstaltung in externen, z.B. überregionalen "
 "Veranstaltungskalendern angezeigt werden soll."
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:230
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:248
 #: frontend/src/apps/manage/components/PlanningFilterModal.vue:55
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:154
 #: frontend/src/shared/LocationFields.vue:64
@@ -3570,7 +3580,7 @@ msgstr "Postleitzahl entfernt"
 msgid "Preview"
 msgstr "Vorschau"
 
-#: frontend/src/apps/manage/components/ManageEventCalendar.vue:119
+#: frontend/src/apps/manage/components/ManageEventCalendar.vue:124
 #: frontend/src/apps/manage/pages/PlanningPage.vue:199
 #: frontend/src/apps/widget/pages/CalendarWidget.vue:137
 msgid "Previous"
@@ -3611,9 +3621,9 @@ msgstr "Datenschutz"
 msgid "Profile"
 msgstr "Profil"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:268
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:286
 #: frontend/src/apps/manage/pages/EventEditPage.vue:282
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:82
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:98
 msgid "Public status"
 msgstr "Öffentlicher Status"
 
@@ -3621,7 +3631,7 @@ msgstr "Öffentlicher Status"
 msgid "Publish event"
 msgstr "Veranstaltung veröffentlichen"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:243
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:261
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:167
 msgid "Radius"
 msgstr "Umkreis"
@@ -3651,11 +3661,11 @@ msgid "Recipient"
 msgstr "Empfänger"
 
 #: frontend/src/apps/manage/components/EventDateDefinitionFields.vue:156
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:306
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:324
 #: frontend/src/apps/manage/components/RecurrenceRuleModal.vue:210
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:73
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:249
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:262
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:89
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:266
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:279
 #: project/presentation/web/templates/_macros.html:135
 #: project/presentation/web/templates/_macros.html:160
 #: project/templates/email/referenced_event_changed_notice.txt:5
@@ -3670,6 +3680,11 @@ msgstr "Serientermin"
 msgid "Redirect URIs"
 msgstr "Redirect URIs"
 
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:67
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:329
+msgid "Reference"
+msgstr "Empfehlung"
+
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:45
 #: frontend/src/apps/public/components/EventDateCard.vue:128
 #: frontend/src/apps/public/components/EventDetailView.vue:294
@@ -3682,6 +3697,11 @@ msgstr "Veranstaltung empfehlen"
 #, python-format
 msgid "Reference event \"%(name)s\""
 msgstr "Veranstaltung \"%(name)s\" empfehlen"
+
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:68
+#, python-format
+msgid "Reference of %(name)s"
+msgstr "Empfehlung von %(name)s"
 
 #: project/domain/models/aggregates/event_reference_request_aggregate.py:77
 msgid "Reference request already verified."
@@ -3698,8 +3718,8 @@ msgstr ""
 " hat."
 
 #: frontend/src/apps/manage/pages/EventEditPage.vue:667
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:85
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:253
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:101
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:270
 #: frontend/src/apps/public/components/EventDetailView.vue:301
 msgid "Reference requests"
 msgstr "Empfehlungsanfragen"
@@ -3730,8 +3750,8 @@ msgstr "Empfohlen von"
 msgid "Referenced event changed"
 msgstr "Empfohlene Veranstaltung wurde geändert"
 
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:84
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:252
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:100
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:269
 #: project/presentation/web/templates/_managebar.html:28
 msgid "References"
 msgstr "Empfehlungen"
@@ -3837,8 +3857,8 @@ msgid "Request deletion"
 msgstr "Löschung beantragen"
 
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:90
-#: frontend/src/apps/manage/components/ManageEventDateModal.vue:87
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:286
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:126
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:322
 #: frontend/src/apps/manage/pages/OutgoingEventReferencesPage.vue:39
 #: frontend/src/apps/public/components/EventDetailView.vue:319
 #: frontend/src/apps/public/components/EventMenu.vue:36
@@ -3870,7 +3890,7 @@ msgstr "Verifizierung für Organisation \"%(name)s\" anfragen"
 
 #: frontend/src/apps/admin/components/ResetTosModal.vue:43
 #: frontend/src/apps/admin/pages/SettingsPage.vue:92
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:330
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:348
 #: frontend/src/shared/AppTypeahead.vue:148
 #: frontend/src/shared/ListFilters.vue:36
 #: frontend/src/shared/LocationFilter.vue:142
@@ -4117,7 +4137,7 @@ msgstr "Veranstaltungen anzeigen"
 msgid "Show unreferenced events only"
 msgstr "Nur nicht empfohlene Veranstaltungen anzeigen"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:162
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:180
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:151
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:148
 #: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:120
@@ -4132,7 +4152,7 @@ msgid "Standard"
 msgstr "Standard"
 
 #: frontend/src/apps/manage/components/EventDateDefinitionFields.vue:57
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:72
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:88
 msgid "Start"
 msgstr "Beginn"
 
@@ -4148,11 +4168,11 @@ msgstr "Startseite"
 msgid "State"
 msgstr "Bundesland"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:256
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:274
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:52
 #: frontend/src/apps/manage/pages/EventEditPage.vue:279
 #: frontend/src/apps/manage/pages/EventEditPage.vue:294
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:81
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:97
 #: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:90
 #: frontend/src/apps/public/components/EventDetailView.vue:87
 #: frontend/src/apps/user/pages/OAuth2TokensPage.vue:35
@@ -4190,10 +4210,10 @@ msgstr "Tablet"
 msgid "Tag removed"
 msgstr "Stichwort entfernt"
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:184
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:202
 #: frontend/src/apps/manage/components/ReviewEventCards.vue:96
 #: frontend/src/apps/manage/pages/EventEditPage.vue:568
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:79
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:95
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:120
 #: frontend/src/apps/public/components/EventDetailView.vue:114
 msgid "Tags"
@@ -4257,7 +4277,7 @@ msgstr ""
 "Dein Account wird nicht sofort gelöscht. Nach einer Frist wird dein "
 "Account gelöscht. Bis dahin kann die Löschung abgebrochen werden."
 
-#: frontend/src/apps/manage/components/ManageEventDateModal.vue:66
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:78
 msgid "The actions apply to the whole event with all its dates."
 msgstr "Die Aktionen gelten für die ganze Veranstaltung mit allen Terminen."
 
@@ -4319,7 +4339,7 @@ msgstr "Das maximale Alter, das die Teilnehmer haben sollten."
 msgid "The maximum number of API keys has been reached."
 msgstr "Die maximale Anzahl an API-Schlüsseln wurde erreicht."
 
-#: frontend/src/apps/manage/components/ManageEventCalendar.vue:101
+#: frontend/src/apps/manage/components/ManageEventCalendar.vue:106
 #: frontend/src/apps/manage/pages/PlanningPage.vue:178
 msgid ""
 "The maximum number of dates was loaded. Shorten the time period or refine"
@@ -4476,7 +4496,7 @@ msgstr "Zeitstempel"
 msgid "To"
 msgstr "Bis"
 
-#: frontend/src/apps/manage/components/ManageEventCalendar.vue:113
+#: frontend/src/apps/manage/components/ManageEventCalendar.vue:118
 #: frontend/src/apps/manage/pages/PlanningPage.vue:193
 msgid "Today"
 msgstr "Heute"
@@ -4658,14 +4678,14 @@ msgstr "Empfehlungsanfragen automatisch verifizieren"
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:155
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:136
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:108
-#: frontend/src/apps/manage/components/ManageEventDateModal.vue:71
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:83
 #: frontend/src/apps/manage/components/PlanningEventDetailsModal.vue:78
 #: frontend/src/apps/manage/pages/AppInstallationsPage.vue:63
 #: frontend/src/apps/manage/pages/AppsPage.vue:56
 #: frontend/src/apps/manage/pages/EventOrganizersPage.vue:104
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:84
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:201
-#: frontend/src/apps/manage/pages/ManageEventsPage.vue:275
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:217
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:292
 #: frontend/src/apps/manage/pages/OrganizationApiKeysPage.vue:88
 #: frontend/src/apps/manage/pages/OrganizationOAuth2ClientsPage.vue:57
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:79
@@ -4697,6 +4717,11 @@ msgstr "Veranstaltungen anzeigen"
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/shells.py:47
 msgid "View organization"
 msgstr "Organisation anzeigen"
+
+#: frontend/src/apps/manage/components/ManageEventDateModal.vue:94
+#: frontend/src/apps/manage/pages/ManageEventsPage.vue:301
+msgid "View reference"
+msgstr "Empfehlung anzeigen"
 
 #: frontend/src/apps/manage/pages/EventEditPage.vue:419
 msgid ""
@@ -4753,7 +4778,7 @@ msgid "Webhooks"
 msgstr "Webhooks"
 
 #: frontend/src/apps/manage/components/CustomWidgetSettingsForm.vue:40
-#: frontend/src/apps/manage/components/ManageEventCalendar.vue:41
+#: frontend/src/apps/manage/components/ManageEventCalendar.vue:46
 #: frontend/src/apps/manage/pages/PlanningPage.vue:50
 msgid "Week"
 msgstr "Woche"
@@ -4824,7 +4849,7 @@ msgstr "Jährlich"
 
 #: frontend/src/apps/admin/pages/EmailPage.vue:29
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:128
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:310
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:328
 #: frontend/src/shared/TriStateFilter.vue:21
 #: project/presentation/web/templates/_macros.html:149
 msgid "Yes"
@@ -4997,8 +5022,8 @@ msgstr "dritten"
 msgid "this is a message from %(site_name)s."
 msgstr "das ist eine Nachricht von %(site_name)s."
 
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:155
-#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:294
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:173
+#: frontend/src/apps/manage/components/ManageEventSearchForm.vue:312
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:95
 #: frontend/src/apps/public/components/EventDateSearchForm.vue:194
 #: frontend/src/apps/widget/pages/EventDatesWidget.vue:159

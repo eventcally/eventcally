@@ -2,6 +2,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { createBootstrap } from "bootstrap-vue-next";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createI18n } from "vue-i18n";
+import { createMemoryHistory, createRouter } from "vue-router";
 import type { ManageEventDate } from "../manageEventCalendar";
 
 vi.mock("@/shared/boot", () => ({ boot: { locale: "en", docsUrl: null } }));
@@ -16,6 +17,8 @@ const options = {
   distances: [],
   can_write: true,
   can_request_reference: true,
+  can_read_references: true,
+  can_write_references: true,
 };
 
 function row(over: Partial<ManageEventDate["event"]> = {}): ManageEventDate {
@@ -32,6 +35,9 @@ function row(over: Partial<ManageEventDate["event"]> = {}): ManageEventDate {
       public_status: "draft",
       organizer_name: "Jam Crew",
       place_label: "Rathaus 38640 Goslar",
+      is_reference: false,
+      reference_id: null,
+      organization_name: null,
       ...over,
     },
   };
@@ -42,7 +48,24 @@ async function mountModal(value: ManageEventDate, opts = {}) {
     props: { row: value, organizationId: 3, options: { ...options, ...opts }, modelValue: true },
     attachTo: document.body,
     global: {
-      plugins: [createBootstrap(), createI18n({ legacy: false, locale: "en", messages: { en: {} } })],
+      plugins: [
+        createBootstrap(),
+        createI18n({
+          legacy: false,
+          locale: "en",
+          messages: { en: { "Reference of %(name)s": "Reference of {name}" } },
+        }),
+        createRouter({
+          history: createMemoryHistory(),
+          routes: [
+            {
+              path: "/manage/admin_unit/:organizationId/incoming_event_reference/:id",
+              name: "incoming-event-reference",
+              component: { template: "<div />" },
+            },
+          ],
+        }),
+      ],
     },
   });
   await flushPromises();
@@ -98,5 +121,32 @@ describe("ManageEventDateModal", () => {
 
     expect(wrapper.emitted("delete")).toEqual([[11]]);
     expect(wrapper.emitted("update:modelValue")).toEqual([[false]]);
+  });
+
+  it("offers the reference actions for a referenced event", async () => {
+    const wrapper = await mountModal(
+      row({ is_reference: true, reference_id: 9, organization_name: "Andere Crew" }),
+    );
+
+    expect(find("reference")!.textContent).toContain("Reference");
+    expect(find("reference")!.textContent).toContain("Andere Crew");
+    expect(find("view-reference")!.getAttribute("href")).toBe(
+      "/manage/admin_unit/3/incoming_event_reference/9",
+    );
+    expect(find("edit")).toBeNull();
+    expect(find("delete")).toBeNull();
+    expect(find("request-reference")).toBeNull();
+
+    find("delete-reference")!.click();
+    await flushPromises();
+    expect(wrapper.emitted("deleteReference")).toEqual([[{ referenceId: 9, name: "Jam" }]]);
+    expect(wrapper.emitted("update:modelValue")).toEqual([[false]]);
+  });
+
+  it("hides deleting a reference without the write permission", async () => {
+    await mountModal(row({ is_reference: true, reference_id: 9 }), { can_write_references: false });
+
+    expect(find("view-reference")).not.toBeNull();
+    expect(find("delete-reference")).toBeNull();
   });
 });

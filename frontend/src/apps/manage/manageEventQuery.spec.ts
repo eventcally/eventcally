@@ -39,9 +39,11 @@ describe("manageEventQuery", () => {
       is_recurring: "1" as const,
       sort: "-created_at" as const,
       page: 2,
+      include_references: true,
     };
 
     const query = toRouteQuery(filter, defaults) as Record<string, string>;
+    expect(query.include_references).toBe("1");
 
     expect(query.keyword).toBe("Jam");
     expect(fromRouteQuery(query, defaults)).toEqual({ ...filter, keyword: "Jam" });
@@ -187,5 +189,15 @@ describe("manageEventQuery", () => {
     });
     expect("page" in params).toBe(false);
     expect("sort" in params).toBe(false);
+  });
+
+  it("sends include_references only when set", () => {
+    expect(toBffParams(emptyFilter(defaults)).include_references).toBeUndefined();
+    expect(
+      toBffParams({ ...emptyFilter(defaults), include_references: true }).include_references,
+    ).toBe(true);
+    expect(fromRouteQuery({ include_references: "yes" }, defaults).include_references).toBe(
+      false,
+    );
   });
 });

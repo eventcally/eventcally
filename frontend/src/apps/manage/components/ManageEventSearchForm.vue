@@ -38,7 +38,9 @@ function isActive(filter: ManageEventFilter): boolean {
         filter.date_from !== props.options.default_date_from ||
         filter.sort !== "min_start",
     );
-  return Boolean(hasExtendedFilter(filter) || filter.keyword || listOnly);
+  return Boolean(
+    hasExtendedFilter(filter) || filter.keyword || filter.include_references || listOnly,
+  );
 }
 
 const open = ref(isActive(props.filter));
@@ -139,6 +141,22 @@ function reset() {
           class="form-control"
           maxlength="255"
         />
+      </div>
+    </div>
+
+    <div v-if="options.can_read_references" class="row g-2 mb-3">
+      <div class="col-sm-10 offset-sm-2">
+        <div class="form-check">
+          <input
+            id="include_references"
+            v-model="draft.include_references"
+            type="checkbox"
+            class="form-check-input"
+          />
+          <label class="form-check-label" for="include_references">{{
+            t("Include references")
+          }}</label>
+        </div>
       </div>
     </div>
 

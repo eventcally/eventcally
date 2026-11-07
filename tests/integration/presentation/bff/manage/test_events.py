@@ -471,6 +471,103 @@ def test_dates_invalid_params_are_422(client, seeder, utils, params):
     assert utils.get_json(url).status_code == 422
 
 
+# references
+
+
+def _referenced_world(seeder):
+    """Own event + a published, a draft and an internal-tagged foreign event that
+    the organization references."""
+    _, admin_unit_id = seeder.setup_base()
+    seeder.create_event(admin_unit_id, name="Own", start=FUTURE, internal_tags="geheim")
+    other_id = _foreign_admin_unit(seeder)
+    seeder.verify_admin_unit(other_id)
+    referenced_id = seeder.create_event(
+        other_id, name="Referenced", start=FUTURE, internal_tags="geheim"
+    )
+    reference_id = seeder.create_reference(referenced_id, admin_unit_id)
+    # Another organization's request for the referenced event: its count stays hidden.
+    seeder.create_reference_request(referenced_id, other_id)
+    draft_id = seeder.create_event(
+        other_id, name="Other draft", start=FUTURE, draft=True
+    )
+    seeder.create_reference(draft_id, admin_unit_id)
+    return admin_unit_id, reference_id
+
+
+def test_list_includes_references_on_request(client, seeder, utils):
+    admin_unit_id, reference_id = _referenced_world(seeder)
+
+    assert _names(_list(utils, admin_unit_id)) == ["Own"]
+
+    response = _list(utils, admin_unit_id, include_references="true")
+
+    assert sorted(_names(response)) == ["Own", "Referenced"]
+    items = {i["name"]: i for i in response.json["items"]}
+    own, referenced = items["Own"], items["Referenced"]
+    assert own["is_reference"] is False
+    assert own["reference_id"] is None
+    assert own["organization_name"] is None
+    assert own["internal_tags"] == "geheim"
+    assert own["number_of_references"] == 0
+    assert referenced["is_reference"] is True
+    assert referenced["reference_id"] == reference_id
+    assert referenced["organization_name"] == "Andere Crew"
+    assert referenced["internal_tags"] is None
+    assert referenced["number_of_references"] is None
+    assert referenced["number_of_reference_requests"] is None
+
+
+def test_dates_include_references_on_request(client, seeder, utils):
+    admin_unit_id, reference_id = _referenced_world(seeder)
+
+    assert _date_names(_dates(utils, admin_unit_id)) == ["Own"]
+
+    response = _dates(utils, admin_unit_id, include_references="true")
+
+    assert sorted(_date_names(response)) == ["Own", "Referenced"]
+    events = {i["event"]["name"]: i["event"] for i in response.json["items"]}
+    assert events["Own"]["is_reference"] is False
+    assert events["Referenced"]["is_reference"] is True
+    assert events["Referenced"]["reference_id"] == reference_id
+    assert events["Referenced"]["organization_name"] == "Andere Crew"
+
+
+def test_internal_tag_with_references_matches_own_events(client, seeder, utils):
+    admin_unit_id, _ = _referenced_world(seeder)
+
+    response = _list(
+        utils, admin_unit_id, include_references="1", internal_tag="geheim"
+    )
+
+    assert _names(response) == ["Own"]
+
+
+def test_empty_include_references_is_off(client, seeder, utils):
+    admin_unit_id, _ = _referenced_world(seeder)
+
+    assert _names(_list(utils, admin_unit_id, include_references="")) == ["Own"]
+
+
+def test_references_need_the_reference_permission(client, seeder, utils, mocker):
+    from project.presentation.bff.manage import events
+
+    admin_unit_id, _ = _referenced_world(seeder)
+    has_access = events.has_access
+    mocker.patch.object(
+        events,
+        "has_access",
+        side_effect=lambda obj, permission: (
+            not permission.startswith("incoming_event_references:")
+            and has_access(obj, permission)
+        ),
+    )
+
+    assert _names(_list(utils, admin_unit_id, include_references="1")) == ["Own"]
+    options = utils.get_json_ok(OPTIONS_URL.format(admin_unit_id)).json
+    assert options["can_read_references"] is False
+    assert options["can_write_references"] is False
+
+
 # options
 
 
@@ -487,6 +584,8 @@ def test_options(client, seeder, utils):
     assert options["distances"]
     assert options["can_write"] is True
     assert options["can_request_reference"] is True
+    assert options["can_read_references"] is True
+    assert options["can_write_references"] is True
     assert len(options["default_date_from"]) == 10
 
 

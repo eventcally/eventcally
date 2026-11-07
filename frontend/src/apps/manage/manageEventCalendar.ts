@@ -3,6 +3,12 @@ import type { components } from "@/api/schema";
 
 export type ManageEventDate = components["schemas"]["ManageEventDate"];
 
+/** A referenced event of another organization, to drop from this organization's calendar. */
+export interface ReferenceTarget {
+  referenceId: number;
+  name: string;
+}
+
 /** The badge variants of the event list and the date modal. */
 export const publicStatusVariant: Record<string, string> = {
   draft: "light",
@@ -41,7 +47,9 @@ export function toManageCalendarEvent(row: ManageEventDate): EventInput {
     end: row.end ?? undefined,
     allDay: row.allday,
     ...colors,
-    className: statusClass(row.event.status),
+    className: [statusClass(row.event.status), row.event.is_reference ? "ec-reference" : ""]
+      .filter(Boolean)
+      .join(" "),
     extendedProps: { row },
   };
 }

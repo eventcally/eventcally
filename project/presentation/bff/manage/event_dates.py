@@ -7,7 +7,10 @@ PAGE_SIZE = MAX_PER_PAGE
 
 
 def collect_event_dates(
-    query_bus: QueryBus, criteria: EventSearchCriteria, max_dates: int
+    query_bus: QueryBus,
+    criteria: EventSearchCriteria,
+    max_dates: int,
+    reference_admin_unit_id=None,
 ) -> tuple:
     """Up to `max_dates` event-date hits in search order and whether more exist."""
     hits = []
@@ -17,6 +20,7 @@ def collect_event_dates(
         page = query_bus.handle(
             SearchEventDatesQuery(
                 criteria=criteria,
+                reference_admin_unit_id=reference_admin_unit_id,
                 page=PageRequest(page=page_number, per_page=PAGE_SIZE),
             )
         )

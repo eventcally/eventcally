@@ -11,6 +11,7 @@ import {
   statusLabel,
   statusVariant,
   type ManageEventDate,
+  type ReferenceTarget,
 } from "../manageEventCalendar";
 
 type Options = components["schemas"]["ManageEventListOptions"];
@@ -20,7 +21,7 @@ const props = defineProps<{
   organizationId: number;
   options: Options;
 }>();
-const emit = defineEmits<{ delete: [eventId: number] }>();
+const emit = defineEmits<{ delete: [eventId: number]; deleteReference: [target: ReferenceTarget] }>();
 const visible = defineModel<boolean>({ default: false });
 
 const { t } = useI18n();
@@ -33,6 +34,13 @@ function askDelete() {
   if (!props.row) return;
   visible.value = false;
   emit("delete", props.row.event.id);
+}
+
+function askDeleteReference() {
+  const event = props.row?.event;
+  if (!event?.reference_id) return;
+  visible.value = false;
+  emit("deleteReference", { referenceId: event.reference_id, name: event.name });
 }
 </script>
 
@@ -55,6 +63,10 @@ function askDelete() {
           >{{ statusLabel(options.public_statuses, row.event.public_status) }}</span
         >
       </p>
+      <p v-if="row.event.is_reference" class="mb-2" data-test="reference">
+        <span class="badge text-bg-info me-1">{{ t("Reference") }}</span>
+        {{ t("Reference of %(name)s", { name: row.event.organization_name ?? "" }) }}
+      </p>
       <p v-if="row.event.organizer_name" class="mb-1">
         <i class="fa fa-fw me-2 fa-server"></i>{{ row.event.organizer_name }}
       </p>
@@ -70,22 +82,50 @@ function askDelete() {
         <a class="btn btn-outline-secondary" :href="publicPages.eventDate(row.id)" data-test="view">{{
           t("View")
         }}</a>
-        <a
-          class="btn btn-outline-secondary"
-          :href="manage.eventUpdate(organizationId, row.event.id)"
-          data-test="edit"
-          >{{ t("Edit") }}</a
-        >
-        <button type="button" class="btn btn-outline-danger" data-test="delete" @click="askDelete">
-          {{ t("Delete") }}
-        </button>
-        <a
-          v-if="options.can_request_reference"
-          class="btn btn-outline-secondary"
-          :href="manage.eventReferenceRequestCreate(organizationId, row.event.id)"
-          data-test="request-reference"
-          >{{ t("Request reference") }}</a
-        >
+        <template v-if="row.event.is_reference">
+          <RouterLink
+            v-if="row.event.reference_id"
+            class="btn btn-outline-secondary"
+            :to="{
+              name: 'incoming-event-reference',
+              params: { organizationId, id: row.event.reference_id },
+            }"
+            data-test="view-reference"
+            >{{ t("View reference") }}</RouterLink
+          >
+          <button
+            v-if="options.can_write_references && row.event.reference_id"
+            type="button"
+            class="btn btn-outline-danger"
+            data-test="delete-reference"
+            @click="askDeleteReference"
+          >
+            {{ t("Delete reference") }}
+          </button>
+        </template>
+        <template v-else>
+          <a
+            class="btn btn-outline-secondary"
+            :href="manage.eventUpdate(organizationId, row.event.id)"
+            data-test="edit"
+            >{{ t("Edit") }}</a
+          >
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            data-test="delete"
+            @click="askDelete"
+          >
+            {{ t("Delete") }}
+          </button>
+          <a
+            v-if="options.can_request_reference"
+            class="btn btn-outline-secondary"
+            :href="manage.eventReferenceRequestCreate(organizationId, row.event.id)"
+            data-test="request-reference"
+            >{{ t("Request reference") }}</a
+          >
+        </template>
         <a
           class="btn btn-outline-secondary"
           :href="publicPages.eventActions(row.event.id)"

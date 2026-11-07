@@ -4605,8 +4605,18 @@ export interface components {
             id: number;
             /** Is Recurring */
             is_recurring: boolean;
+            /**
+             * Is Reference
+             * @default false
+             */
+            is_reference: boolean;
             /** Name */
             name: string;
+            /**
+             * Organization Name
+             * @default null
+             */
+            organization_name: string | null;
             /**
              * Organizer Name
              * @default null
@@ -4619,6 +4629,11 @@ export interface components {
             place_label: string | null;
             /** Public Status */
             public_status: string;
+            /**
+             * Reference Id
+             * @default null
+             */
+            reference_id: number | null;
             /**
              * Status
              * @default null
@@ -4653,6 +4668,11 @@ export interface components {
             /** Is Recurring */
             is_recurring: boolean;
             /**
+             * Is Reference
+             * @default false
+             */
+            is_reference: boolean;
+            /**
              * Last Modified At
              * @default null
              */
@@ -4675,6 +4695,11 @@ export interface components {
              */
             number_of_references: number | null;
             /**
+             * Organization Name
+             * @default null
+             */
+            organization_name: string | null;
+            /**
              * Organizer Name
              * @default null
              */
@@ -4686,6 +4711,11 @@ export interface components {
             place_label: string | null;
             /** Public Status */
             public_status: string;
+            /**
+             * Reference Id
+             * @default null
+             */
+            reference_id: number | null;
             /**
              * Start
              * @default null
@@ -4704,10 +4734,14 @@ export interface components {
         };
         /** ManageEventListOptions */
         ManageEventListOptions: {
+            /** Can Read References */
+            can_read_references: boolean;
             /** Can Request Reference */
             can_request_reference: boolean;
             /** Can Write */
             can_write: boolean;
+            /** Can Write References */
+            can_write_references: boolean;
             /** Categories */
             categories: components["schemas"]["PlanningChoice"][];
             /**
@@ -11049,6 +11083,7 @@ export interface operations {
                 created_at_to?: string | null;
                 is_recurring?: ("0" | "1") | null;
                 sort?: "min_start" | "-last_modified_at" | "-created_at";
+                include_references?: boolean;
             };
             header?: never;
             path: {
@@ -12230,6 +12265,7 @@ export interface operations {
                 created_at_to?: string | null;
                 is_recurring?: ("0" | "1") | null;
                 sort?: "min_start" | "-last_modified_at" | "-created_at";
+                include_references?: boolean;
             };
             header?: never;
             path: {

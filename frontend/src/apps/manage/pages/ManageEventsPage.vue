@@ -16,15 +16,22 @@ import { api } from "@/shared/api";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
 import AppPager from "@/shared/AppPager.vue";
 import { boot } from "@/shared/boot";
+import ConfirmModal from "@/shared/ConfirmModal.vue";
 import { formatDate, formatStart } from "@/shared/format";
 import { manage, publicPages } from "@/shared/legacy";
 import { useNotify } from "@/shared/notify";
 import { takeFlash } from "@/shared/flash";
+import { useConfirmAction } from "@/shared/useConfirmAction";
 import EventDeleteModal from "../components/EventDeleteModal.vue";
 import ManageEventCalendar from "../components/ManageEventCalendar.vue";
 import type { CalendarView } from "../components/PlanningCalendar.vue";
 import ManageEventSearchForm from "../components/ManageEventSearchForm.vue";
-import { publicStatusVariant, statusLabel, statusVariant } from "../manageEventCalendar";
+import {
+  publicStatusVariant,
+  statusLabel,
+  statusVariant,
+  type ReferenceTarget,
+} from "../manageEventCalendar";
 import {
   type ManageEventFilter,
   type ManageEventView,
@@ -51,6 +58,15 @@ const error = ref<string | null>(null);
 const deleting = ref<number | null>(null);
 const showDelete = ref(false);
 const calendar = ref<InstanceType<typeof ManageEventCalendar> | null>(null);
+
+const deleteReference = useConfirmAction<ReferenceTarget>({
+  call: (target) =>
+    api.POST("/bff/manage/organizations/{id}/incoming-event-references/{reference_id}/delete", {
+      params: { path: { id: props.organizationId, reference_id: target.referenceId } },
+      body: { inline: true },
+    }),
+  onDone: () => reload(),
+});
 
 function askDelete(id: number) {
   deleting.value = id;
@@ -230,6 +246,7 @@ onMounted(async () => {
       :options="options"
       @position="onPosition"
       @delete="askDelete"
+      @delete-reference="deleteReference.open"
     />
 
     <template v-else>
@@ -273,21 +290,45 @@ onMounted(async () => {
                 {{ nameHead(item.name) }}<span class="text-nowrap">{{ nameTail(item.name) }}<i class="fa fa-caret-down ms-1"></i></span>
               </template>
               <BDropdownItem :href="publicPages.event(item.id)">{{ t("View") }}</BDropdownItem>
-              <BDropdownItem :href="manage.eventUpdate(organizationId, item.id)">
-                {{ t("Edit") }}
-              </BDropdownItem>
-              <BDropdownItem @click="askDelete(item.id)">
-                {{ t("Delete") }}
-              </BDropdownItem>
-              <BDropdownItem
-                v-if="options?.can_request_reference"
-                :href="manage.eventReferenceRequestCreate(organizationId, item.id)"
-              >
-                {{ t("Request reference") }}
-              </BDropdownItem>
+              <template v-if="item.is_reference && item.reference_id">
+                <BDropdownItem
+                  :to="{
+                    name: 'incoming-event-reference',
+                    params: { organizationId, id: item.reference_id },
+                  }"
+                  data-test="view-reference"
+                >
+                  {{ t("View reference") }}
+                </BDropdownItem>
+                <BDropdownItem
+                  v-if="options?.can_write_references"
+                  data-test="delete-reference"
+                  @click="deleteReference.open({ referenceId: item.reference_id, name: item.name })"
+                >
+                  {{ t("Delete reference") }}
+                </BDropdownItem>
+              </template>
+              <template v-else>
+                <BDropdownItem :href="manage.eventUpdate(organizationId, item.id)">
+                  {{ t("Edit") }}
+                </BDropdownItem>
+                <BDropdownItem @click="askDelete(item.id)">
+                  {{ t("Delete") }}
+                </BDropdownItem>
+                <BDropdownItem
+                  v-if="options?.can_request_reference"
+                  :href="manage.eventReferenceRequestCreate(organizationId, item.id)"
+                >
+                  {{ t("Request reference") }}
+                </BDropdownItem>
+              </template>
               <BDropdownDivider />
               <BDropdownItem :href="publicPages.eventActions(item.id)">{{ t("More") }}</BDropdownItem>
             </BDropdown>
+            <div v-if="item.is_reference" class="small" data-test="reference">
+              <span class="badge text-bg-info me-1">{{ t("Reference") }}</span>
+              <span class="text-body-secondary">{{ item.organization_name }}</span>
+            </div>
           </template>
           <template #cell(category_names)="{ item }">{{ item.category_names.join(", ") }}</template>
           <template #cell(status)="{ item }">
@@ -314,6 +355,20 @@ onMounted(async () => {
         :total="page.total"
       />
     </template>
+
+    <ConfirmModal
+      v-model="deleteReference.show.value"
+      :title="t('Delete %(model_display_name)s', { model_display_name: t('Incoming reference') })"
+      :confirm-title="t('Delete reference')"
+      :instruction="
+        t('Do you want to delete \'%(object_title)s\'?', {
+          object_title: deleteReference.item.value?.name ?? '',
+        })
+      "
+      :busy="deleteReference.busy.value"
+      :error="deleteReference.error.value"
+      @submit="deleteReference.submit"
+    />
 
     <EventDeleteModal
       v-model="showDelete"

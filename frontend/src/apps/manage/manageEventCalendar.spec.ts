@@ -19,6 +19,9 @@ const row = (event: Partial<ManageEventDate["event"]> = {}): ManageEventDate => 
     public_status: "published",
     organizer_name: null,
     place_label: null,
+    is_reference: false,
+    reference_id: null,
+    organization_name: null,
     ...event,
   },
 });
@@ -51,6 +54,10 @@ describe("manageEventCalendar", () => {
 
     expect(toManageCalendarEvent(row({ public_status: "unknown" })).color).toBe("#007bff");
     expect(toManageCalendarEvent(row({ status: "postponed" })).className).toBe("ec-status-info");
+    expect(
+      toManageCalendarEvent(row({ status: "cancelled", is_reference: true })).className,
+    ).toBe("ec-cancelled ec-reference");
+    expect(toManageCalendarEvent(row({ is_reference: true })).className).toBe("ec-reference");
   });
 
   it("picks badge variants and labels", () => {

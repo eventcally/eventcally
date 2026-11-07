@@ -17,6 +17,8 @@ const options = {
   distances: [{ value: 500, label: "500 m" }],
   can_write: true,
   can_request_reference: true,
+  can_read_references: true,
+  can_write_references: true,
 };
 
 function mountForm(filter = {}, refs: Record<string, unknown> = {}) {
@@ -142,5 +144,30 @@ describe("ManageEventSearchForm", () => {
 
     await wrapper.find('[data-test="reset"]').trigger("click");
     expect(wrapper.emitted("search")![1]).toEqual([{ ...emptyFilter(defaults), ...position }]);
+  });
+
+  it("offers including references only with the permission", async () => {
+    expect(mountForm().find("#include_references").exists()).toBe(true);
+    const restricted = mount(ManageEventSearchForm, {
+      props: {
+        organizationId: 3,
+        filter: emptyFilter(defaults),
+        options: { ...options, can_read_references: false },
+        organizer: null,
+        eventPlace: null,
+      },
+      global: { plugins: [createI18n({ legacy: false, locale: "en", messages: { en: {} } })] },
+    });
+    expect(restricted.find("#include_references").exists()).toBe(false);
+  });
+
+  it("emits include_references and starts open when it is set", async () => {
+    expect(formVisible(mountForm({ include_references: true }))).toBe(true);
+
+    const wrapper = mountForm();
+    await wrapper.find("#include_references").setValue(true);
+    await wrapper.find('[data-test="form"]').trigger("submit");
+
+    expect(wrapper.emitted("search")![0][0]).toMatchObject({ include_references: true });
   });
 });

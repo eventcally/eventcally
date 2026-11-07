@@ -4,7 +4,11 @@ import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
-import { toManageCalendarEvent, type ManageEventDate } from "../manageEventCalendar";
+import {
+  toManageCalendarEvent,
+  type ManageEventDate,
+  type ReferenceTarget,
+} from "../manageEventCalendar";
 import { type ManageEventFilter, toBffDateParams } from "../manageEventQuery";
 import { earliestHour } from "../planning";
 import ManageEventDateModal from "./ManageEventDateModal.vue";
@@ -20,6 +24,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   position: [position: { view: CalendarView; date: string }];
   delete: [eventId: number];
+  deleteReference: [target: ReferenceTarget];
 }>();
 
 const { t } = useI18n();
@@ -169,6 +174,7 @@ defineExpose({ reload: load });
       :organization-id="organizationId"
       :options="options"
       @delete="emit('delete', $event)"
+      @delete-reference="emit('deleteReference', $event)"
     />
   </div>
 </template>
@@ -181,5 +187,11 @@ defineExpose({ reload: load });
 
 .manage-event-calendar :deep(.ec-status-info) {
   font-style: italic;
+}
+
+/* A referenced event of another organization. */
+.manage-event-calendar :deep(.ec-reference) {
+  outline: 2px dashed currentColor;
+  outline-offset: -2px;
 }
 </style>

@@ -4533,9 +4533,26 @@
             "title": "Is Recurring",
             "type": "boolean"
           },
+          "is_reference": {
+            "default": false,
+            "title": "Is Reference",
+            "type": "boolean"
+          },
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "organization_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Organization Name"
           },
           "organizer_name": {
             "anyOf": [
@@ -4564,6 +4581,18 @@
           "public_status": {
             "title": "Public Status",
             "type": "string"
+          },
+          "reference_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reference Id"
           },
           "status": {
             "anyOf": [
@@ -4646,6 +4675,11 @@
             "title": "Is Recurring",
             "type": "boolean"
           },
+          "is_reference": {
+            "default": false,
+            "title": "Is Reference",
+            "type": "boolean"
+          },
           "last_modified_at": {
             "anyOf": [
               {
@@ -4699,6 +4733,18 @@
             "default": null,
             "title": "Number Of References"
           },
+          "organization_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Organization Name"
+          },
           "organizer_name": {
             "anyOf": [
               {
@@ -4726,6 +4772,18 @@
           "public_status": {
             "title": "Public Status",
             "type": "string"
+          },
+          "reference_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reference Id"
           },
           "start": {
             "anyOf": [
@@ -4778,12 +4836,20 @@
       },
       "ManageEventListOptions": {
         "properties": {
+          "can_read_references": {
+            "title": "Can Read References",
+            "type": "boolean"
+          },
           "can_request_reference": {
             "title": "Can Request Reference",
             "type": "boolean"
           },
           "can_write": {
             "title": "Can Write",
+            "type": "boolean"
+          },
+          "can_write_references": {
+            "title": "Can Write References",
             "type": "boolean"
           },
           "categories": {
@@ -4827,7 +4893,9 @@
           "distances",
           "default_date_from",
           "can_write",
-          "can_request_reference"
+          "can_request_reference",
+          "can_read_references",
+          "can_write_references"
         ],
         "title": "ManageEventListOptions",
         "type": "object"
@@ -16432,6 +16500,15 @@
               ],
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "include_references",
+            "required": false,
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -18357,6 +18434,15 @@
                 "-created_at"
               ],
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_references",
+            "required": false,
+            "schema": {
+              "default": false,
+              "type": "boolean"
             }
           }
         ],

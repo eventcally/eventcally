@@ -51,6 +51,8 @@ const options = {
   distances: [],
   can_write: true,
   can_request_reference: true,
+  can_read_references: true,
+  can_write_references: true,
 };
 
 const item = (over = {}) => ({
@@ -71,6 +73,9 @@ const item = (over = {}) => ({
   number_of_references: 0,
   number_of_reference_requests: 0,
   last_modified_at: "2030-09-01T10:00:00+02:00",
+  is_reference: false,
+  reference_id: null,
+  organization_name: null,
   ...over,
 });
 
@@ -86,6 +91,11 @@ async function mountPage(url = "/manage/admin_unit/3/events") {
         path: "/manage/admin_unit/:organizationId/events",
         name: "manage-events",
         component: ManageEventsPage,
+      },
+      {
+        path: "/manage/admin_unit/:organizationId/incoming_event_reference/:id",
+        name: "incoming-event-reference",
+        component: { template: "<div />" },
       },
     ],
   });
@@ -130,6 +140,9 @@ const dateRow = (over = {}) => ({
     public_status: "published",
     organizer_name: null,
     place_label: null,
+    is_reference: false,
+    reference_id: null,
+    organization_name: null,
   },
   ...over,
 });
@@ -513,6 +526,140 @@ describe("ManageEventsPage", () => {
         body: { inline: true },
       });
       expect(success).toHaveBeenCalledWith("Event successfully deleted");
+      expect(dateCalls()).toHaveLength(2);
+      expect(listCalls()).toHaveLength(0);
+    });
+  });
+  describe("references", () => {
+    const referenceItem = () =>
+      item({
+        id: 12,
+        name: "Fremdes Fest",
+        is_reference: true,
+        reference_id: 9,
+        organization_name: "Andere Crew",
+        internal_tags: null,
+        number_of_references: null,
+        number_of_reference_requests: null,
+      });
+
+    // The menus are teleported to the body in row order.
+    const menu = (index: number) => document.querySelectorAll<HTMLElement>("ul.dropdown-menu")[index];
+
+    const openActions = async (wrapper: ReturnType<typeof mount>, index: number) => {
+      await wrapper.findAll(".event-actions button")[index].trigger("click");
+      await flushPromises();
+      return [...menu(index).querySelectorAll<HTMLElement>(".dropdown-item")].map((i) =>
+        i.textContent?.trim(),
+      );
+    };
+
+    beforeEach(() => {
+      GET.mockReset().mockImplementation((path: string) =>
+        Promise.resolve(
+          path.endsWith("/options")
+            ? { data: options }
+            : path.endsWith("/event-dates")
+              ? {
+                  data: {
+                    items: [
+                      dateRow({
+                        event: {
+                          ...dateRow().event,
+                          is_reference: true,
+                          reference_id: 9,
+                          organization_name: "Andere Crew",
+                        },
+                      }),
+                    ],
+                    truncated: false,
+                  },
+                }
+              : listPage([item(), referenceItem()]),
+        ),
+      );
+      POST.mockResolvedValue({
+        data: { message: "Incoming reference successfully deleted", redirect_url: "/x" },
+        response: { ok: true },
+      });
+    });
+
+    it("passes the filter and marks reference rows with their own actions", async () => {
+      const { wrapper } = await mountPage("/manage/admin_unit/3/events?include_references=1");
+
+      expect(listCalls()[0][1].params.query.include_references).toBe(true);
+      const marker = wrapper.find('[data-test="reference"]');
+      expect(marker.text()).toContain("Reference");
+      expect(marker.text()).toContain("Andere Crew");
+
+      expect(await openActions(wrapper, 1)).toEqual([
+        "View",
+        "View reference",
+        "Delete reference",
+        "More",
+      ]);
+      expect(
+        menu(1).querySelector('[data-test="view-reference"]')?.getAttribute("href"),
+      ).toBe("/manage/admin_unit/3/incoming_event_reference/9");
+    });
+
+    it("hides deleting a reference without the write permission", async () => {
+      GET.mockImplementation((path: string) =>
+        Promise.resolve(
+          path.endsWith("/options")
+            ? { data: { ...options, can_write_references: false } }
+            : listPage([referenceItem()]),
+        ),
+      );
+      const { wrapper } = await mountPage();
+
+      expect(await openActions(wrapper, 0)).toEqual(["View", "View reference", "More"]);
+    });
+
+    it("deletes a reference from its row after a confirmation and searches again", async () => {
+      const { wrapper } = await mountPage();
+      await openActions(wrapper, 1);
+      menu(1).querySelector<HTMLElement>('[data-test="delete-reference"]')!.click();
+      await flushPromises();
+
+      expect(document.body.textContent).toContain("Do you want to delete 'Fremdes Fest'?");
+      [...document.querySelectorAll<HTMLButtonElement>(".modal-footer .btn-danger")]
+        .find((b) => b.textContent?.trim() === "Delete reference")!
+        .click();
+      await flushPromises();
+
+      expect(POST).toHaveBeenCalledWith(
+        "/bff/manage/organizations/{id}/incoming-event-references/{reference_id}/delete",
+        { params: { path: { id: 3, reference_id: 9 } }, body: { inline: true } },
+      );
+      expect(success).toHaveBeenCalledWith("Incoming reference successfully deleted");
+      expect(listCalls()).toHaveLength(2);
+    });
+
+    it("deletes a reference from the calendar and reloads the dates", async () => {
+      const { wrapper } = await mountPage(
+        "/manage/admin_unit/3/events?view=calendar&calendar_date=2030-11-01&include_references=1",
+      );
+      await emitRange(wrapper);
+      expect(dateCalls()[0][1].params.query.include_references).toBe(true);
+      const events = wrapper.findComponent(CalendarStub).props("events") as { className: string }[];
+      expect(events[0].className).toBe("ec-reference");
+
+      wrapper.findComponent(CalendarStub).vm.$emit("select", {
+        row: (await GET("/x/event-dates")).data.items[0],
+      });
+      await flushPromises();
+      document.body.querySelector<HTMLElement>('[data-test="details"] [data-test="delete-reference"]')!.click();
+      await flushPromises();
+      [...document.querySelectorAll<HTMLButtonElement>(".modal-footer .btn-danger")]
+        .find((b) => b.textContent?.trim() === "Delete reference")!
+        .click();
+      await flushPromises();
+
+      expect(POST).toHaveBeenCalledWith(
+        "/bff/manage/organizations/{id}/incoming-event-references/{reference_id}/delete",
+        { params: { path: { id: 3, reference_id: 9 } }, body: { inline: true } },
+      );
       expect(dateCalls()).toHaveLength(2);
       expect(listCalls()).toHaveLength(0);
     });
