@@ -65,7 +65,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     # Exact pins: black/isort/flake8/import-linter must match .pre-commit-config.yaml (lint.yml runs these from uv.lock).
-    "pytest==9.1.1",
+    "pytest==9.2.0",
     "pytest-cov==4.1.0",
     "pytest-mock==3.17.0",
     "pytest-split==0.11.0",
