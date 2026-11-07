@@ -58,7 +58,7 @@ services:
       REDIS_PASSWORD: pass
 
   mailpit:
-    image: axllent/mailpit:v1.32
+    image: axllent/mailpit:v1.33
     # no compose healthcheck: the image has no curl and ships its own (mailpit readyz)
     ports:
      - "8026:8025"
