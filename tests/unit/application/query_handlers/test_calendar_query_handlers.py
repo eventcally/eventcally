@@ -46,6 +46,9 @@ class FakeRepo(AbstractCalendarReadRepository):
     def get(self, object_id):
         return CALENDARS.get(object_id)
 
+    def get_filter_infos(self, ids):  # pragma: no cover
+        return []
+
     def is_name_taken(self, admin_unit_id, name, exclude_id=None):
         return (admin_unit_id, name, exclude_id) == (7, "Taken", 3)
 

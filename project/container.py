@@ -16,6 +16,7 @@ from project.application.query_bus import QueryBus
 from project.application.services.actor_authorization_service import (
     ActorAuthorizationService,
 )
+from project.application.services.calendar_filter_service import CalendarFilterService
 from project.application.services.event_change_summary_service import (
     EventChangeSummaryService,
 )
@@ -452,6 +453,15 @@ class Cqrs(containers.DeclarativeContainer):
                 commands.DeleteCalendarCommand: providers.Factory(
                     command_handlers.DeleteCalendarHandler
                 ),
+                commands.AddEventToCalendarCommand: providers.Factory(
+                    command_handlers.AddEventToCalendarHandler
+                ),
+                commands.RemoveEventFromCalendarCommand: providers.Factory(
+                    command_handlers.RemoveEventFromCalendarHandler
+                ),
+                commands.SetEventCalendarsCommand: providers.Factory(
+                    command_handlers.SetEventCalendarsHandler
+                ),
                 commands.CreateEventPlaceCommand: providers.Factory(
                     command_handlers.CreateEventPlaceHandler
                 ),
@@ -871,6 +881,12 @@ class Cqrs(containers.DeclarativeContainer):
         authz=actor_authorization_service,
     )
 
+    calendar_filter_service = providers.Factory(
+        CalendarFilterService,
+        repo=read_repos.calendar_read_repo,
+        authz=actor_authorization_service,
+    )
+
     query_handler_factory = providers.Singleton(
         QueryHandlerFactory,
         factory_aggregate=providers.FactoryAggregate(
@@ -963,11 +979,13 @@ class Cqrs(containers.DeclarativeContainer):
                     query_handlers.SearchEventDatesHandler,
                     repo=read_repos.event_search_read_repo,
                     visibility=event_visibility_service,
+                    calendar_filter=calendar_filter_service,
                 ),
                 queries.SearchEventsQuery: providers.Factory(
                     query_handlers.SearchEventsHandler,
                     repo=read_repos.event_search_read_repo,
                     visibility=event_visibility_service,
+                    calendar_filter=calendar_filter_service,
                 ),
                 queries.ListEventsQuery: providers.Factory(
                     query_handlers.ListEventsHandler,
@@ -978,6 +996,7 @@ class Cqrs(containers.DeclarativeContainer):
                     query_handlers.ListAllEventsHandler,
                     repo=read_repos.event_search_read_repo,
                     visibility=event_visibility_service,
+                    calendar_filter=calendar_filter_service,
                 ),
                 queries.ListEventDatesQuery: providers.Factory(
                     query_handlers.ListEventDatesHandler,

@@ -38,3 +38,13 @@ class CalendarReadModel(BaseReadModel):
     private: bool = False
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+
+
+class CalendarFilterInfo(BaseReadModel):
+    """What the calendar search filter needs to decide who may filter by a calendar."""
+
+    model_config = ConfigDict(frozen=True)
+
+    id: ObjectId
+    admin_unit_id: ObjectId
+    private: bool

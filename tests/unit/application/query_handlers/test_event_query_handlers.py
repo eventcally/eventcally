@@ -41,6 +41,9 @@ from project.application.read_models.organization_ref_read_model import (
     OrganizationRefReadModel,
 )
 from project.application.read_models.page import Page
+from project.application.read_repositories.abstract_calendar_read_repository import (
+    AbstractCalendarReadRepository,
+)
 from project.application.read_repositories.abstract_event_detail_read_repository import (
     AbstractEventDetailReadRepository,
 )
@@ -50,8 +53,9 @@ from project.application.read_repositories.abstract_event_search_read_repository
 from project.application.services.actor_authorization_service import (
     ActorAuthorizationService,
 )
+from project.application.services.calendar_filter_service import CalendarFilterService
 from project.application.services.event_visibility_service import EventVisibilityService
-from project.domain.errors import UnauthorizedError
+from project.domain.errors import NotFoundError, UnauthorizedError
 from project.domain.models.entities.actor import Actor
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_reference_request_review_status import (
@@ -155,8 +159,62 @@ def _visibility(**kwargs):
     return EventVisibilityService(ActorAuthorizationService(FakeReader(**kwargs)))
 
 
+class _NoCalendars(AbstractCalendarReadRepository):
+    def organization_exists(self, admin_unit_id):
+        return True
+
+    def list(self, query, include_private):
+        return None
+
+    def get(self, object_id):
+        return None
+
+    def get_filter_infos(self, ids):
+        return []
+
+    def is_name_taken(self, admin_unit_id, name, exclude_id=None):
+        return False
+
+
+def _calendar_filter():
+    return CalendarFilterService(
+        _NoCalendars(), ActorAuthorizationService(FakeReader())
+    )
+
+
 OWNER = Actor(user_id=7)
 MEMBER_READER = dict(members=[(2, 7, "events:read")])
+
+
+class _Refusing:
+    def __init__(self):
+        self.calls = []
+
+    def ensure_can_filter(self, actor, calendar_ids):
+        self.calls.append(calendar_ids)
+        raise NotFoundError("Calendar not found")
+
+
+class TestSearchHandlersGuardCalendars:
+    @pytest.mark.parametrize(
+        "handler, query_type",
+        [
+            (SearchEventsHandler, queries.SearchEventsQuery),
+            (SearchEventDatesHandler, queries.SearchEventDatesQuery),
+            (ListAllEventsHandler, queries.ListAllEventsQuery),
+        ],
+    )
+    def test_calendar_filter_runs_before_the_repository(self, handler, query_type):
+        repo = FakeSearchRepo()
+        guard = _Refusing()
+        query = query_type(
+            criteria=queries.EventSearchCriteria(calendar_ids=[3]), actor=OWNER
+        )
+
+        with pytest.raises(NotFoundError):
+            handler(repo, _visibility(), guard).handle(query)
+
+        assert guard.calls == [[3]]
 
 
 class TestSearchHandlers:
@@ -166,7 +224,9 @@ class TestSearchHandlers:
             criteria=queries.EventSearchCriteria(admin_unit_id=2), actor=OWNER
         )
 
-        SearchEventsHandler(repo, _visibility(**MEMBER_READER)).handle(query)
+        SearchEventsHandler(
+            repo, _visibility(**MEMBER_READER), _calendar_filter()
+        ).handle(query)
 
         assert repo.calls[0][2:4] == (False, False)
 
@@ -177,7 +237,9 @@ class TestSearchHandlers:
             criteria=criteria, actor=OWNER, reference_admin_unit_id=2
         )
 
-        SearchEventsHandler(repo, _visibility(**MEMBER_READER)).handle(query)
+        SearchEventsHandler(
+            repo, _visibility(**MEMBER_READER), _calendar_filter()
+        ).handle(query)
 
         assert repo.calls[0][2:] == (True, False, 2)
 
@@ -186,13 +248,15 @@ class TestSearchHandlers:
 
         for actor in (None, Actor(user_id=9)):
             repo = FakeSearchRepo()
-            SearchEventsHandler(repo, _visibility(**MEMBER_READER)).handle(
-                queries.SearchEventsQuery(criteria=criteria, actor=actor)
-            )
+            SearchEventsHandler(
+                repo, _visibility(**MEMBER_READER), _calendar_filter()
+            ).handle(queries.SearchEventsQuery(criteria=criteria, actor=actor))
             assert repo.calls[0][2] is False
 
         repo = FakeSearchRepo()
-        SearchEventsHandler(repo, _visibility(**MEMBER_READER)).handle(
+        SearchEventsHandler(
+            repo, _visibility(**MEMBER_READER), _calendar_filter()
+        ).handle(
             queries.SearchEventsQuery(
                 criteria=queries.EventSearchCriteria(include_private=True),
                 actor=OWNER,
@@ -204,10 +268,10 @@ class TestSearchHandlers:
         repo = FakeSearchRepo()
         criteria = queries.EventSearchCriteria(include_planned=True)
 
-        SearchEventsHandler(repo, _visibility(verified_members=[7])).handle(
-            queries.SearchEventsQuery(criteria=criteria, actor=OWNER)
-        )
-        SearchEventsHandler(repo, _visibility()).handle(
+        SearchEventsHandler(
+            repo, _visibility(verified_members=[7]), _calendar_filter()
+        ).handle(queries.SearchEventsQuery(criteria=criteria, actor=OWNER))
+        SearchEventsHandler(repo, _visibility(), _calendar_filter()).handle(
             queries.SearchEventsQuery(criteria=criteria, actor=OWNER)
         )
 
@@ -215,15 +279,15 @@ class TestSearchHandlers:
 
     def test_internal_tags_stay_with_the_organizations_members(self):
         repo = FakeSearchRepo()
-        page = SearchEventsHandler(repo, _visibility(**MEMBER_READER)).handle(
-            queries.SearchEventsQuery(actor=OWNER)
-        )
+        page = SearchEventsHandler(
+            repo, _visibility(**MEMBER_READER), _calendar_filter()
+        ).handle(queries.SearchEventsQuery(actor=OWNER))
 
         assert [item.internal_tags for item in page.items] == ["secret", None]
 
     def test_event_date_hits_redact_the_event(self):
         repo = FakeSearchRepo()
-        page = SearchEventDatesHandler(repo, _visibility()).handle(
+        page = SearchEventDatesHandler(repo, _visibility(), _calendar_filter()).handle(
             queries.SearchEventDatesQuery(actor=OWNER)
         )
 
@@ -232,7 +296,7 @@ class TestSearchHandlers:
 
     def test_all_events_for_a_feed(self):
         repo = FakeSearchRepo()
-        events = ListAllEventsHandler(repo, _visibility()).handle(
+        events = ListAllEventsHandler(repo, _visibility(), _calendar_filter()).handle(
             queries.ListAllEventsQuery(actor=None)
         )
 

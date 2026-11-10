@@ -1,8 +1,9 @@
 import abc
-from typing import Optional
+from typing import List, Optional
 
 from project.application.queries.list_calendars_query import ListCalendarsQuery
 from project.application.read_models.calendar_read_models import (
+    CalendarFilterInfo,
     CalendarListItemReadModel,
     CalendarReadModel,
 )
@@ -25,6 +26,12 @@ class AbstractCalendarReadRepository(abc.ABC):
     def get(
         self, object_id: ObjectId
     ) -> Optional[CalendarReadModel]:  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_filter_infos(
+        self, ids: List[ObjectId]
+    ) -> List[CalendarFilterInfo]:  # pragma: no cover
         raise NotImplementedError
 
     @abc.abstractmethod

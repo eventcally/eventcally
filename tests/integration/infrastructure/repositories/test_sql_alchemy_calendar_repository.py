@@ -124,3 +124,26 @@ def test_deleting_calendar_event_and_organization_removes_entries(app, db, seede
         db.session.delete(db.session.get(AdminUnit, admin_unit_id))
         db.session.commit()
         assert CalendarEntry.query.count() == 0
+
+
+def test_entry_finders(app, db, seeder):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    other_user_id, other_admin_unit_id = seeder.setup_base(
+        email="other@test.de", name="Andere Crew", log_in=False
+    )
+    own_calendar = seeder.create_calendar(admin_unit_id, "Own")
+    foreign_calendar = seeder.create_calendar(other_admin_unit_id, "Foreign")
+    event_id = seeder.create_event(admin_unit_id)
+    seeder.create_calendar_entry(own_calendar, event_id)
+    seeder.create_calendar_entry(foreign_calendar, event_id)
+
+    with app.app_context():
+        repo = SqlAlchemyCalendarEntryRepository(db.session)
+
+        assert (
+            repo.get_by_calendar_and_event(own_calendar, event_id).event_id == event_id
+        )
+        assert repo.get_by_calendar_and_event(own_calendar, 4711) is None
+        own = repo.get_by_event_and_admin_unit(event_id, admin_unit_id)
+        assert [entry.calendar_id for entry in own] == [own_calendar]
+        assert repo.get_by_event_and_admin_unit(event_id, 4711) == []

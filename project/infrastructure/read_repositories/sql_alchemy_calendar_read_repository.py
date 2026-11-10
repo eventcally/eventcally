@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from sqlalchemy import exists, func, select
 from sqlalchemy.orm import joinedload, undefer_group
@@ -8,6 +8,7 @@ from project.application.queries.list_calendars_query import (
     ListCalendarsQuery,
 )
 from project.application.read_models.calendar_read_models import (
+    CalendarFilterInfo,
     CalendarListItemReadModel,
     CalendarReadModel,
 )
@@ -110,6 +111,20 @@ class SqlAlchemyCalendarReadRepository(AbstractCalendarReadRepository):
             created_at=calendar.created_at,
             updated_at=calendar.updated_at,
         )
+
+    def get_filter_infos(self, ids: List[ObjectId]) -> List[CalendarFilterInfo]:
+        rows = self.session.execute(
+            select(Calendar.id, Calendar.admin_unit_id, Calendar.private).where(
+                Calendar.id.in_(ids)
+            )
+        ).all()
+
+        return [
+            CalendarFilterInfo(
+                id=row.id, admin_unit_id=row.admin_unit_id, private=row.private
+            )
+            for row in rows
+        ]
 
     def is_name_taken(
         self,

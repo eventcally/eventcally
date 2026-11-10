@@ -1146,3 +1146,25 @@ class TestAbstractCalendarEntryRepository:
         repo = _stub(AbstractCalendarEntryRepository)
         assert repo.get(5) is None
         assert len(repo.seen) == 0
+
+
+class TestAbstractCalendarEntryRepositoryFinders:
+    def test_by_calendar_and_event_with_result_adds_to_seen(self):
+        agg = object()
+        repo = _stub(AbstractCalendarEntryRepository, _get_by_calendar_and_event=agg)
+        assert repo.get_by_calendar_and_event(1, 2) is agg
+        assert repo.calls == [("_get_by_calendar_and_event", (1, 2))]
+        assert agg in repo.seen
+
+    def test_by_calendar_and_event_none_does_not_add_to_seen(self):
+        repo = _stub(AbstractCalendarEntryRepository)
+        assert repo.get_by_calendar_and_event(1, 2) is None
+        assert len(repo.seen) == 0
+
+    def test_by_event_and_admin_unit_adds_all_to_seen(self):
+        entries = [object(), object()]
+        repo = _stub(
+            AbstractCalendarEntryRepository, _get_by_event_and_admin_unit=entries
+        )
+        assert repo.get_by_event_and_admin_unit(1, 2) == entries
+        assert repo.seen == set(entries)

@@ -161,3 +161,14 @@ def test_is_name_taken(read_repo, calendars):
         is False
     )
     assert read_repo("is_name_taken", admin_unit_id, "Other crew calendar") is False
+
+
+def test_get_filter_infos(read_repo, calendars):
+    admin_unit_id, ids = calendars
+
+    infos = read_repo("get_filter_infos", [ids["alpha"], ids["secret"], 4711])
+
+    assert {(i.id, i.admin_unit_id, i.private) for i in infos} == {
+        (ids["alpha"], admin_unit_id, False),
+        (ids["secret"], admin_unit_id, True),
+    }

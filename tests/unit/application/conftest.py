@@ -151,6 +151,27 @@ class FakeCalendarRepo(FakeRepo):
         return None
 
 
+class FakeCalendarEntryRepo(FakeRepo):
+    def __init__(self, calendars):
+        super().__init__()
+        self.calendars = calendars
+
+    def get_by_calendar_and_event(self, calendar_id, event_id):
+        for obj in self._store.values():
+            if obj.calendar_id == calendar_id and obj.event_id == event_id:
+                self.seen.add(obj)
+                return obj
+        return None
+
+    def get_by_event_and_admin_unit(self, event_id, admin_unit_id):
+        return [
+            obj
+            for obj in self._store.values()
+            if obj.event_id == event_id
+            and self.calendars.get(obj.calendar_id).admin_unit_id == admin_unit_id
+        ]
+
+
 class FakeOrganizationRelationRepo(FakeRepo):
     def get_by_source_and_target(self, source_admin_unit_id, target_admin_unit_id):
         for obj in self._store.values():
@@ -230,7 +251,7 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         self.users = FakeUserRepo()
         self.custom_widgets = FakeRepo()
         self.calendars = FakeCalendarRepo()
-        self.calendar_entries = FakeRepo()
+        self.calendar_entries = FakeCalendarEntryRepo(self.calendars)
         self.api_keys = FakeApiKeyRepo()
         self.app_keys = FakeRepo()
         self.oauth2_clients = FakeRepo()

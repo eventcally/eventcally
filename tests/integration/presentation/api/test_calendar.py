@@ -207,3 +207,129 @@ def test_write_other_organization(client, seeder: Seeder, utils: UtilActions, ap
         from project.infrastructure.models import Calendar
 
         assert db.session.get(Calendar, calendar_id) is not None
+
+
+# Entries
+
+
+def _events_url(utils, admin_unit_id, calendar_id, **kwargs):
+    return utils.get_url(
+        "api_v1_organization_calendar_event_list",
+        id=admin_unit_id,
+        calendar_id=calendar_id,
+        **kwargs,
+    )
+
+
+def _event_url(utils, admin_unit_id, calendar_id, event_id):
+    return utils.get_url(
+        "api_v1_organization_calendar_event",
+        id=admin_unit_id,
+        calendar_id=calendar_id,
+        event_id=event_id,
+    )
+
+
+def test_add_list_and_remove_events(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_admin_unit_id = _other_organization(seeder)
+    calendar_id = seeder.create_calendar(admin_unit_id)
+    own_id = seeder.create_event(admin_unit_id, name="Own Event", draft=True)
+    foreign_id = seeder.create_event(other_admin_unit_id, name="Foreign Event")
+    seeder.verify_admin_unit(other_admin_unit_id)
+
+    for event_id in (own_id, foreign_id):
+        response = utils.post_json(
+            _events_url(utils, admin_unit_id, calendar_id), {"event_id": event_id}
+        )
+        utils.assert_response_created(response)
+        assert "id" in response.json
+
+    response = utils.get_json_ok(_events_url(utils, admin_unit_id, calendar_id))
+    assert sorted(item["name"] for item in response.json["items"]) == [
+        "Foreign Event",
+        "Own Event",
+    ]
+
+    utils.assert_response_no_content(
+        utils.delete(_event_url(utils, admin_unit_id, calendar_id, own_id))
+    )
+    response = utils.get_json_ok(_events_url(utils, admin_unit_id, calendar_id))
+    assert [item["name"] for item in response.json["items"]] == ["Foreign Event"]
+
+
+def test_add_event_errors(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access()
+    other_admin_unit_id = _other_organization(seeder)
+    calendar_id = seeder.create_calendar(admin_unit_id)
+    event_id = seeder.create_event(admin_unit_id)
+    foreign_draft_id = seeder.create_event(other_admin_unit_id, draft=True)
+    url = _events_url(utils, admin_unit_id, calendar_id)
+
+    utils.assert_response_created(utils.post_json(url, {"event_id": event_id}))
+    utils.assert_response_bad_request(utils.post_json(url, {"event_id": event_id}))
+    utils.assert_response_bad_request(
+        utils.post_json(url, {"event_id": foreign_draft_id})
+    )
+    utils.assert_response_unprocessable_entity(utils.post_json(url, {}))
+    # The event is not in the calendar.
+    utils.assert_response_bad_request(
+        utils.delete(_event_url(utils, admin_unit_id, calendar_id, 4711))
+    )
+
+
+def test_entries_of_other_organizations_calendar(
+    client, seeder: Seeder, utils: UtilActions
+):
+    user_id, admin_unit_id = seeder.setup_api_access(admin=False)
+    other_admin_unit_id = _other_organization(seeder)
+    calendar_id = seeder.create_calendar(other_admin_unit_id, "Other")
+    private_id = seeder.create_calendar(other_admin_unit_id, "Secret", private=True)
+    event_id = seeder.create_event(admin_unit_id)
+
+    # The calendar is not in the organization named in the path.
+    utils.assert_response_notFound(
+        utils.get_json(_events_url(utils, admin_unit_id, calendar_id))
+    )
+    utils.assert_response_notFound(
+        utils.post_json(
+            _events_url(utils, admin_unit_id, calendar_id), {"event_id": event_id}
+        )
+    )
+    # Outsider writes: 401; a private calendar is never revealed on read.
+    utils.assert_response_unauthorized(
+        utils.post_json(
+            _events_url(utils, other_admin_unit_id, calendar_id), {"event_id": event_id}
+        )
+    )
+    utils.assert_response_notFound(
+        utils.get_json(_events_url(utils, other_admin_unit_id, private_id))
+    )
+    utils.get_json_ok(_events_url(utils, other_admin_unit_id, calendar_id))
+
+
+def test_calendar_id_filters_event_searches(client, seeder: Seeder, utils: UtilActions):
+    user_id, admin_unit_id = seeder.setup_api_access(admin=False)
+    other_admin_unit_id = _other_organization(seeder)
+    calendar_id = seeder.create_calendar(admin_unit_id)
+    in_id = seeder.create_event(admin_unit_id, name="In")
+    seeder.create_event(admin_unit_id, name="Out")
+    seeder.create_calendar_entry(calendar_id, in_id)
+    secret_id = seeder.create_calendar(other_admin_unit_id, "Secret", private=True)
+
+    for endpoint, kwargs in (
+        ("api_v1_event_search", {}),
+        ("api_v1_event_date_search", {}),
+        ("api_v1_organization_event_search", {"id": other_admin_unit_id}),
+        ("api_v1_organization_event_date_search", {"id": other_admin_unit_id}),
+    ):
+        url = utils.get_url(endpoint, calendar_id=calendar_id, **kwargs)
+        response = utils.get_json_ok(url)
+        assert response.json["total"] == 1
+
+        # Unknown and hidden private calendars answer the same.
+        for hidden in (4711, secret_id):
+            response = utils.get_json(
+                utils.get_url(endpoint, calendar_id=hidden, **kwargs)
+            )
+            utils.assert_response_bad_request(response)

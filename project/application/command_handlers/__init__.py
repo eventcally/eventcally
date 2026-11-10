@@ -1,6 +1,7 @@
 from .abstract_command_handler import AbstractCommandHandler
 from .accept_member_invitation_handler import AcceptMemberInvitationHandler
 from .accept_tos_handler import AcceptTosHandler
+from .add_event_to_calendar_handler import AddEventToCalendarHandler
 from .approve_organization_verification_request_handler import (
     ApproveOrganizationVerificationRequestHandler,
 )
@@ -54,6 +55,7 @@ from .reject_event_reference_request_handler import RejectEventReferenceRequestH
 from .reject_organization_verification_request_handler import (
     RejectOrganizationVerificationRequestHandler,
 )
+from .remove_event_from_calendar_handler import RemoveEventFromCalendarHandler
 from .remove_organization_member_handler import RemoveOrganizationMemberHandler
 from .report_event_handler import ReportEventHandler
 from .request_event_reference_handler import RequestEventReferenceHandler
@@ -68,6 +70,7 @@ from .revoke_oauth2_token_handler import RevokeOAuth2TokenHandler
 from .revoke_organization_invitation_handler import RevokeOrganizationInvitationHandler
 from .send_newsletter_handler import SendNewsletterHandler
 from .send_test_mail_handler import SendTestMailHandler
+from .set_event_calendars_handler import SetEventCalendarsHandler
 from .start_organization_export_handler import StartOrganizationExportHandler
 from .uninstall_app_handler import UninstallAppHandler
 from .update_api_key_handler import UpdateApiKeyHandler
@@ -118,6 +121,9 @@ __all__ = [
     "DeleteCustomWidgetHandler",
     "UpdateCustomWidgetHandler",
     "CreateEventHandler",
+    "AddEventToCalendarHandler",
+    "RemoveEventFromCalendarHandler",
+    "SetEventCalendarsHandler",
     "CreateCalendarHandler",
     "DeleteCalendarHandler",
     "UpdateCalendarHandler",

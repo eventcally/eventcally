@@ -70,6 +70,7 @@ def event_search_criteria_from_request(
     for arg, field in (
         ("category_id", "category_ids"),
         ("custom_category_set_id", "custom_category_set_ids"),
+        ("calendar_id", "calendar_ids"),
         ("postal_code", "postal_codes"),
         ("tag", "tags"),
         ("internal_tag", "internal_tags"),

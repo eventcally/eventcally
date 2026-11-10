@@ -1,6 +1,10 @@
 from marshmallow import fields, post_load, validate
 
-from project.application.commands import CreateCalendarCommand, UpdateCalendarCommand
+from project.application.commands import (
+    AddEventToCalendarCommand,
+    CreateCalendarCommand,
+    UpdateCalendarCommand,
+)
 from project.presentation.api.organization.schemas import OrganizationRefSchema
 from project.presentation.api.schemas import (
     IdPlainSchemaMixin,
@@ -108,3 +112,13 @@ class CalendarPatchRequestPlainSchema(PlainBaseSchema):
         data["id"] = self.context.get("id")
         data["actor"] = self.context.get("actor")
         return UpdateCalendarCommand(**data)
+
+
+class CalendarEventAddRequestPlainSchema(PlainBaseSchema):
+    event_id = fields.Int(required=True)
+
+    @post_load
+    def make_instance(self, data, **kwargs):
+        data["calendar_id"] = self.context.get("id")
+        data["actor"] = self.context.get("actor")
+        return AddEventToCalendarCommand(**data)

@@ -464,3 +464,97 @@ def test_events_know_whether_they_have_multiple_dates(read_repo, world):
     assert by_name["Full Event"].has_multiple_dates() is True  # two definitions
     assert by_name["Weekly Jam"].has_multiple_dates() is True  # recurring
     assert by_name["Allday Fest"].has_multiple_dates() is False
+
+
+@pytest.fixture
+def calendars(world, seeder):
+    """Calendar "Mix" of organization a: own published, own draft, a foreign published
+    event, a foreign draft, a foreign event of an unverified organization; calendar
+    "Music" holds the weekly jam."""
+    foreign_draft = seeder.create_event(
+        world["b"],
+        name="Other Draft",
+        draft=True,
+        start=create_berlin_date(2040, 3, 2, 12),
+    )
+    mix = seeder.create_calendar(world["a"], "Mix")
+    music = seeder.create_calendar(world["a"], "Music")
+    for event_id in (
+        world["full"],
+        world["draft"],
+        world["other"],
+        foreign_draft,
+        world["unverified"],
+    ):
+        seeder.create_calendar_entry(mix, event_id)
+    seeder.create_calendar_entry(music, world["recurring"])
+    return {"mix": mix, "music": music}
+
+
+@pytest.mark.parametrize("method", ["search_events", "search_event_dates"])
+def test_calendar_filter_applies_own_and_foreign_visibility(
+    read_repo, world, calendars, method
+):
+    def names(**kwargs):
+        return set(
+            _names(
+                _search(
+                    read_repo,
+                    method=method,
+                    calendar_ids=[calendars["mix"]],
+                    **kwargs,
+                )
+            )
+        )
+
+    # Anonymous: public statuses of verified organizations only.
+    assert names() == {"Full Event", "Other Event"}
+    assert names(admin_unit_id=world["a"]) == {"Full Event", "Other Event"}
+    # The owner also sees the own draft, never the foreign draft or unverified event.
+    assert names(private=True, admin_unit_id=world["a"]) == {
+        "Full Event",
+        "Draft Event",
+        "Other Event",
+    }
+
+
+def test_calendar_filter_hides_foreign_events_of_unverified_organizations(
+    read_repo, world, calendars
+):
+    names = _names(
+        _search(
+            read_repo,
+            private=True,
+            admin_unit_id=world["a"],
+            calendar_ids=[calendars["mix"]],
+        )
+    )
+
+    assert "Unverified Event" not in names
+
+
+def test_calendar_filter_drops_the_organization_scope(read_repo, world, calendars):
+    names = _names(
+        _search(read_repo, admin_unit_id=world["b"], calendar_ids=[calendars["mix"]])
+    )
+
+    assert "Full Event" in names and "Other Event" in names
+
+
+def test_several_calendars_are_a_union(read_repo, world, calendars):
+    names = _names(
+        _search(read_repo, calendar_ids=[calendars["mix"], calendars["music"]])
+    )
+
+    assert sorted(names) == ["Full Event", "Other Event", "Weekly Jam"]
+    # An event in two calendars is listed once.
+    twice = _names(
+        _search(read_repo, calendar_ids=[calendars["mix"], calendars["mix"]])
+    )
+    assert sorted(twice) == ["Full Event", "Other Event"]
+
+
+def test_calendar_filter_intersects_other_criteria(read_repo, world, calendars):
+    names = _names(_search(read_repo, calendar_ids=[calendars["mix"]], keyword="Other"))
+
+    assert names == ["Other Event"]
