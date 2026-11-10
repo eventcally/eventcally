@@ -44,6 +44,12 @@ from project.domain.repositories.abstract_app_key_repository import (
     AbstractAppKeyRepository,
 )
 from project.domain.repositories.abstract_app_repository import AbstractAppRepository
+from project.domain.repositories.abstract_calendar_entry_repository import (
+    AbstractCalendarEntryRepository,
+)
+from project.domain.repositories.abstract_calendar_repository import (
+    AbstractCalendarRepository,
+)
 from project.domain.repositories.abstract_custom_widget_repository import (
     AbstractCustomWidgetRepository,
 )
@@ -969,6 +975,7 @@ def _stub(repo_cls, **returns):
 
 _CRUD_REPOSITORIES = [
     pytest.param(AbstractApiKeyRepository, id="api_key"),
+    pytest.param(AbstractCalendarRepository, id="calendar"),
     pytest.param(AbstractCustomWidgetRepository, id="custom_widget"),
     pytest.param(AbstractEventReferenceRequestRepository, id="event_reference_request"),
     pytest.param(AbstractMemberInvitationRepository, id="member_invitation"),
@@ -1105,3 +1112,37 @@ class TestAbstractOrganizationRepositoryAdd:
         org = _org_agg()
         repo.add(org)
         assert org in repo.seen
+
+
+class TestAbstractCalendarRepositoryByName:
+    def test_with_result_adds_to_seen(self):
+        agg = object()
+        repo = _stub(AbstractCalendarRepository, _get_by_admin_unit_and_name=agg)
+        assert repo.get_by_admin_unit_and_name(1, "Name") is agg
+        assert repo.calls == [("_get_by_admin_unit_and_name", (1, "Name"))]
+        assert agg in repo.seen
+
+    def test_none_does_not_add_to_seen(self):
+        repo = _stub(AbstractCalendarRepository)
+        assert repo.get_by_admin_unit_and_name(1, "Name") is None
+        assert len(repo.seen) == 0
+
+
+class TestAbstractCalendarEntryRepository:
+    def test_add_and_remove_add_to_seen(self):
+        repo = _stub(AbstractCalendarEntryRepository)
+        added, removed = object(), object()
+        repo.add(added)
+        repo.remove(removed)
+        assert repo.seen == {added, removed}
+
+    def test_get_with_result_adds_to_seen(self):
+        agg = object()
+        repo = _stub(AbstractCalendarEntryRepository, _get=agg)
+        assert repo.get(5) is agg
+        assert agg in repo.seen
+
+    def test_get_none_does_not_add_to_seen(self):
+        repo = _stub(AbstractCalendarEntryRepository)
+        assert repo.get(5) is None
+        assert len(repo.seen) == 0

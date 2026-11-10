@@ -105,6 +105,7 @@ def test_resource_owners_of_relations_invitations_widgets_and_requests(
     relation_id = seeder.create_admin_unit_relation(world["a"], world["c"])
     invitation_id = seeder.create_admin_unit_invitation(world["a"])
     widget_id = seeder.insert_event_custom_widget(world["a"])
+    calendar_id = seeder.create_calendar(world["a"])
     verification_id = seeder.create_admin_unit_verification_request(
         world["c"], world["b"]
     )
@@ -115,6 +116,7 @@ def test_resource_owners_of_relations_invitations_widgets_and_requests(
     assert owner(ResourceKind.organization_relation, relation_id) == world["a"]
     assert owner(ResourceKind.organization_invitation, invitation_id) == world["a"]
     assert owner(ResourceKind.custom_widget, widget_id) == world["a"]
+    assert owner(ResourceKind.calendar, calendar_id) == world["a"]
     assert (
         owner(ResourceKind.verification_request_source, verification_id) == world["c"]
     )

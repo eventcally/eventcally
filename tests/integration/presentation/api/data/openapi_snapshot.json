@@ -327,6 +327,200 @@
       ],
       "type": "object"
     },
+    "Calendar": {
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "readOnly": true,
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        },
+        "organization": {
+          "$ref": "#/definitions/OrganizationRef"
+        },
+        "private": {
+          "description": "Private calendars have no public page and cannot be used as search filter by others.",
+          "type": "boolean"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "CalendarCreateRequestPlain": {
+      "properties": {
+        "description": {
+          "default": null,
+          "type": "string",
+          "x-nullable": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        },
+        "private": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "CalendarIdPlain": {
+      "properties": {
+        "id": {
+          "readOnly": true,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "CalendarListRef": {
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "readOnly": true,
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 255,
+          "type": "string"
+        },
+        "number_of_events": {
+          "type": "integer"
+        },
+        "private": {
+          "type": "boolean"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "CalendarListResponse": {
+      "properties": {
+        "has_next": {
+          "description": "True if a next page exists.",
+          "type": "boolean"
+        },
+        "has_prev": {
+          "description": "True if a previous page exists.",
+          "type": "boolean"
+        },
+        "items": {
+          "description": "Calendars",
+          "items": {
+            "$ref": "#/definitions/CalendarListRef"
+          },
+          "type": "array"
+        },
+        "next_num": {
+          "description": "Number of the next page.",
+          "type": "integer"
+        },
+        "page": {
+          "description": "The current page number (1 indexed).",
+          "type": "integer"
+        },
+        "pages": {
+          "description": "The total number of pages.",
+          "type": "integer"
+        },
+        "per_page": {
+          "description": "Items per page",
+          "type": "integer"
+        },
+        "prev_num": {
+          "description": "Number of the previous page.",
+          "type": "integer"
+        },
+        "total": {
+          "description": "The total number of items matching the query",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "has_next",
+        "has_prev",
+        "page",
+        "pages",
+        "per_page",
+        "total"
+      ],
+      "type": "object"
+    },
+    "CalendarPatchRequestPlain": {
+      "properties": {
+        "description": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        },
+        "private": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "CalendarPutRequestPlain": {
+      "properties": {
+        "description": {
+          "default": null,
+          "type": "string",
+          "x-nullable": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "type": "string"
+        },
+        "private": {
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
     "CustomEventCategoryRef": {
       "properties": {
         "category_set": {
@@ -7538,6 +7732,452 @@
         ]
       }
     },
+    "/api/v1/organizations/{id}/calendars": {
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Items created at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items created before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "created_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items last modified before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "last_modified_at_to",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Looks for name.",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "The page number (1 indexed).",
+            "in": "query",
+            "minimum": 1,
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Items per page",
+            "in": "query",
+            "maximum": 50,
+            "minimum": 1,
+            "name": "per_page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Sort result items.",
+            "enum": [
+              "-created_at",
+              "-updated_at",
+              "-last_modified_at",
+              "-number_of_events",
+              "name"
+            ],
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated at or after this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_from",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Items updated before this date time in GTM, e.g. 2020-12-31T00:00:00.",
+            "format": "date-time",
+            "in": "query",
+            "name": "updated_at_to",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CalendarListResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [],
+            "oauth2ClientCredentials": []
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "List calendars of organization",
+        "tags": [
+          "Organizations",
+          "Calendars"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/CalendarCreateRequestPlain"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/CalendarIdPlain"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.calendars:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.calendars:write"
+            ]
+          }
+        ],
+        "summary": "Add new calendar",
+        "tags": [
+          "Organizations",
+          "Calendars"
+        ]
+      }
+    },
+    "/api/v1/organizations/{id}/calendars/{calendar_id}": {
+      "delete": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.calendars:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.calendars:write"
+            ]
+          }
+        ],
+        "summary": "Delete calendar",
+        "tags": [
+          "Organizations",
+          "Calendars"
+        ]
+      },
+      "get": {
+        "parameters": [
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          },
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Calendar"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [],
+            "oauth2ClientCredentials": []
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "summary": "Get calendar of organization",
+        "tags": [
+          "Organizations",
+          "Calendars"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/CalendarPatchRequestPlain"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.calendars:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.calendars:write"
+            ]
+          }
+        ],
+        "summary": "Patch calendar",
+        "tags": [
+          "Organizations",
+          "Calendars"
+        ]
+      },
+      "put": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/CalendarPutRequestPlain"
+            }
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntityResponse"
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "schema": {
+              "$ref": "#/definitions/TooManyRequestsResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2AuthCode": [
+              "organization.calendars:write"
+            ],
+            "oauth2ClientCredentials": [
+              "organization.calendars:write"
+            ]
+          }
+        ],
+        "summary": "Update calendar",
+        "tags": [
+          "Organizations",
+          "Calendars"
+        ]
+      }
+    },
     "/api/v1/organizations/{id}/event-dates/search": {
       "get": {
         "description": "Includes events that organization is referencing.",
@@ -14132,6 +14772,8 @@
       "flow": "accessCode",
       "scopes": {
         "openid": "openid",
+        "organization.calendars:read": "organization.calendars:read",
+        "organization.calendars:write": "organization.calendars:write",
         "organization.custom_widgets:read": "organization.custom_widgets:read",
         "organization.custom_widgets:write": "organization.custom_widgets:write",
         "organization.event_organizers:read": "organization.event_organizers:read",
@@ -14178,6 +14820,8 @@
       "flow": "application",
       "scopes": {
         "openid": "openid",
+        "organization.calendars:read": "organization.calendars:read",
+        "organization.calendars:write": "organization.calendars:write",
         "organization.custom_widgets:read": "organization.custom_widgets:read",
         "organization.custom_widgets:write": "organization.custom_widgets:write",
         "organization.event_organizers:read": "organization.event_organizers:read",

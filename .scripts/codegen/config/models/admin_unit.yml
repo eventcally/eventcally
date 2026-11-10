@@ -134,6 +134,11 @@ models:
         pattern: one-to-many
         relation: owned
         back_populates: admin_unit
+      - name: calendars
+        target_model: Calendar
+        pattern: one-to-many
+        relation: owned
+        back_populates: admin_unit
       - name: location
         target_model: Location
         pattern: one-to-one

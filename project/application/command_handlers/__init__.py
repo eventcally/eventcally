@@ -13,6 +13,7 @@ from .change_organization_member_roles_handler import (
 from .create_api_key_handler import CreateApiKeyHandler
 from .create_app_handler import CreateAppHandler
 from .create_app_key_handler import CreateAppKeyHandler
+from .create_calendar_handler import CreateCalendarHandler
 from .create_custom_widget_handler import CreateCustomWidgetHandler
 from .create_event_handler import CreateEventHandler
 from .create_event_organizer_handler import CreateEventOrganizerHandler
@@ -28,6 +29,7 @@ from .decline_organization_invitation_handler import (
 from .delete_api_key_handler import DeleteApiKeyHandler
 from .delete_app_handler import DeleteAppHandler
 from .delete_app_key_handler import DeleteAppKeyHandler
+from .delete_calendar_handler import DeleteCalendarHandler
 from .delete_custom_widget_handler import DeleteCustomWidgetHandler
 from .delete_event_handler import DeleteEventHandler
 from .delete_event_organizer_handler import DeleteEventOrganizerHandler
@@ -73,6 +75,7 @@ from .update_app_handler import UpdateAppHandler
 from .update_app_installation_permissions_handler import (
     UpdateAppInstallationPermissionsHandler,
 )
+from .update_calendar_handler import UpdateCalendarHandler
 from .update_custom_widget_handler import UpdateCustomWidgetHandler
 from .update_event_handler import UpdateEventHandler
 from .update_event_organizer_handler import UpdateEventOrganizerHandler
@@ -115,6 +118,9 @@ __all__ = [
     "DeleteCustomWidgetHandler",
     "UpdateCustomWidgetHandler",
     "CreateEventHandler",
+    "CreateCalendarHandler",
+    "DeleteCalendarHandler",
+    "UpdateCalendarHandler",
     "CreateEventOrganizerHandler",
     "CreateEventPlaceHandler",
     "DeleteEventOrganizerHandler",

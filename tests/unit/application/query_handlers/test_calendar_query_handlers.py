@@ -1,0 +1,116 @@
+"""Calendar query handlers — fake repository."""
+
+from project.application import queries
+from project.application.query_handlers import (
+    GetCalendarHandler,
+    IsCalendarNameTakenHandler,
+    ListCalendarsHandler,
+)
+from project.application.read_models.calendar_read_models import CalendarReadModel
+from project.application.read_models.organization_ref_read_model import (
+    OrganizationRefReadModel,
+)
+from project.application.read_models.page import Page
+from project.application.read_repositories.abstract_calendar_read_repository import (
+    AbstractCalendarReadRepository,
+)
+from tests.unit.application.query_handlers.authz_helpers import ACTOR, authz
+
+ORGANIZATION = OrganizationRefReadModel(id=7, name="Crew")
+
+
+def _calendar(id, private):
+    return CalendarReadModel(
+        id=id,
+        admin_unit_id=7,
+        admin_unit=ORGANIZATION,
+        name=f"Calendar {id}",
+        private=private,
+    )
+
+
+CALENDARS = {1: _calendar(1, False), 2: _calendar(2, True)}
+
+
+class FakeRepo(AbstractCalendarReadRepository):
+    def __init__(self):
+        self.include_private = None
+
+    def organization_exists(self, admin_unit_id):
+        return admin_unit_id == 7
+
+    def list(self, query, include_private):
+        self.include_private = include_private
+        return Page(items=[], page=1, per_page=20, total=0)
+
+    def get(self, object_id):
+        return CALENDARS.get(object_id)
+
+    def is_name_taken(self, admin_unit_id, name, exclude_id=None):
+        return (admin_unit_id, name, exclude_id) == (7, "Taken", 3)
+
+
+def test_list_includes_private_calendars_with_read_permission():
+    repo = FakeRepo()
+    query = queries.ListCalendarsQuery(admin_unit_id=7, actor=ACTOR)
+
+    page = ListCalendarsHandler(repo, authz("calendars:read")).handle(query)
+
+    assert page.total == 0
+    assert repo.include_private is True
+
+
+def test_list_hides_private_calendars_without_read_permission():
+    repo = FakeRepo()
+    query = queries.ListCalendarsQuery(admin_unit_id=7, actor=ACTOR)
+
+    ListCalendarsHandler(repo, authz()).handle(query)
+    assert repo.include_private is False
+
+    ListCalendarsHandler(repo, authz("calendars:read")).handle(
+        queries.ListCalendarsQuery(admin_unit_id=7)
+    )
+    assert repo.include_private is False
+
+
+def test_list_unknown_organization_answers_none():
+    query = queries.ListCalendarsQuery(admin_unit_id=8, actor=ACTOR)
+
+    assert (
+        ListCalendarsHandler(FakeRepo(), authz("calendars:read")).handle(query) is None
+    )
+
+
+def test_get_public_calendar_is_visible_to_everybody():
+    handler = GetCalendarHandler(FakeRepo(), authz())
+
+    assert handler.handle(queries.GetCalendarQuery(id=1)).id == 1
+
+
+def test_get_private_calendar_needs_read_permission():
+    query = queries.GetCalendarQuery(id=2, actor=ACTOR)
+
+    assert GetCalendarHandler(FakeRepo(), authz("calendars:read")).handle(query).id == 2
+    assert GetCalendarHandler(FakeRepo(), authz()).handle(query) is None
+    assert (
+        GetCalendarHandler(FakeRepo(), authz()).handle(queries.GetCalendarQuery(id=2))
+        is None
+    )
+
+
+def test_get_unknown_calendar_answers_none():
+    assert (
+        GetCalendarHandler(FakeRepo(), authz()).handle(queries.GetCalendarQuery(id=9))
+        is None
+    )
+
+
+def test_is_name_taken_delegates():
+    handler = IsCalendarNameTakenHandler(FakeRepo())
+
+    assert handler.handle(
+        queries.IsCalendarNameTakenQuery(admin_unit_id=7, name="Taken", exclude_id=3)
+    )
+    assert not handler.handle(
+        queries.IsCalendarNameTakenQuery(admin_unit_id=7, name="Free")
+    )

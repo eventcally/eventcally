@@ -13,6 +13,7 @@ from .get_app_installation_query import GetAppInstallationQuery
 from .get_app_key_query import GetAppKeyQuery
 from .get_app_query import GetAppQuery
 from .get_app_webhook_delivery_query import GetAppWebhookDeliveryQuery
+from .get_calendar_query import GetCalendarQuery
 from .get_current_organization_query import GetCurrentOrganizationQuery
 from .get_custom_event_category_query import GetCustomEventCategoryQuery
 from .get_custom_widget_query import GetCustomWidgetQuery
@@ -89,6 +90,7 @@ from .get_user_organization_membership_query import GetUserOrganizationMembershi
 from .get_user_profile_query import GetUserProfileQuery
 from .get_webhook_delivery_for_app_query import GetWebhookDeliveryForAppQuery
 from .has_other_admin_query import HasOtherAdminQuery
+from .is_calendar_name_taken_query import IsCalendarNameTakenQuery
 from .is_event_organizer_name_taken_query import IsEventOrganizerNameTakenQuery
 from .is_event_place_name_taken_query import IsEventPlaceNameTakenQuery
 from .is_organization_name_taken_query import IsOrganizationNameTakenQuery
@@ -103,6 +105,7 @@ from .list_app_webhook_delivery_attempts_query import (
     ListAppWebhookDeliveryAttemptsQuery,
 )
 from .list_apps_query import ListAppsQuery
+from .list_calendars_query import CalendarSort, ListCalendarsQuery
 from .list_custom_event_categories_query import ListCustomEventCategoriesQuery
 from .list_custom_event_category_sets_query import ListCustomEventCategorySetsQuery
 from .list_custom_widgets_query import ListCustomWidgetsQuery

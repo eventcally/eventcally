@@ -1,0 +1,17 @@
+models:
+  - name: CalendarEntry
+    mixins: [Trackable]
+    relationships:
+      - name: calendar
+        target_model: Calendar
+        pattern: many-to-one
+        relation: parent
+        back_populates: entries
+      - name: event
+        target_model: Event
+        pattern: many-to-one
+        relation: parent
+        back_populates: calendar_entries
+    constraints:
+      - type: unique
+        columns: [calendar_id, event_id]

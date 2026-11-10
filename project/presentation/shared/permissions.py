@@ -136,6 +136,7 @@ def _add_user(
 _add_org("apps", lazy_gettext("Apps"), no_api_access=True)
 _add_org("app_keys", lazy_gettext("App keys"), no_api_access=True)
 _add_org("api_keys", lazy_gettext("API keys"), no_api_access=True)
+_add_org("calendars", lazy_gettext("Calendars"))
 _add_org("custom_widgets", lazy_gettext("Custom widgets"))
 _add_org("event_organizers", lazy_gettext("Event organizers"))
 _add_org("event_places", lazy_gettext("Places"))

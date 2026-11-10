@@ -259,6 +259,15 @@ class EventGeneratedMixin(TrackableMixin):
         )
 
     @declared_attr
+    def calendar_entries(cls):
+        return relationship(
+            "CalendarEntry",
+            cascade="all, delete-orphan",
+            back_populates="event",
+            primaryjoin="CalendarEntry.event_id == Event.id",
+        )
+
+    @declared_attr
     def reference_requests(cls):
         return relationship(
             "EventReferenceRequest",

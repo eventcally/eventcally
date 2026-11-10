@@ -7,6 +7,8 @@ from project.domain.events import Event
 from project.domain.repositories import (
     AbstractApiKeyRepository,
     AbstractAppKeyRepository,
+    AbstractCalendarEntryRepository,
+    AbstractCalendarRepository,
     AbstractCustomWidgetRepository,
     AbstractEventOrganizerRepository,
     AbstractEventPlaceRepository,
@@ -62,6 +64,8 @@ class AbstractUnitOfWork(abc.ABC):
     organization_members: AbstractOrganizationMemberRepository
     users: AbstractUserRepository
     custom_widgets: AbstractCustomWidgetRepository
+    calendars: AbstractCalendarRepository
+    calendar_entries: AbstractCalendarEntryRepository
     api_keys: AbstractApiKeyRepository
     app_keys: AbstractAppKeyRepository
     oauth2_clients: AbstractOAuth2ClientRepository
@@ -105,6 +109,8 @@ class AbstractUnitOfWork(abc.ABC):
         self._collect_domain_events_from_repo(self.webhook_delivery_attempts)
         self._collect_domain_events_from_repo(self.users)
         self._collect_domain_events_from_repo(self.custom_widgets)
+        self._collect_domain_events_from_repo(self.calendars)
+        self._collect_domain_events_from_repo(self.calendar_entries)
         self._collect_domain_events_from_repo(self.api_keys)
         self._collect_domain_events_from_repo(self.app_keys)
         self._collect_domain_events_from_repo(self.oauth2_clients)

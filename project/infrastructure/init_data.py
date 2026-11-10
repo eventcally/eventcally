@@ -15,6 +15,8 @@ organization_admin_permissions = [
     "app_keys:write",
     "app_installations:read",
     "app_installations:write",
+    "calendars:read",
+    "calendars:write",
     "custom_widgets:read",
     "custom_widgets:write",
     "export:read",
@@ -41,6 +43,8 @@ organization_admin_permissions = [
     "widgets:write",
 ]
 organization_event_expert_permissions = [
+    "calendars:read",
+    "calendars:write",
     "event_organizers:read",
     "event_organizers:write",
     "event_places:read",

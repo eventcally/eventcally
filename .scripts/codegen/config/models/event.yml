@@ -104,6 +104,11 @@ models:
         pattern: one-to-many
         relation: owned
         back_populates: event
+      - name: calendar_entries
+        target_model: CalendarEntry
+        pattern: one-to-many
+        relation: owned
+        back_populates: event
       - name: reference_requests
         target_model: EventReferenceRequest
         pattern: one-to-many

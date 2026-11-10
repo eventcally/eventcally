@@ -1,5 +1,7 @@
 from .sql_alchemy_api_key_repository import SqlAlchemyApiKeyRepository
 from .sql_alchemy_app_key_repository import SqlAlchemyAppKeyRepository
+from .sql_alchemy_calendar_entry_repository import SqlAlchemyCalendarEntryRepository
+from .sql_alchemy_calendar_repository import SqlAlchemyCalendarRepository
 from .sql_alchemy_custom_widget_repository import SqlAlchemyCustomWidgetRepository
 from .sql_alchemy_event_organizer_repository import SqlAlchemyEventOrganizerRepository
 from .sql_alchemy_event_place_repository import SqlAlchemyEventPlaceRepository
@@ -27,6 +29,8 @@ from .sql_alchemy_organization_verification_request_repository import (
 __all__ = [
     "SqlAlchemyApiKeyRepository",
     "SqlAlchemyAppKeyRepository",
+    "SqlAlchemyCalendarEntryRepository",
+    "SqlAlchemyCalendarRepository",
     "SqlAlchemyCustomWidgetRepository",
     "SqlAlchemyEventOrganizerRepository",
     "SqlAlchemyEventReferenceRepository",

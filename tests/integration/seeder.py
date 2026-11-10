@@ -289,6 +289,35 @@ class Seeder(object):
 
         return custom_widget_id
 
+    def create_calendar(self, admin_unit_id, name="Calendar", private=False):
+        from project.infrastructure.models import Calendar
+
+        with self._app.app_context():
+            calendar = Calendar()
+            calendar.admin_unit_id = admin_unit_id
+            calendar.name = name
+            calendar.private = private
+
+            self._db.session.add(calendar)
+            self._db.session.commit()
+            calendar_id = calendar.id
+
+        return calendar_id
+
+    def create_calendar_entry(self, calendar_id, event_id):
+        from project.infrastructure.models import CalendarEntry
+
+        with self._app.app_context():
+            entry = CalendarEntry()
+            entry.calendar_id = calendar_id
+            entry.event_id = event_id
+
+            self._db.session.add(entry)
+            self._db.session.commit()
+            entry_id = entry.id
+
+        return entry_id
+
     def insert_default_oauth2_client(self, user_id=None, admin_unit_id=None):
         from project.infrastructure.models import OAuth2Client
         from project.infrastructure.seed_helpers import complete_oauth2_client
