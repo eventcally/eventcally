@@ -60,7 +60,12 @@ const requestPill = (status: string | null | undefined) =>
 
       <div class="p-3 clearfix">
         <div class="float-sm-end">
-          <EventMenu :event-id="event.id" :organization-id="event.organization_id" :rights="event.rights" />
+          <EventMenu
+            :event-id="event.id"
+            :organization-id="event.organization_id"
+            :rights="event.rights"
+            :calendar-organization-id="event.calendar_organization?.id ?? null"
+          />
         </div>
 
         <div class="fw-bold text-uppercase">

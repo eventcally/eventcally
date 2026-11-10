@@ -2418,6 +2418,17 @@
       },
       "EventDateSearchOptions": {
         "properties": {
+          "calendar_organization": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicOrganizationRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
           "categories": {
             "items": {
               "$ref": "#/components/schemas/WidgetCategory"
@@ -3952,6 +3963,14 @@
             "default": null,
             "title": "Auto Verify Description"
           },
+          "calendars": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/CalendarChoice"
+            },
+            "title": "Calendars",
+            "type": "array"
+          },
           "dates": {
             "default": [],
             "items": {
@@ -4035,6 +4054,14 @@
             "default": false,
             "title": "Auto Verify",
             "type": "boolean"
+          },
+          "calendar_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Calendar Ids",
+            "type": "array"
           },
           "rating": {
             "default": 50,
@@ -4482,6 +4509,11 @@
       },
       "IncomingEventReferenceListPage": {
         "properties": {
+          "can_assign_calendars": {
+            "default": false,
+            "title": "Can Assign Calendars",
+            "type": "boolean"
+          },
           "can_write": {
             "title": "Can Write",
             "type": "boolean"
@@ -4554,6 +4586,11 @@
               }
             ],
             "default": null
+          },
+          "can_assign_calendars": {
+            "default": false,
+            "title": "Can Assign Calendars",
+            "type": "boolean"
           },
           "can_write": {
             "title": "Can Write",
@@ -8437,6 +8474,17 @@
           },
           "calendar_links": {
             "$ref": "#/components/schemas/PublicCalendarLinks"
+          },
+          "calendar_organization": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicOrganizationRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
           },
           "categories": {
             "default": [],

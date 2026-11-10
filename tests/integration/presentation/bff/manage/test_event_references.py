@@ -194,6 +194,7 @@ def test_incoming_list(app, db, seeder, utils, incoming):
 
     assert response.status_code == 200
     assert response.json["can_write"] is True
+    assert response.json["can_assign_calendars"] is True
     assert response.json["per_page"] == 50
     assert response.json["total"] == 2
     assert [i["id"] for i in response.json["items"]] == [newer_id, older_id]
@@ -251,6 +252,7 @@ def test_read(app, db, utils, incoming):
     assert response.json["rating"] == 70
     assert response.json["rating_text"] == "7/10"
     assert response.json["can_write"] is True
+    assert response.json["can_assign_calendars"] is True
     assert response.json["audit"]["created_at"]
     assert len(response.json["rating_choices"]) == 11
 

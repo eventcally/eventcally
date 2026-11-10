@@ -193,3 +193,25 @@ def _first_date_id(app, db, event_id):
 
     with app.app_context():
         return EventDate.query.filter(EventDate.event_id == event_id).first().id
+
+
+def test_get_event_carries_the_calendar_organization(client, app, db, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+
+    assert utils.get_json_ok(_event_url(event_id)).json["calendar_organization"] is None
+
+    seeder.create_calendar(admin_unit_id)
+    expected = {"id": admin_unit_id, "name": "Meine Crew"}
+    assert (
+        utils.get_json_ok(_event_url(event_id)).json["calendar_organization"]
+        == expected
+    )
+    date_id = _first_date_id(app, db, event_id)
+    assert (
+        utils.get_json_ok(_date_url(date_id)).json["event"]["calendar_organization"]
+        == expected
+    )
+
+    utils.logout()
+    assert utils.get_json_ok(_event_url(event_id)).json["calendar_organization"] is None

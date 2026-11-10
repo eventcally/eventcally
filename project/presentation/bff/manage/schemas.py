@@ -946,6 +946,9 @@ class EventReferenceRequestReview(BaseModel):
     default_rating: int = 50
     rejection_reasons: List[ReviewChoice]
     list_url: str
+    # The organization's calendars to put the event into with the accept (empty
+    # without `calendars:write`).
+    calendars: List["CalendarChoice"] = []
 
 
 class OrganizationVerificationRequestReview(BaseModel):
@@ -961,6 +964,8 @@ class OrganizationVerificationRequestReview(BaseModel):
 class EventReferenceRequestVerify(BaseModel):
     rating: int = 50
     auto_verify: bool = False
+    # Also put the event into these calendars of the organization.
+    calendar_ids: List[int] = []
 
     @field_validator("rating")
     @classmethod
@@ -1125,6 +1130,7 @@ class EventReferenceListItem(BaseModel):
 class IncomingEventReferenceListPage(ManageListPage):
     items: List[EventReferenceListItem]
     rating_choices: List[ManageIntChoice]
+    can_assign_calendars: bool = False
 
 
 class OutgoingEventReferenceListPage(ManageListPage):
@@ -1140,6 +1146,7 @@ class IncomingEventReferenceRead(BaseModel):
     rating_choices: List[ManageIntChoice]
     audit: Optional[ManageAudit] = None
     can_write: bool
+    can_assign_calendars: bool = False
 
 
 class IncomingEventReferenceRating(BaseModel):

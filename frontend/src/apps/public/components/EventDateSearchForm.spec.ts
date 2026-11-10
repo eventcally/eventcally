@@ -20,6 +20,7 @@ const baseOptions = {
   organization: null,
   organizer: null,
   referencing_organization: null,
+  calendar_organization: null,
 };
 
 function mountForm(filter = {}, options: Record<string, unknown> = {}) {

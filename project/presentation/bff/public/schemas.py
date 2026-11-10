@@ -238,6 +238,8 @@ class EventDateSearchOptions(BaseModel):
     organization: Optional[PublicOrganizationRef] = None
     organizer: Optional[PublicOrganizationRef] = None
     referencing_organization: Optional[PublicOrganizationRef] = None
+    # The session's organization when it may put events into its calendars.
+    calendar_organization: Optional[PublicOrganizationRef] = None
 
 
 class PublicEventDatePlace(BaseModel):
@@ -441,6 +443,8 @@ class PublicEventDetail(BaseModel):
     # The public calendars of other organizations that contain the event; only for
     # editors of the event (`None` for everybody else).
     public_calendars: Optional[List[PublicCalendarRef]] = None
+    # The session's organization when it may put events into its calendars.
+    calendar_organization: Optional[PublicOrganizationRef] = None
     dates: List[PublicEventDateRow] = []
     rights: PublicEventRights
     share_links: PublicShareLinks

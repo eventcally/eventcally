@@ -7,6 +7,7 @@ import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AppPager from "@/shared/AppPager.vue";
 import { boot } from "@/shared/boot";
+import CalendarAssignModal from "@/shared/CalendarAssignModal.vue";
 import { useNotify } from "@/shared/notify";
 import EventDateCard from "../components/EventDateCard.vue";
 import EventDateSearchForm from "../components/EventDateSearchForm.vue";
@@ -39,6 +40,15 @@ const results = ref<HTMLElement | null>(null);
 const map = ref<InstanceType<typeof EventDatesMap> | null>(null);
 
 const defaults = computed(() => ({ date_from: options.value?.default_date_from ?? "" }));
+const calendarOrganizationId = computed(() => options.value?.calendar_organization?.id ?? null);
+const calendarEventId = ref<number | null>(null);
+const showCalendars = ref(false);
+
+function assignCalendars(eventId: number) {
+  calendarEventId.value = eventId;
+  showCalendars.value = true;
+}
+
 const referencingId = computed(() => options.value?.referencing_organization?.id ?? null);
 
 function idOf(value: unknown): number | undefined {
@@ -208,7 +218,9 @@ function showInList(eventDateId: number) {
                 :event-date="eventDate"
                 :locale="boot.locale"
                 :busy="busy"
+                :can-assign-calendar="calendarOrganizationId !== null"
                 @fly-to="flyTo"
+                @assign-calendar="assignCalendars"
                 @reference="reference"
                 @unreference="unreference"
               />
@@ -231,5 +243,11 @@ function showInList(eventDateId: number) {
         </div>
       </div>
     </div>
+    <CalendarAssignModal
+      v-if="calendarOrganizationId !== null"
+      v-model="showCalendars"
+      :organization-id="calendarOrganizationId"
+      :event-id="calendarEventId"
+    />
   </div>
 </template>

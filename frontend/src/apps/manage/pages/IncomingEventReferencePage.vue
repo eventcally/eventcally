@@ -6,6 +6,7 @@ import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import { errorMessage } from "@/shared/apiError";
 import AuditLine from "@/shared/AuditLine.vue";
+import CalendarAssignModal from "@/shared/CalendarAssignModal.vue";
 import ConfirmModal from "@/shared/ConfirmModal.vue";
 import { publicPages } from "@/shared/legacy";
 import ManageBreadcrumb from "@/shared/ManageBreadcrumb.vue";
@@ -42,6 +43,7 @@ const modelName = computed(() => t("Incoming reference"));
 const objectTitle = computed(() => `${t("Event reference")} ${props.id}`);
 
 const showRating = ref(false);
+const showCalendars = ref(false);
 
 // Deleting leaves the page: the server flashes the text for the list (a full page load, so
 // the Flask frame shows the flash).
@@ -66,6 +68,10 @@ const actions = computed<RowAction[]>(() => {
       { title: t("Edit"), onClick: () => (showRating.value = true) },
       { title: t("Delete"), onClick: () => reference.value && confirm.open(reference.value) },
     );
+  }
+
+  if (reference.value?.can_assign_calendars) {
+    result.push({ title: t("Calendars…"), onClick: () => (showCalendars.value = true) });
   }
 
   if (reference.value) {
@@ -114,6 +120,12 @@ const actions = computed<RowAction[]>(() => {
           :rating="reference.rating ?? null"
           :choices="reference.rating_choices"
           @saved="load"
+        />
+        <CalendarAssignModal
+          v-if="reference.can_assign_calendars"
+          v-model="showCalendars"
+          :organization-id="organizationId"
+          :event-id="reference.event_id"
         />
         <ConfirmModal
           v-model="confirm.show.value"

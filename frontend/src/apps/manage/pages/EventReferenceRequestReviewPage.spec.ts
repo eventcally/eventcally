@@ -50,6 +50,7 @@ function review(overrides: Record<string, unknown> = {}) {
       { value: 4, label: "Irrelevant" },
     ],
     list_url: "/manage/admin_unit/3/incoming_event_reference_requests",
+    calendars: [],
     ...overrides,
   };
 }
@@ -124,7 +125,7 @@ describe("EventReferenceRequestReviewPage", () => {
 
     expect(POST).toHaveBeenCalledWith(`${BASE}/verify`, {
       ...PARAMS,
-      body: { rating: 50, auto_verify: false },
+      body: { rating: 50, auto_verify: false, calendar_ids: [] },
     });
     expect(assign).toHaveBeenCalledWith("/list");
   });
@@ -146,7 +147,37 @@ describe("EventReferenceRequestReviewPage", () => {
     body("[data-test=accept-confirm]")!.click();
     await flushPromises();
 
-    expect(POST.mock.calls[0][1].body).toEqual({ rating: 60, auto_verify: true });
+    expect(POST.mock.calls[0][1].body).toEqual({ rating: 60, auto_verify: true, calendar_ids: [] });
+  });
+
+  it("offers the calendars in the accept form and sends the selection", async () => {
+    GET.mockResolvedValue({
+      data: review({
+        calendars: [
+          { id: 1, name: "Sport", private: false },
+          { id: 2, name: "Intern", private: true },
+        ],
+      }),
+    });
+    POST.mockResolvedValue({ data: { redirect_url: "/list" } });
+    const wrapper = await mountPage();
+
+    await open(wrapper, "accept");
+    expect(body("[data-test=calendars]")).not.toBeNull();
+    (body("#review-calendar-2") as HTMLInputElement).click();
+    await flushPromises();
+    body("[data-test=accept-confirm]")!.click();
+    await flushPromises();
+
+    expect(POST.mock.calls[0][1].body.calendar_ids).toEqual([2]);
+  });
+
+  it("shows no calendar picker without calendars", async () => {
+    GET.mockResolvedValue({ data: review() });
+    const wrapper = await mountPage();
+
+    await open(wrapper, "accept");
+    expect(body("[data-test=calendars]")).toBeNull();
   });
 
   it("hides the auto-verify switch when the requester is already verified automatically", async () => {

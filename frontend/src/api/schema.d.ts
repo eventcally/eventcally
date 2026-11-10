@@ -3840,6 +3840,8 @@ export interface components {
         };
         /** EventDateSearchOptions */
         EventDateSearchOptions: {
+            /** @default null */
+            calendar_organization: components["schemas"]["PublicOrganizationRef"] | null;
             /** Categories */
             categories: components["schemas"]["WidgetCategory"][];
             /**
@@ -4509,6 +4511,11 @@ export interface components {
              */
             auto_verify_description: string | null;
             /**
+             * Calendars
+             * @default []
+             */
+            calendars: components["schemas"]["CalendarChoice"][];
+            /**
              * Dates
              * @default []
              */
@@ -4546,6 +4553,11 @@ export interface components {
              * @default false
              */
             auto_verify: boolean;
+            /**
+             * Calendar Ids
+             * @default []
+             */
+            calendar_ids: number[];
             /**
              * Rating
              * @default 50
@@ -4745,6 +4757,11 @@ export interface components {
         };
         /** IncomingEventReferenceListPage */
         IncomingEventReferenceListPage: {
+            /**
+             * Can Assign Calendars
+             * @default false
+             */
+            can_assign_calendars: boolean;
             /** Can Write */
             can_write: boolean;
             /** Items */
@@ -4769,6 +4786,11 @@ export interface components {
         IncomingEventReferenceRead: {
             /** @default null */
             audit: components["schemas"]["ManageAudit"] | null;
+            /**
+             * Can Assign Calendars
+             * @default false
+             */
+            can_assign_calendars: boolean;
             /** Can Write */
             can_write: boolean;
             /** Event Id */
@@ -6387,6 +6409,8 @@ export interface components {
              */
             booked_up: boolean | null;
             calendar_links: components["schemas"]["PublicCalendarLinks"];
+            /** @default null */
+            calendar_organization: components["schemas"]["PublicOrganizationRef"] | null;
             /**
              * Categories
              * @default []

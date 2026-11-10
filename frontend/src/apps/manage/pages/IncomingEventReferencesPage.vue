@@ -6,6 +6,7 @@ import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AppPager from "@/shared/AppPager.vue";
 import { boot } from "@/shared/boot";
+import CalendarAssignModal from "@/shared/CalendarAssignModal.vue";
 import ConfirmModal from "@/shared/ConfirmModal.vue";
 import { formatDate } from "@/shared/format";
 import { LINK_CLOSE, LINK_OPEN } from "@/shared/instruction";
@@ -78,6 +79,9 @@ const fields = computed<TableFieldRaw[]>(() => [
   { key: "created_at", label: t("Created at") },
 ]);
 
+const showCalendars = ref(false);
+const calendarEventId = ref<number | null>(null);
+
 function actions(item: Item): RowAction[] {
   const result: RowAction[] = [
     {
@@ -100,6 +104,16 @@ function actions(item: Item): RowAction[] {
       },
       { title: t("Delete"), onClick: () => confirm.open(item) },
     );
+  }
+
+  if (page.value?.can_assign_calendars) {
+    result.push({
+      title: t("Calendars…"),
+      onClick: () => {
+        calendarEventId.value = item.event_id;
+        showCalendars.value = true;
+      },
+    });
   }
 
   result.push({ title: t("View event"), href: publicPages.event(item.event_id) });
@@ -144,6 +158,13 @@ function actions(item: Item): RowAction[] {
       v-model:page="currentPage"
       :pages="page.pages"
       :total="page.total"
+    />
+
+    <CalendarAssignModal
+      v-if="page?.can_assign_calendars"
+      v-model="showCalendars"
+      :organization-id="organizationId"
+      :event-id="calendarEventId"
     />
 
     <ConfirmModal

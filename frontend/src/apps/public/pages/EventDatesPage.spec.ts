@@ -44,6 +44,7 @@ const options: {
   organization: Ref;
   organizer: Ref;
   referencing_organization: Ref;
+  calendar_organization: Ref;
 } = {
   default_date_from: "2030-10-01",
   categories: [{ id: 3, name: "Music" }],
@@ -55,6 +56,7 @@ const options: {
   organization: null,
   organizer: null,
   referencing_organization: null,
+  calendar_organization: null,
 };
 
 function item(id: number, reference: unknown = null, place: unknown = null) {
@@ -272,6 +274,27 @@ describe("EventDatesPage", () => {
 
       expect(notify.error).toHaveBeenCalledWith("Denied");
       expect(notify.success).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("calendars", () => {
+    it("offers adding an event to a calendar of the session's organization", async () => {
+      current.options = { ...options, calendar_organization: { id: 5, name: "Mine" } };
+      const { wrapper } = await mountPage();
+
+      await wrapper.findAll('[data-test="add-to-calendar"]')[1].trigger("click");
+      await flushPromises();
+
+      expect(GET).toHaveBeenLastCalledWith(
+        "/bff/manage/organizations/{id}/events/{event_id}/calendars",
+        { params: { path: { id: 5, event_id: 102 } } },
+      );
+    });
+
+    it("offers nothing without a calendar organization", async () => {
+      const { wrapper } = await mountPage();
+
+      expect(wrapper.find('[data-test="add-to-calendar"]').exists()).toBe(false);
     });
   });
 

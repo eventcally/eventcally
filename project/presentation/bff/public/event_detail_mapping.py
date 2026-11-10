@@ -129,6 +129,7 @@ def event_detail(
     share_links: dict,
     calendar_links: dict,
     public_calendars=None,
+    calendar_organization=None,
 ) -> PublicEventDetail:
     """The public payload of an event. What only editors may see is decided here:
     the rating (`show_rating`), the internal tags and the audit labels follow the
@@ -216,6 +217,13 @@ def event_detail(
                 for c in public_calendars
             ]
             if can_update and public_calendars is not None
+            else None
+        ),
+        calendar_organization=(
+            PublicOrganizationRef(
+                id=calendar_organization.id, name=calendar_organization.name
+            )
+            if calendar_organization
             else None
         ),
         dates=[

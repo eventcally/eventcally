@@ -16,6 +16,7 @@ from project.presentation.bff.public.schemas import (
     PublicEventDetail,
 )
 from project.presentation.bff.routing import bff_route
+from project.presentation.shared.calendar_access import calendar_organization
 from project.presentation.shared.event_links import (
     get_calendar_links_for_event,
     get_calendar_links_for_event_date,
@@ -54,6 +55,7 @@ def get_event(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
         share_links=get_share_links(url, event.name),
         calendar_links=get_calendar_links_for_event(event),
         public_calendars=_public_calendars(query_bus, event, rights),
+        calendar_organization=calendar_organization(),
     )
 
 
@@ -83,5 +85,6 @@ def get_event_date(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]
             share_links=get_share_links(url, event.name),
             calendar_links=get_calendar_links_for_event_date(event_date),
             public_calendars=_public_calendars(query_bus, event, rights),
+            calendar_organization=calendar_organization(),
         ),
     )

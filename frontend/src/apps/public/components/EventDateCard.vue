@@ -8,11 +8,17 @@ import { publicPages } from "@/shared/legacy";
 
 type EventDate = components["schemas"]["PublicEventDate"];
 
-const props = defineProps<{ eventDate: EventDate; locale: string; busy?: boolean }>();
+const props = defineProps<{
+  eventDate: EventDate;
+  locale: string;
+  busy?: boolean;
+  canAssignCalendar?: boolean;
+}>();
 const emit = defineEmits<{
   "fly-to": [latitude: number, longitude: number];
   reference: [eventId: number];
   unreference: [referenceId: number];
+  "assign-calendar": [eventId: number];
 }>();
 
 const { t } = useI18n();
@@ -109,9 +115,9 @@ function toggleReference() {
         </div>
       </div>
     </div>
-    <div v-if="reference" class="card-footer py-1">
+    <div v-if="reference || canAssignCalendar" class="card-footer py-1 d-flex flex-wrap gap-3">
       <button
-        v-if="reference.state === 'own'"
+        v-if="reference?.state === 'own'"
         type="button"
         class="btn btn-link px-0 text-secondary text-decoration-none"
         disabled
@@ -121,7 +127,7 @@ function toggleReference() {
         <i class="fa fa-fw fa-link me-1"></i><span class="small">{{ t("Own event") }}</span>
       </button>
       <button
-        v-else
+        v-else-if="reference"
         type="button"
         class="btn btn-link px-0 text-decoration-none"
         :class="reference.state === 'referenced' ? 'text-success' : 'text-primary'"
@@ -134,6 +140,16 @@ function toggleReference() {
         <span class="small">{{
           reference.state === "referenced" ? t("Referenced") : t("Not referenced")
         }}</span>
+      </button>
+      <button
+        v-if="canAssignCalendar"
+        type="button"
+        class="btn btn-link px-0 text-decoration-none text-primary"
+        :title="t('Add to calendar')"
+        data-test="add-to-calendar"
+        @click="emit('assign-calendar', event.id)"
+      >
+        <i class="fa fa-fw fa-calendar-plus me-1"></i><span class="small">{{ t("Add to calendar") }}</span>
       </button>
     </div>
   </div>

@@ -36,6 +36,7 @@ from project.presentation.bff.public.schemas import (
 )
 from project.presentation.bff.routing import bff_route
 from project.presentation.shared.access import has_access
+from project.presentation.shared.calendar_access import calendar_organization
 from project.presentation.shared.current_admin_unit import get_current_admin_unit
 from project.presentation.shared.search_options import distance_choices
 from project.shared.dateutils import form_input_to_date, get_today
@@ -110,6 +111,7 @@ def get_event_date_search_options(
         organization=_organization_ref(admin_unit),
         organizer=_organization_ref(organizer),
         referencing_organization=_organization_ref(_referencing_organization()),
+        calendar_organization=_organization_ref(calendar_organization()),
     )
 
 

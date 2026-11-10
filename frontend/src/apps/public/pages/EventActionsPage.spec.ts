@@ -56,6 +56,26 @@ describe("EventActionsPage", () => {
     expect(document.body.querySelector('input[name="shareUrl"]')).not.toBeNull();
   });
 
+  it("offers adding to a calendar and opens the modal", async () => {
+    GET.mockResolvedValue({ data: makeEvent({ calendar_organization: { id: 7, name: "Crew" } }) });
+    const wrapper = await mountPage();
+
+    await wrapper.find("[data-test=add-to-calendar]").trigger("click");
+    await flushPromises();
+
+    expect(GET).toHaveBeenLastCalledWith(
+      "/bff/manage/organizations/{id}/events/{event_id}/calendars",
+      { params: { path: { id: 7, event_id: 4 } } },
+    );
+  });
+
+  it("offers no calendar action without a calendar organization", async () => {
+    GET.mockResolvedValue({ data: makeEvent() });
+    const wrapper = await mountPage();
+
+    expect(wrapper.find("[data-test=add-to-calendar]").exists()).toBe(false);
+  });
+
   it("lists the management actions of an editor", async () => {
     GET.mockResolvedValue({
       data: makeEvent({

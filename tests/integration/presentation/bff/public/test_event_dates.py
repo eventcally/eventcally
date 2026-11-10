@@ -275,3 +275,22 @@ def test_not_referenced_is_ignored_for_anonymous(client, seeder, utils):
     seeder.create_event(admin_unit_id, name="Konzert", start=START)
 
     assert _names(utils.get_json_ok(_url(not_referenced="true"))) == ["Konzert"]
+
+
+def test_options_carry_the_calendar_organization(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+
+    assert utils.get_json_ok(OPTIONS_URL).json["calendar_organization"] is None
+
+    seeder.create_calendar(admin_unit_id)
+    body = utils.get_json_ok(OPTIONS_URL).json
+
+    assert body["calendar_organization"] == {"id": admin_unit_id, "name": "Meine Crew"}
+
+
+def test_options_anonymous_have_no_calendar_organization(client, seeder, utils):
+    owner_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(owner_id, verified=True)
+    seeder.create_calendar(admin_unit_id)
+
+    assert utils.get_json_ok(OPTIONS_URL).json["calendar_organization"] is None
