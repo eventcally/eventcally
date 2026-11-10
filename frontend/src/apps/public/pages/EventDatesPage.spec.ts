@@ -122,7 +122,9 @@ describe("EventDatesPage", () => {
       Promise.resolve(
         path === "/bff/public/event-dates/options"
           ? { data: current.options }
-          : current.search,
+          : path === "/bff/manage/organizations/{id}/events/{event_id}/calendars"
+            ? { data: { choices: [], selected_ids: [] } }
+            : current.search,
       ),
     );
   });

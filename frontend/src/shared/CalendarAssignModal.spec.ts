@@ -1,6 +1,6 @@
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { createBootstrap } from "bootstrap-vue-next";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createI18n } from "vue-i18n";
 
 const GET = vi.fn();
@@ -41,6 +41,8 @@ const ok = () =>
   Array.from(document.body.querySelectorAll<HTMLButtonElement>(".modal-footer button")).pop()!;
 
 describe("CalendarAssignModal", () => {
+  enableAutoUnmount(afterEach);
+
   beforeEach(() => {
     [GET, PUT, success].forEach((f) => f.mockReset());
     document.body.innerHTML = "";

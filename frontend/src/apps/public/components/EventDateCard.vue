@@ -145,11 +145,11 @@ function toggleReference() {
         v-if="canAssignCalendar"
         type="button"
         class="btn btn-link px-0 text-decoration-none text-primary"
-        :title="t('Add to calendar')"
+        :title="t('Add to organization calendar')"
         data-test="add-to-calendar"
         @click="emit('assign-calendar', event.id)"
       >
-        <i class="fa fa-fw fa-calendar-plus me-1"></i><span class="small">{{ t("Add to calendar") }}</span>
+        <i class="fa fa-fw fa-calendar-plus me-1"></i><span class="small">{{ t("Add to organization calendar") }}</span>
       </button>
     </div>
   </div>

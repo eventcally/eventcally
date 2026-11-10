@@ -73,7 +73,7 @@ onMounted(load);
             data-test="add-to-calendar"
             @click="calendarVisible = true"
           >
-            <p class="mb-1"><i class="fa fa-calendar-plus"></i> {{ t("Add to calendar") }}</p>
+            <p class="mb-1"><i class="fa fa-calendar-plus"></i> {{ t("Add to organization calendar") }}</p>
             <small>{{ t("Put this event into calendars of your organization.") }}</small>
           </button>
         </div>

@@ -49,7 +49,7 @@ describe("EventMenu", () => {
   it("offers adding to a calendar when the session's organization has calendars", async () => {
     await mountMenu(none, 7);
 
-    expect(items()).toEqual([["Add to calendar", null], ["More…", "/event/4/actions"]]);
+    expect(items()).toEqual([["Add to organization calendar", null], ["More…", "/event/4/actions"]]);
   });
 
   it("only offers more for a signed-in visitor", async () => {

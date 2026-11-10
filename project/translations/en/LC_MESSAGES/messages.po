@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-10 16:53+0100\n"
+"POT-Creation-Date: 2026-11-10 17:15+0100\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -351,12 +351,15 @@ msgid "Add tag"
 msgstr ""
 
 #: frontend/src/apps/public/components/CalendarExportModal.vue:17
+#: frontend/src/apps/public/components/EventDetailView.vue:176
+msgid "Add to calendar"
+msgstr ""
+
 #: frontend/src/apps/public/components/EventDateCard.vue:148
 #: frontend/src/apps/public/components/EventDateCard.vue:152
-#: frontend/src/apps/public/components/EventDetailView.vue:176
 #: frontend/src/apps/public/components/EventMenu.vue:53
 #: frontend/src/apps/public/pages/EventActionsPage.vue:76
-msgid "Add to calendar"
+msgid "Add to organization calendar"
 msgstr ""
 
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:95

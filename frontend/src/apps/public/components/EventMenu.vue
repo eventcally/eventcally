@@ -50,7 +50,7 @@ const showCalendars = ref(false);
       ><i class="fa fa-fw me-2 fa-link"></i>{{ t("Reference event") }}</BDropdownItem
     >
     <BDropdownItem v-if="calendarOrganizationId != null" data-test="add-to-calendar" @click="showCalendars = true"
-      ><i class="fa fa-fw me-2 fa-calendar-plus"></i>{{ t("Add to calendar") }}</BDropdownItem
+      ><i class="fa fa-fw me-2 fa-calendar-plus"></i>{{ t("Add to organization calendar") }}</BDropdownItem
     >
     <BDropdownDivider />
     <BDropdownItem :href="publicPages.eventActions(eventId)">{{ t("More") }}&hellip;</BDropdownItem>

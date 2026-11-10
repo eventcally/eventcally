@@ -57,7 +57,13 @@ describe("EventActionsPage", () => {
   });
 
   it("offers adding to a calendar and opens the modal", async () => {
-    GET.mockResolvedValue({ data: makeEvent({ calendar_organization: { id: 7, name: "Crew" } }) });
+    GET.mockImplementation((path: string) =>
+      Promise.resolve(
+        path === "/bff/manage/organizations/{id}/events/{event_id}/calendars"
+          ? { data: { choices: [], selected_ids: [] } }
+          : { data: makeEvent({ calendar_organization: { id: 7, name: "Crew" } }) },
+      ),
+    );
     const wrapper = await mountPage();
 
     await wrapper.find("[data-test=add-to-calendar]").trigger("click");
