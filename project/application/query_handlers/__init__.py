@@ -170,6 +170,7 @@ from .list_reference_request_suggestions_handler import (
     ListReferenceRequestSuggestionsHandler,
 )
 from .list_roles_handler import ListRolesHandler
+from .list_sitemap_calendars_handler import ListSitemapCalendarsHandler
 from .list_sitemap_events_handler import ListSitemapEventsHandler
 from .list_upcoming_event_dates_handler import ListUpcomingEventDatesHandler
 from .list_user_api_keys_handler import ListUserApiKeysHandler

@@ -7918,6 +7918,62 @@
         "title": "PlanningOptions",
         "type": "object"
       },
+      "PublicCalendar": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "ical_url": {
+            "title": "Ical Url",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "manage_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Manage Url"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "organization": {
+            "$ref": "#/components/schemas/PublicOrganizationRef"
+          },
+          "private": {
+            "default": false,
+            "title": "Private",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "organization",
+          "ical_url"
+        ],
+        "title": "PublicCalendar",
+        "type": "object"
+      },
       "PublicCalendarLinks": {
         "properties": {
           "google": {
@@ -9222,6 +9278,14 @@
       },
       "PublicOrganization": {
         "properties": {
+          "calendars": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PublicCalendarRef"
+            },
+            "title": "Calendars",
+            "type": "array"
+          },
           "description": {
             "anyOf": [
               {
@@ -26119,6 +26183,74 @@
         "summary": "Events of a configured external calendar"
       }
     },
+    "/bff/public/calendars/{id}": {
+      "get": {
+        "operationId": "bff_public_get_calendar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCalendar"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get calendar"
+      }
+    },
     "/bff/public/event-dates": {
       "get": {
         "operationId": "bff_public_search_event_dates",
@@ -26198,6 +26330,18 @@
           {
             "in": "query",
             "name": "category_id",
+            "required": false,
+            "schema": {
+              "default": [],
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "in": "query",
+            "name": "calendar_id",
             "required": false,
             "schema": {
               "default": [],

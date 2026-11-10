@@ -294,3 +294,30 @@ def test_options_anonymous_have_no_calendar_organization(client, seeder, utils):
     seeder.create_calendar(admin_unit_id)
 
     assert utils.get_json_ok(OPTIONS_URL).json["calendar_organization"] is None
+
+
+def test_search_filters_by_calendar(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(
+        other_user_id, "Other Crew", verified=True
+    )
+    calendar_id = seeder.create_calendar(admin_unit_id)
+    inside = seeder.create_event(admin_unit_id, name="Inside")
+    foreign = seeder.create_event(other_admin_unit_id, name="Foreign")
+    seeder.create_event(admin_unit_id, name="Outside")
+    seeder.create_event(admin_unit_id, name="Draft", draft=True)
+    for event_id in (inside, foreign):
+        seeder.create_calendar_entry(calendar_id, event_id)
+
+    body = utils.get_json_ok(f"{SEARCH_URL}?calendar_id={calendar_id}").json
+
+    assert sorted(i["event"]["name"] for i in body["items"]) == ["Foreign", "Inside"]
+
+
+def test_search_with_unknown_or_private_calendar_is_400(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    private_id = seeder.create_calendar(admin_unit_id, private=True)
+
+    assert utils.get_json(f"{SEARCH_URL}?calendar_id=4711").status_code == 400
+    assert utils.get_json(f"{SEARCH_URL}?calendar_id={private_id}").status_code == 400

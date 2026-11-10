@@ -1060,6 +1060,10 @@ class Cqrs(containers.DeclarativeContainer):
                     query_handlers.ListDumpEventReferencesHandler,
                     repo=read_repos.batch_read_repo,
                 ),
+                queries.ListSitemapCalendarsQuery: providers.Factory(
+                    query_handlers.ListSitemapCalendarsHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
                 queries.ListSitemapEventsQuery: providers.Factory(
                     query_handlers.ListSitemapEventsHandler,
                     repo=read_repos.batch_read_repo,

@@ -208,7 +208,7 @@ def list_calendars(
                 private=c.private,
                 number_of_events=c.number_of_events,
                 last_modified_at=c.last_modified_at,
-                public_url=(None if c.private else f"/calendars/{c.id}"),
+                public_url=(None if c.private else url_for("main.calendar", id=c.id)),
             )
             for c in page.items
         ],

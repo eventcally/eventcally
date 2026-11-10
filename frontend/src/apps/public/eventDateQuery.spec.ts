@@ -45,6 +45,7 @@ describe("eventDateQuery", () => {
       category_id: 3,
       tag: "live",
       admin_unit_id: 7,
+    calendar_id: null,
       organizer_id: 9,
       postal_code: "38640",
       coordinate: "51.9,10.4",

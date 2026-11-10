@@ -9,6 +9,8 @@ export interface EventDateFilter {
   tag: string;
   admin_unit_id: number | null;
   organizer_id: number | null;
+  /** Only the dates of the events in this calendar. */
+  calendar_id: number | null;
   postal_code: string;
   coordinate: string;
   /** The place label next to the coordinate; UI only. */
@@ -38,6 +40,7 @@ export function emptyFilter(defaults: EventDateDefaults): EventDateFilter {
     tag: "",
     admin_unit_id: null,
     organizer_id: null,
+    calendar_id: null,
     postal_code: "",
     coordinate: "",
     location: "",
@@ -84,6 +87,7 @@ export function fromRouteQuery(query: LocationQuery, defaults: EventDateDefaults
   filter.tag = text(query.tag);
   filter.admin_unit_id = positiveInt(query.admin_unit_id);
   filter.organizer_id = positiveInt(query.organizer_id);
+  filter.calendar_id = positiveInt(query.calendar_id);
   filter.postal_code = text(query.postal_code);
   filter.coordinate = hasCoordinate ? coordinate : "";
   filter.location = hasCoordinate ? text(query.location) : "";
@@ -112,6 +116,7 @@ export function toRouteQuery(filter: EventDateFilter, defaults: EventDateDefault
   set("tag", filter.tag.trim());
   set("admin_unit_id", filter.admin_unit_id);
   set("organizer_id", filter.organizer_id);
+  set("calendar_id", filter.calendar_id);
   set("postal_code", filter.postal_code.trim());
   if (filter.coordinate) {
     set("coordinate", filter.coordinate);
@@ -138,6 +143,7 @@ export function toBffParams(filter: EventDateFilter) {
     tag: filter.tag.trim() || undefined,
     admin_unit_id: filter.admin_unit_id ?? undefined,
     organizer_id: filter.organizer_id ?? undefined,
+    calendar_id: filter.calendar_id ? [filter.calendar_id] : undefined,
     postal_code: filter.postal_code.trim() || undefined,
     coordinate: filter.coordinate || undefined,
     distance: filter.coordinate ? (filter.distance ?? undefined) : undefined,

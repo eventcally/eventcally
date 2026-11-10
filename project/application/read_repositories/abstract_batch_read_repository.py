@@ -15,6 +15,7 @@ from project.application.queries.list_dump_places_query import ListDumpPlacesQue
 from project.application.read_models.batch_read_models import (
     DumpEventReferenceReadModel,
     DumpOrganizerReadModel,
+    SitemapCalendarReadModel,
     SitemapEventReadModel,
 )
 from project.application.read_models.event_read_models import (
@@ -66,6 +67,12 @@ class AbstractBatchReadRepository(abc.ABC):
     def list_dump_event_references(
         self, query: ListDumpEventReferencesQuery
     ) -> List[DumpEventReferenceReadModel]:  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def list_sitemap_calendars(
+        self,
+    ) -> List[SitemapCalendarReadModel]:  # pragma: no cover
         raise NotImplementedError
 
     @abc.abstractmethod

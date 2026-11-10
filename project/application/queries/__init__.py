@@ -165,6 +165,7 @@ from .list_reference_request_suggestions_query import (
     ListReferenceRequestSuggestionsQuery,
 )
 from .list_roles_query import ListRolesQuery
+from .list_sitemap_calendars_query import ListSitemapCalendarsQuery
 from .list_sitemap_events_query import ListSitemapEventsQuery
 from .list_upcoming_event_dates_query import ListUpcomingEventDatesQuery
 from .list_user_api_keys_query import ListUserApiKeysQuery

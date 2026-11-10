@@ -2111,6 +2111,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/public/calendars/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get calendar */
+        get: operations["bff_public_get_calendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/public/event-dates": {
         parameters: {
             query?: never;
@@ -6180,6 +6197,31 @@ export interface components {
             /** Max Dates */
             max_dates: number;
         };
+        /** PublicCalendar */
+        PublicCalendar: {
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /** Ical Url */
+            ical_url: string;
+            /** Id */
+            id: number;
+            /**
+             * Manage Url
+             * @default null
+             */
+            manage_url: string | null;
+            /** Name */
+            name: string;
+            organization: components["schemas"]["PublicOrganizationRef"];
+            /**
+             * Private
+             * @default false
+             */
+            private: boolean;
+        };
         /** PublicCalendarLinks */
         PublicCalendarLinks: {
             /**
@@ -6707,6 +6749,11 @@ export interface components {
         };
         /** PublicOrganization */
         PublicOrganization: {
+            /**
+             * Calendars
+             * @default []
+             */
+            calendars: components["schemas"]["PublicCalendarRef"][];
             /**
              * Description
              * @default null
@@ -17958,6 +18005,64 @@ export interface operations {
             };
         };
     };
+    bff_public_get_calendar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicCalendar"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_public_search_event_dates: {
         parameters: {
             query?: {
@@ -17967,6 +18072,7 @@ export interface operations {
                 date_to?: string | null;
                 keyword?: string | null;
                 category_id?: number[];
+                calendar_id?: number[];
                 tag?: string | null;
                 admin_unit_id?: number | null;
                 organizer_id?: number | null;

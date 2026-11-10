@@ -33,6 +33,13 @@ class SitemapEventReadModel(BaseReadModel):
     last_modified_at: Optional[datetime] = None
 
 
+class SitemapCalendarReadModel(BaseReadModel):
+    model_config = ConfigDict(frozen=True)
+
+    id: ObjectId
+    last_modified_at: Optional[datetime] = None
+
+
 class ImageMetaReadModel(BaseReadModel):
     """What the image route needs to name its cache file."""
 

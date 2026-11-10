@@ -289,3 +289,31 @@ def test_organizers_out_of_range_page_is_404(client, seeder, utils):
     _, admin_unit_id = _create_org(seeder, "Alpha", verified=True)
 
     assert utils.get_json(_organizers_url(admin_unit_id, page=9)).status_code == 404
+
+
+def test_get_lists_the_public_calendars_only(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base()
+    seeder.create_calendar(admin_unit_id, "Zweiter")
+    seeder.create_calendar(admin_unit_id, "Erster")
+    seeder.create_calendar(admin_unit_id, "Geheim", private=True)
+
+    calendars = utils.get_json_ok(_url(admin_unit_id)).json["calendars"]
+
+    assert [(c["name"], c["organization"]["id"]) for c in calendars] == [
+        ("Erster", admin_unit_id),
+        ("Zweiter", admin_unit_id),
+    ]
+
+
+def test_get_without_calendars(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+
+    assert utils.get_json_ok(_url(admin_unit_id)).json["calendars"] == []
+
+
+def test_get_collects_every_page_of_calendars(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    for number in range(101):
+        seeder.create_calendar(admin_unit_id, f"Kalender {number:03d}")
+
+    assert len(utils.get_json_ok(_url(admin_unit_id)).json["calendars"]) == 101

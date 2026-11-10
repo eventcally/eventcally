@@ -202,6 +202,7 @@ def _criteria(query: EventDateSearchParams, referencing_organization):
         ),
         keyword=(query.keyword or "").strip() or None,
         category_ids=[c for c in query.category_id if c > 0],
+        calendar_ids=query.calendar_id,
         tags=_split(query.tag),
         postal_codes=_split(query.postal_code),
         admin_unit_id=query.admin_unit_id,

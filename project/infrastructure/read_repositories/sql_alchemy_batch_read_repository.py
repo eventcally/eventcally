@@ -18,6 +18,7 @@ from project.application.queries.list_dump_places_query import ListDumpPlacesQue
 from project.application.read_models.batch_read_models import (
     DumpEventReferenceReadModel,
     DumpOrganizerReadModel,
+    SitemapCalendarReadModel,
     SitemapEventReadModel,
 )
 from project.application.read_models.event_read_models import (
@@ -36,6 +37,7 @@ from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.types.object_id import ObjectId
 from project.infrastructure.models import (
     AdminUnit,
+    Calendar,
     Event,
     EventCategory,
     EventDate,
@@ -166,6 +168,20 @@ class SqlAlchemyBatchReadRepository(AbstractBatchReadRepository):
                 id=r.id, event_id=r.event_id, admin_unit_id=r.admin_unit_id
             )
             for r in references
+        ]
+
+    def list_sitemap_calendars(self) -> List[SitemapCalendarReadModel]:
+        rows = self.session.execute(
+            select(Calendar.id, Calendar.created_at, Calendar.updated_at)
+            .join(Calendar.admin_unit)
+            .where(Calendar.private.is_(False), AdminUnit.is_verified)
+            .order_by(Calendar.id)
+        ).all()
+        return [
+            SitemapCalendarReadModel(
+                id=row.id, last_modified_at=row.updated_at or row.created_at
+            )
+            for row in rows
         ]
 
     def list_sitemap_events(self) -> List[SitemapEventReadModel]:

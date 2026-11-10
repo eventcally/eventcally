@@ -114,6 +114,8 @@ class PublicOrganization(BaseModel):
     logo_url: Optional[str] = None
     ical_url: str
     relation: Optional[PublicOrganizationRelation] = None
+    # The public calendars of the organization, by name.
+    calendars: List["PublicCalendarRef"] = []
 
 
 class WidgetEventDateParams(PageParams):
@@ -210,6 +212,9 @@ class EventDateSearchParams(PageParams):
     date_to: Optional[date] = None
     keyword: Optional[str] = Field(default=None, max_length=255)
     category_id: List[int] = []
+    # Only the dates of events in any of these calendars; an unknown calendar or a
+    # private one of another organization answers 400.
+    calendar_id: List[int] = []
     tag: Optional[str] = Field(default=None, max_length=255)
     admin_unit_id: Optional[int] = None
     organizer_id: Optional[int] = None
@@ -397,6 +402,17 @@ class PublicEventAudit(BaseModel):
     updated_at: Optional[datetime] = None
     created_by_label: Optional[str] = None
     updated_by_label: Optional[str] = None
+
+
+class PublicCalendar(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    private: bool = False
+    organization: PublicOrganizationRef
+    ical_url: str
+    # Only for members who may manage the calendar.
+    manage_url: Optional[str] = None
 
 
 class PublicCalendarRef(BaseModel):

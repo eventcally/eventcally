@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-10 16:43+0100\n"
+"POT-Creation-Date: 2026-11-10 16:53+0100\n"
 "PO-Revision-Date: 2020-06-07 18:51+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -709,6 +709,7 @@ msgstr "Kalendertyp"
 #: frontend/src/apps/manage/pages/CalendarsPage.vue:129
 #: frontend/src/apps/manage/pages/EventEditPage.vue:616
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:128
+#: frontend/src/apps/public/pages/OrganizationPage.vue:163
 #: frontend/src/shared/CalendarAssignModal.vue:81
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:139
@@ -1766,6 +1767,8 @@ msgstr "Der eingegebene Name entspricht nicht dem Namen des Ortes"
 #: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:42
 #: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:59
 #: frontend/src/apps/manage/pages/WebhookDeliveryPage.vue:75
+#: frontend/src/apps/public/pages/CalendarPage.vue:37
+#: frontend/src/apps/public/pages/CalendarPage.vue:46
 #: frontend/src/apps/public/pages/EventActionsPage.vue:30
 #: frontend/src/apps/public/pages/EventDatePage.vue:26
 #: frontend/src/apps/public/pages/EventDatesPage.vue:69
@@ -2918,10 +2921,11 @@ msgstr "Mails erfolgreich gesendet"
 
 #: frontend/src/apps/admin/pages/OrganizationUpdatePage.vue:154
 #: frontend/src/apps/admin/pages/OrganizationsPage.vue:135
+#: frontend/src/apps/public/pages/CalendarPage.vue:106
 #: project/presentation/web/templates/home.html:26
 #: project/presentation/web/views/flask_admin.py:143
 msgid "Manage"
-msgstr "Verwaltung"
+msgstr "Verwalten"
 
 #: frontend/src/shared/CalendarAssignModal.vue:93
 msgid "Manage calendars"
@@ -3129,6 +3133,10 @@ msgstr ""
 #: frontend/src/shared/LocationFilter.vue:169
 msgid "No results"
 msgstr "Keine Ergebnisse"
+
+#: frontend/src/apps/public/pages/CalendarPage.vue:125
+msgid "No upcoming events in this calendar"
+msgstr "Keine bevorstehenden Veranstaltungen in diesem Kalender"
 
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:106
 msgid "No widgets found"
@@ -3730,6 +3738,7 @@ msgstr "Datenschutz"
 #: frontend/src/apps/manage/pages/CalendarEditPage.vue:165
 #: frontend/src/apps/manage/pages/CalendarsPage.vue:91
 #: frontend/src/apps/manage/pages/CalendarsPage.vue:174
+#: frontend/src/apps/public/pages/CalendarPage.vue:67
 #: frontend/src/shared/CalendarPicker.vue:27
 msgid "Private"
 msgstr "Privat"
@@ -4152,6 +4161,10 @@ msgstr "Scopes"
 msgid "Search"
 msgstr "Suche"
 
+#: frontend/src/apps/public/pages/CalendarPage.vue:98
+msgid "Search events"
+msgstr "Veranstaltungen suchen"
+
 #: frontend/src/shared/PlaceLookup.vue:50
 msgid "Search location on Google"
 msgstr "Ort bei Google suchen"
@@ -4336,6 +4349,10 @@ msgstr "Styles"
 #: frontend/src/apps/public/pages/EventReportPage.vue:156
 msgid "Submit"
 msgstr "Absenden"
+
+#: frontend/src/apps/public/pages/CalendarPage.vue:95
+msgid "Subscribe"
+msgstr "Abonnieren"
 
 #: project/presentation/web/templates/_managebar.html:103
 msgid "Switch organization"
@@ -4603,6 +4620,10 @@ msgstr "Es darf keine Selbstreferenz geben."
 #: project/domain/models/aggregates/oauth2_token_aggregate.py:20
 msgid "This OAuth2 token has already been revoked."
 msgstr "Dieses OAuth2-Token wurde bereits widerrufen."
+
+#: frontend/src/apps/public/pages/CalendarPage.vue:80
+msgid "This calendar is private."
+msgstr "Dieser Kalender ist privat."
 
 #: project/presentation/bff/admin/mail.py:119
 #: project/presentation/bff/manage/event_forms.py:292

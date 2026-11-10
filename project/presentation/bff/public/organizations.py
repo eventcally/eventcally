@@ -3,16 +3,21 @@ from flask import abort, url_for
 from flask_security import current_user
 
 from project.application.queries import (
+    CalendarSort,
     GetOrganizationQuery,
     GetOutgoingOrganizationRelationByTargetQuery,
+    ListCalendarsQuery,
     ListEventOrganizersQuery,
+    PageRequest,
     SearchOrganizationsQuery,
 )
+from project.application.queries.page_request import MAX_PER_PAGE
 from project.application.query_bus import QueryBus
 from project.container import Application
 from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.presentation.bff.public import bff_public_bp
 from project.presentation.bff.public.schemas import (
+    PublicCalendarRef,
     PublicOrganization,
     PublicOrganizationListParams,
     PublicOrganizationPage,
@@ -105,6 +110,37 @@ def _relation_for(target, query_bus: QueryBus):
     )
 
 
+def _public_calendars(organization, query_bus: QueryBus):
+    """The organization's public calendars, whatever the user may read."""
+    calendars = []
+    number = 1
+
+    while True:
+        page = query_bus.handle(
+            ListCalendarsQuery(
+                admin_unit_id=organization.id,
+                sort=CalendarSort.name,
+                page=PageRequest(page=number, per_page=MAX_PER_PAGE),
+            )
+        )
+        calendars.extend(
+            PublicCalendarRef(
+                id=c.id,
+                name=c.name,
+                organization=PublicOrganizationRef(
+                    id=organization.id, name=organization.name
+                ),
+            )
+            for c in page.items
+            if not c.private
+        )
+
+        if number >= page.pages:
+            return calendars
+
+        number += 1
+
+
 @bff_route(
     bff_public_bp,
     "/organizations/<int:id>",
@@ -141,6 +177,7 @@ def get_organization(id, query_bus: QueryBus = Provide[Application.cqrs.query_bu
         logo_url=url_for_image(organization.logo, s=120) if organization.logo else None,
         ical_url=url_for("main.organization_ical", id=organization.id, _external=True),
         relation=_relation_for(organization, query_bus),
+        calendars=_public_calendars(organization, query_bus),
     )
 
 

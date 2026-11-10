@@ -112,6 +112,17 @@ def test_sitemap_lists_upcoming_public_events(batch, world):
     assert all(e.last_modified_at for e in events)
 
 
+def test_sitemap_lists_public_calendars_of_verified_organizations(batch, world, seeder):
+    public = seeder.create_calendar(world["a"], "Public")
+    seeder.create_calendar(world["a"], "Secret", private=True)
+    seeder.create_calendar(world["c"], "Unverified")
+
+    calendars = batch("list_sitemap_calendars")
+
+    assert [c.id for c in calendars] == [public]
+    assert calendars[0].last_modified_at
+
+
 def _age(app, db, statement, days, **params):
     with app.app_context():
         db.session.execute(

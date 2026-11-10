@@ -159,6 +159,21 @@ onMounted(load);
             </button>
           </div>
 
+          <div v-if="organization.calendars?.length" class="mt-4" data-test="calendars">
+            <h2 class="h5">{{ t("Calendars") }}</h2>
+            <div class="list-group">
+              <a
+                v-for="calendar in organization.calendars"
+                :key="calendar.id"
+                class="list-group-item list-group-item-action"
+                :href="publicPages.calendar(calendar.id)"
+              >
+                <i class="fa fa-fw me-2 fa-calendar-alt"></i>
+                {{ calendar.name }}
+              </a>
+            </div>
+          </div>
+
           <IcalExportModal v-model="icalVisible" :url="organization.ical_url" />
         </div>
       </div>
