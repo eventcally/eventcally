@@ -54,6 +54,8 @@ function form(overrides: Partial<EventForm> = {}): EventForm {
     rating_choices: [],
     reference_request_choices: [],
     reference_request_ids: [],
+    calendars: [],
+    calendar_ids: [],
     can_create_place: true,
     can_create_organizer: true,
     ...overrides,

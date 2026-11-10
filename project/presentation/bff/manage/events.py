@@ -25,6 +25,7 @@ from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.models.enums.event_status import EventStatus
 from project.presentation.bff.manage import bff_manage_bp
+from project.presentation.bff.manage.calendars import calendar_choices
 from project.presentation.bff.manage.event_dates import collect_event_dates
 from project.presentation.bff.manage.organization_form import actor
 from project.presentation.bff.manage.schemas import (
@@ -111,6 +112,7 @@ def _criteria(id: int, query: ManageEventListParams) -> EventSearchCriteria:
         admin_unit_id=id,
         include_private=True,
         include_admin_unit_references=include_references,
+        calendar_ids=[query.calendar_id] if query.calendar_id else [],
         name=query.keyword or None,
         date_from=date_from,
         date_to=_start_of_day(query.date_to, end_of_day=True),
@@ -155,8 +157,9 @@ def _reference_fields(event, id: int) -> dict:
     if event.admin_unit_id == id:
         return {}
 
+    # An event of a calendar is not necessarily referenced.
     return dict(
-        is_reference=True,
+        is_reference=event.reference_id is not None,
         reference_id=event.reference_id,
         organization_name=event.admin_unit.name,
     )
@@ -166,7 +169,7 @@ def to_item(event, id: int) -> ManageEventListItem:
     definition = event.min_start_definition
     reference = _reference_fields(event, id)
     # Internal fields of another organization's event stay hidden.
-    own = not reference
+    own = event.admin_unit_id == id
 
     return ManageEventListItem(
         id=event.id,
@@ -188,6 +191,7 @@ def to_item(event, id: int) -> ManageEventListItem:
             event.number_of_reference_requests if own else None
         ),
         last_modified_at=event.last_modified_at,
+        is_own=own,
         **reference,
     )
 
@@ -243,6 +247,8 @@ def get_event_list_options(
         can_write_references=has_access(
             SimpleNamespace(id=id), "incoming_event_references:write"
         ),
+        calendars=calendar_choices(query_bus, id),
+        can_write_calendars=has_access(SimpleNamespace(id=id), "calendars:write"),
     )
 
 
@@ -310,6 +316,7 @@ def to_date_item(hit, id: int) -> ManageEventDate:
             public_status=event.public_status.name,
             organizer_name=event.organizer.name if event.organizer else None,
             place_label=_place_label(event.event_place),
+            is_own=event.admin_unit_id == id,
             **_reference_fields(event, id),
         ),
     )

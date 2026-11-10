@@ -133,6 +133,22 @@ describe("EventDetailView", () => {
     expect(document.body.textContent).toContain("Outlook");
   });
 
+  it("links the public calendars of other organizations for editors", async () => {
+    const wrapper = await mountView(
+      makeEvent({
+        public_calendars: [{ id: 4, name: "Sport", organization: { id: 2, name: "Other Crew" } }],
+      }),
+    );
+
+    const block = wrapper.find("[data-test=public-calendars]");
+    expect(block.text()).toContain("Sport");
+    expect(block.text()).toContain("Other Crew");
+    expect(block.find("a").attributes("href")).toBe("/calendars/4");
+
+    const none = await mountView(makeEvent({ public_calendars: [] }));
+    expect(none.find("[data-test=public-calendars]").exists()).toBe(false);
+  });
+
   it("shows the property list of a full event", async () => {
     const wrapper = await mountView(
       makeEvent({

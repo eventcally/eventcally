@@ -156,3 +156,40 @@ def test_get_event_date_never_sends_the_rating(client, app, db, seeder, utils):
 
 def test_get_event_date_unknown(client, app, db, seeder, utils):
     utils.assert_response_notFound(utils.get_json(_date_url(1234)))
+
+
+def _calendars_of_other_organization(seeder, event_id):
+    other_user_id, other_admin_unit_id = seeder.setup_base(
+        email="other@test.de", name="Other Crew", log_in=False
+    )
+    public = seeder.create_calendar(other_admin_unit_id, "Sport")
+    private = seeder.create_calendar(other_admin_unit_id, "Geheim", private=True)
+    seeder.create_calendar_entry(public, event_id)
+    seeder.create_calendar_entry(private, event_id)
+
+
+def test_get_event_lists_public_calendars_for_editors_only(
+    client, app, db, seeder, utils
+):
+    user_id, admin_unit_id = seeder.setup_base()
+    event_id = seeder.create_event(admin_unit_id)
+    own = seeder.create_calendar(admin_unit_id, "Own")
+    seeder.create_calendar_entry(own, event_id)
+    _calendars_of_other_organization(seeder, event_id)
+
+    for url in (_event_url(event_id), _date_url(_first_date_id(app, db, event_id))):
+        body = utils.get_json_ok(url).json
+        event = body.get("event", body)
+        assert [
+            (c["name"], c["organization"]["name"]) for c in event["public_calendars"]
+        ] == [("Sport", "Other Crew")]
+
+    utils.logout()
+    assert utils.get_json_ok(_event_url(event_id)).json["public_calendars"] is None
+
+
+def _first_date_id(app, db, event_id):
+    from project.infrastructure.models import EventDate
+
+    with app.app_context():
+        return EventDate.query.filter(EventDate.event_id == event_id).first().id

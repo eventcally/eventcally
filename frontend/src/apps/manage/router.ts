@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import { boot } from "@/shared/boot";
+import CalendarEditPage from "./pages/CalendarEditPage.vue";
+import CalendarsPage from "./pages/CalendarsPage.vue";
 import CustomWidgetEditPage from "./pages/CustomWidgetEditPage.vue";
 import CustomWidgetsPage from "./pages/CustomWidgetsPage.vue";
 import EventEditPage from "./pages/EventEditPage.vue";
@@ -18,6 +20,27 @@ import PlanningPage from "./pages/PlanningPage.vue";
 
 export const routes: RouteRecordRaw[] = [
   { path: "/planning", name: "planning", component: PlanningPage },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/calendars",
+    name: "calendars",
+    component: CalendarsPage,
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/calendar/create",
+    name: "calendar-create",
+    component: CalendarEditPage,
+    props: (route) => ({ organizationId: Number(route.params.organizationId) }),
+  },
+  {
+    path: "/manage/admin_unit/:organizationId(\\d+)/calendar/:id(\\d+)/update",
+    name: "calendar-update",
+    component: CalendarEditPage,
+    props: (route) => ({
+      organizationId: Number(route.params.organizationId),
+      id: Number(route.params.id),
+    }),
+  },
   {
     path: "/manage/admin_unit/:organizationId(\\d+)/custom-widgets",
     name: "custom-widgets",

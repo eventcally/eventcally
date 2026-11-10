@@ -16,6 +16,7 @@ import { api } from "@/shared/api";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
 import AppPager from "@/shared/AppPager.vue";
 import { boot } from "@/shared/boot";
+import CalendarAssignModal from "@/shared/CalendarAssignModal.vue";
 import ConfirmModal from "@/shared/ConfirmModal.vue";
 import { formatDate, formatStart } from "@/shared/format";
 import { manage, publicPages } from "@/shared/legacy";
@@ -67,6 +68,14 @@ const deleteReference = useConfirmAction<ReferenceTarget>({
     }),
   onDone: () => reload(),
 });
+
+const assigning = ref<number | null>(null);
+const showCalendars = ref(false);
+
+function askCalendars(id: number) {
+  assigning.value = id;
+  showCalendars.value = true;
+}
 
 function askDelete(id: number) {
   deleting.value = id;
@@ -308,7 +317,7 @@ onMounted(async () => {
                   {{ t("Delete reference") }}
                 </BDropdownItem>
               </template>
-              <template v-else>
+              <template v-else-if="item.is_own !== false">
                 <BDropdownItem :href="manage.eventUpdate(organizationId, item.id)">
                   {{ t("Edit") }}
                 </BDropdownItem>
@@ -322,6 +331,13 @@ onMounted(async () => {
                   {{ t("Request reference") }}
                 </BDropdownItem>
               </template>
+              <BDropdownItem
+                v-if="options?.can_write_calendars"
+                data-test="assign-calendars"
+                @click="askCalendars(item.id)"
+              >
+                {{ t("Calendars…") }}
+              </BDropdownItem>
               <BDropdownDivider />
               <BDropdownItem :href="publicPages.eventActions(item.id)">{{ t("More") }}</BDropdownItem>
             </BDropdown>
@@ -368,6 +384,13 @@ onMounted(async () => {
       :busy="deleteReference.busy.value"
       :error="deleteReference.error.value"
       @submit="deleteReference.submit"
+    />
+
+    <CalendarAssignModal
+      v-model="showCalendars"
+      :organization-id="organizationId"
+      :event-id="assigning"
+      @saved="reload"
     />
 
     <EventDeleteModal

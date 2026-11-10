@@ -145,6 +145,18 @@ const requestPill = (status: string | null | undefined) =>
               <EventProp v-if="event.internal_tags" icon="fa-tags" :title="t('Internal tags')">{{
                 tags(event.internal_tags)
               }}</EventProp>
+              <EventProp
+                v-if="event.public_calendars?.length"
+                icon="fa-calendar-alt"
+                :title="t('In calendars')"
+                data-test="public-calendars"
+              >
+                <template v-for="(calendar, index) in event.public_calendars" :key="calendar.id">
+                  <template v-if="index">, </template>
+                  <a :href="publicPages.calendar(calendar.id)">{{ calendar.name }}</a>
+                  <span class="text-body-secondary"> ({{ calendar.organization.name }})</span>
+                </template>
+              </EventProp>
             </div>
 
             <div v-if="event.description" class="mt-4" style="white-space: pre-wrap">

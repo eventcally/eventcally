@@ -51,6 +51,8 @@ export interface EventFormValue {
   attendanceMode: Schemas["EventAttendanceMode"];
   rating: number;
   referenceRequestIds: number[];
+  // The organization's calendars the event is in (the field needs calendars:write).
+  calendarIds: number[];
 }
 
 // The 422 locations the page shows next to a field; `date_definitions.<i>.start|end` are
@@ -81,6 +83,7 @@ export const EVENT_FORM_FIELDS = [
   "attendance_mode",
   "rating",
   "reference_request_ids",
+  "calendar_ids",
 ];
 
 export function eventFormFields(dateCount: number): string[] {
@@ -192,6 +195,7 @@ export function eventFormValue(data: EventForm): EventFormValue {
     attendanceMode: data.attendance_mode as Schemas["EventAttendanceMode"],
     rating: data.rating ?? 50,
     referenceRequestIds: data.reference_request_ids ?? [],
+    calendarIds: data.calendar_ids ?? [],
   };
 }
 

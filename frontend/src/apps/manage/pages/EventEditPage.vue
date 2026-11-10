@@ -22,6 +22,7 @@ import MultiTypeahead from "@/shared/MultiTypeahead.vue";
 import EventDateDefinitionFields from "../components/EventDateDefinitionFields.vue";
 import EventOrganizerCreateModal from "../components/EventOrganizerCreateModal.vue";
 import EventPlaceCreateModal from "../components/EventPlaceCreateModal.vue";
+import CalendarPicker from "@/shared/CalendarPicker.vue";
 import LabeledField from "@/shared/LabeledField.vue";
 import {
   eventFormFields,
@@ -165,7 +166,11 @@ async function save() {
   saveError.value = null;
   errors.value = {};
 
-  const common = eventSaveBody(form.value);
+  // The field is only offered with calendars to choose from; without it they stay as they are.
+  const calendars = {
+    calendar_ids: eventForm.value?.calendars?.length ? form.value.calendarIds : null,
+  };
+  const common = { ...eventSaveBody(form.value), ...calendars };
   const path = { id: props.organizationId };
   const { data, error } = isUpdate.value
     ? await api.PUT("/bff/manage/organizations/{id}/events/{event_id}", {
@@ -604,6 +609,19 @@ onMounted(load);
                 :tag-removed-label="t('Tag removed')"
                 separator=",;"
                 no-outer-focus
+              />
+            </LabeledField>
+            <LabeledField
+              v-if="eventForm.calendars?.length"
+              :label="t('Calendars')"
+              :description="t('Put the event into calendars of your organization.')"
+              :error="errors.calendar_ids"
+            >
+              <CalendarPicker
+                v-model="form.calendarIds"
+                :choices="eventForm.calendars"
+                id-prefix="calendar"
+                data-test="calendars"
               />
             </LabeledField>
             <LabeledField

@@ -1,12 +1,19 @@
 """Calendar query handlers — fake repository."""
 
+import pytest
+
 from project.application import queries
 from project.application.query_handlers import (
     GetCalendarHandler,
     IsCalendarNameTakenHandler,
     ListCalendarsHandler,
+    ListEventCalendarIdsHandler,
+    ListPublicCalendarsForEventHandler,
 )
-from project.application.read_models.calendar_read_models import CalendarReadModel
+from project.application.read_models.calendar_read_models import (
+    CalendarReadModel,
+    CalendarRefReadModel,
+)
 from project.application.read_models.organization_ref_read_model import (
     OrganizationRefReadModel,
 )
@@ -14,6 +21,7 @@ from project.application.read_models.page import Page
 from project.application.read_repositories.abstract_calendar_read_repository import (
     AbstractCalendarReadRepository,
 )
+from project.domain.errors import UnauthorizedError
 from tests.unit.application.query_handlers.authz_helpers import ACTOR, authz
 
 ORGANIZATION = OrganizationRefReadModel(id=7, name="Crew")
@@ -48,6 +56,21 @@ class FakeRepo(AbstractCalendarReadRepository):
 
     def get_filter_infos(self, ids):  # pragma: no cover
         return []
+
+    def event_admin_unit_id(self, event_id):
+        return 7 if event_id == 1 else None
+
+    def list_calendar_ids_of_event(self, admin_unit_id, event_id):
+        return [4, 5]
+
+    def list_public_calendars_of_other_organizations(self, event_id, admin_unit_id):
+        return [
+            CalendarRefReadModel(
+                id=9,
+                name="Other",
+                organization=OrganizationRefReadModel(id=8, name="X"),
+            )
+        ]
 
     def is_name_taken(self, admin_unit_id, name, exclude_id=None):
         return (admin_unit_id, name, exclude_id) == (7, "Taken", 3)
@@ -116,4 +139,30 @@ def test_is_name_taken_delegates():
     )
     assert not handler.handle(
         queries.IsCalendarNameTakenQuery(admin_unit_id=7, name="Free")
+    )
+
+
+def test_event_calendar_ids_need_read_permission():
+    query = queries.ListEventCalendarIdsQuery(admin_unit_id=7, event_id=1, actor=ACTOR)
+
+    assert ListEventCalendarIdsHandler(FakeRepo(), authz("calendars:read")).handle(
+        query
+    ) == [4, 5]
+    with pytest.raises(UnauthorizedError):
+        ListEventCalendarIdsHandler(FakeRepo(), authz()).handle(query)
+
+
+def test_public_calendars_for_event_are_for_event_editors_only():
+    query = queries.ListPublicCalendarsForEventQuery(event_id=1, actor=ACTOR)
+
+    calendars = ListPublicCalendarsForEventHandler(
+        FakeRepo(), authz("events:read")
+    ).handle(query)
+    assert [c.id for c in calendars] == [9]
+    assert ListPublicCalendarsForEventHandler(FakeRepo(), authz()).handle(query) == []
+    assert (
+        ListPublicCalendarsForEventHandler(FakeRepo(), authz("events:read")).handle(
+            queries.ListPublicCalendarsForEventQuery(event_id=2, actor=ACTOR)
+        )
+        == []
     )

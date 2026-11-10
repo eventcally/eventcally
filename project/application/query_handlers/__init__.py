@@ -121,6 +121,7 @@ from .list_dump_events_handler import ListDumpEventsHandler
 from .list_dump_organizations_handler import ListDumpOrganizationsHandler
 from .list_dump_organizers_handler import ListDumpOrganizersHandler
 from .list_dump_places_handler import ListDumpPlacesHandler
+from .list_event_calendar_ids_handler import ListEventCalendarIdsHandler
 from .list_event_categories_handler import ListEventCategoriesHandler
 from .list_event_dates_handler import ListEventDatesHandler
 from .list_event_organizers_handler import ListEventOrganizersHandler
@@ -163,6 +164,7 @@ from .list_outgoing_organization_relations_handler import (
 from .list_outgoing_organization_verification_requests_handler import (
     ListOutgoingOrganizationVerificationRequestsHandler,
 )
+from .list_public_calendars_for_event_handler import ListPublicCalendarsForEventHandler
 from .list_recurring_event_ids_handler import ListRecurringEventIdsHandler
 from .list_reference_request_suggestions_handler import (
     ListReferenceRequestSuggestionsHandler,

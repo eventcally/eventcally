@@ -31,6 +31,17 @@ class FakeRepo(AbstractCalendarReadRepository):
     def get_filter_infos(self, ids):
         return [INFOS[i] for i in ids if i in INFOS]
 
+    def event_admin_unit_id(self, event_id):  # pragma: no cover
+        return None
+
+    def list_calendar_ids_of_event(self, admin_unit_id, event_id):  # pragma: no cover
+        return []
+
+    def list_public_calendars_of_other_organizations(
+        self, event_id, admin_unit_id
+    ):  # pragma: no cover
+        return []
+
     def is_name_taken(self, admin_unit_id, name, exclude_id=None):  # pragma: no cover
         return False
 

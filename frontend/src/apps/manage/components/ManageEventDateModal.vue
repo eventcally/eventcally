@@ -103,7 +103,7 @@ function askDeleteReference() {
             {{ t("Delete reference") }}
           </button>
         </template>
-        <template v-else>
+        <template v-else-if="row.event.is_own !== false">
           <a
             class="btn btn-outline-secondary"
             :href="manage.eventUpdate(organizationId, row.event.id)"

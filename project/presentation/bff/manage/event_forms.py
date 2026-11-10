@@ -11,6 +11,7 @@ from markupsafe import Markup, escape
 from project.application.commands import (
     CreateEventCommand,
     RequestEventReferenceCommand,
+    SetEventCalendarsCommand,
     UpdateEventCommand,
 )
 from project.application.message_bus import MessageBus
@@ -23,6 +24,7 @@ from project.application.queries import (
     GetEventPlaceRefQuery,
     ListAllEventCategoriesQuery,
     ListCustomEventCategorySetsQuery,
+    ListEventCalendarIdsQuery,
     ListReferenceRequestSuggestionsQuery,
     LookupCustomEventCategoriesQuery,
     PageRequest,
@@ -40,6 +42,7 @@ from project.domain.models.value_objects.event_date_definition_value_object impo
 from project.domain.translation import dummy_gettext
 from project.presentation.bff.errors import FieldValidationError
 from project.presentation.bff.manage import bff_manage_bp
+from project.presentation.bff.manage.calendars import calendar_choices
 from project.presentation.bff.manage.events import LOOKUP_PER_PAGE
 from project.presentation.bff.manage.image_form import image_form_value, image_from_save
 from project.presentation.bff.manage.organization_form import actor, license_choices
@@ -205,6 +208,11 @@ def _base_form(id: int, query_bus: QueryBus) -> dict:
         can_create_place=has_access(SimpleNamespace(id=id), "event_places:write"),
         can_create_organizer=has_access(
             SimpleNamespace(id=id), "event_organizers:write"
+        ),
+        calendars=(
+            calendar_choices(query_bus, id)
+            if has_access(SimpleNamespace(id=id), "calendars:write")
+            else []
         ),
     )
 
@@ -401,6 +409,36 @@ def _command_fields(body: EventSaveBase, photo) -> dict:
     )
 
 
+def _calendar_ids(id: int, body: EventSaveBase, query_bus: QueryBus, errors: list):
+    """The calendars to set after the event is saved, or `None` to leave them alone.
+    The ids are checked first, so the second command cannot fail on input."""
+    if body.calendar_ids is None or not has_access(
+        SimpleNamespace(id=id), "calendars:write"
+    ):
+        return None
+
+    allowed = {choice.id for choice in calendar_choices(query_bus, id)}
+
+    if not set(body.calendar_ids) <= allowed:
+        _invalid_choice(["calendar_ids"], errors)
+
+    return body.calendar_ids
+
+
+def _set_calendars(id: int, event_id: int, calendar_ids, message_bus: MessageBus):
+    if calendar_ids is None:
+        return
+
+    message_bus.handle_command(
+        SetEventCalendarsCommand(
+            actor=actor(),
+            admin_unit_id=id,
+            event_id=event_id,
+            calendar_ids=calendar_ids,
+        )
+    )
+
+
 def _flash_with_link(msg: str, url: str):
     """Copied from `flash_message` (web views): the message plus a " – Show" link."""
     link = Markup(' &ndash; <a href="%s">%s</a>') % (url, gettext("Show"))
@@ -468,6 +506,12 @@ def get_event_form(
         public_status_choices=_choices(_PUBLIC_STATUSES),
         custom_category_sets=_custom_category_sets(query_bus, event),
     )
+
+    if form["calendars"]:
+        form["calendar_ids"] = query_bus.handle(
+            ListEventCalendarIdsQuery(admin_unit_id=id, event_id=event_id)
+        )
+
     return EventForm(**form)
 
 
@@ -499,6 +543,8 @@ def create_event(
         if any(i not in reference_names for i in body.reference_request_ids):
             _invalid_choice(["reference_request_ids"], errors)
 
+    calendar_ids = _calendar_ids(id, body, query_bus, errors)
+
     if errors:
         raise FieldValidationError(errors=errors)
 
@@ -521,6 +567,7 @@ def create_event(
             else gettext("Event successfully planned")
         )
     )
+    _set_calendars(id, result.id, calendar_ids, message_bus)
     _flash_with_link(success_msg, url_for("main.event", event_id=result.id))
 
     if body.public_status == EventPublicStatus.published:
@@ -564,6 +611,7 @@ def update_event(
     event = _event_or_404(id, event_id, query_bus)
     errors = _validate(id, body, query_bus)
     photo = image_from_save(body.photo, event.photo, errors, ["photo"])
+    calendar_ids = _calendar_ids(id, body, query_bus, errors)
 
     if errors:
         raise FieldValidationError(errors=errors)
@@ -577,6 +625,7 @@ def update_event(
             **_command_fields(body, photo),
         )
     )
+    _set_calendars(id, event_id, calendar_ids, message_bus)
 
     flash(
         gettext(

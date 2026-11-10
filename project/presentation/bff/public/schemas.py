@@ -397,6 +397,12 @@ class PublicEventAudit(BaseModel):
     updated_by_label: Optional[str] = None
 
 
+class PublicCalendarRef(BaseModel):
+    id: int
+    name: str
+    organization: PublicOrganizationRef
+
+
 class PublicEventDetail(BaseModel):
     id: int
     name: str
@@ -432,6 +438,9 @@ class PublicEventDetail(BaseModel):
     categories: List[PublicEventCategoryGroup] = []
     references: List[PublicEventReferrer] = []
     reference_requests: List[PublicEventReferenceRequest] = []
+    # The public calendars of other organizations that contain the event; only for
+    # editors of the event (`None` for everybody else).
+    public_calendars: Optional[List[PublicCalendarRef]] = None
     dates: List[PublicEventDateRow] = []
     rights: PublicEventRights
     share_links: PublicShareLinks

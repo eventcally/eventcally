@@ -11,6 +11,7 @@ from project.application.read_models.calendar_read_models import (
     CalendarFilterInfo,
     CalendarListItemReadModel,
     CalendarReadModel,
+    CalendarRefReadModel,
 )
 from project.application.read_models.organization_ref_read_model import (
     OrganizationRefReadModel,
@@ -20,7 +21,7 @@ from project.application.read_repositories.abstract_calendar_read_repository imp
     AbstractCalendarReadRepository,
 )
 from project.domain.types.object_id import ObjectId
-from project.infrastructure.models import AdminUnit, Calendar, CalendarEntry
+from project.infrastructure.models import AdminUnit, Calendar, CalendarEntry, Event
 from project.infrastructure.read_repositories.query_helpers import (
     paginate,
     trackable_filters,
@@ -122,6 +123,50 @@ class SqlAlchemyCalendarReadRepository(AbstractCalendarReadRepository):
         return [
             CalendarFilterInfo(
                 id=row.id, admin_unit_id=row.admin_unit_id, private=row.private
+            )
+            for row in rows
+        ]
+
+    def event_admin_unit_id(self, event_id: ObjectId) -> Optional[ObjectId]:
+        return self.session.execute(
+            select(Event.admin_unit_id).where(Event.id == event_id)
+        ).scalar_one_or_none()
+
+    def list_calendar_ids_of_event(
+        self, admin_unit_id: ObjectId, event_id: ObjectId
+    ) -> List[ObjectId]:
+        return list(
+            self.session.execute(
+                select(Calendar.id)
+                .join(CalendarEntry, CalendarEntry.calendar_id == Calendar.id)
+                .where(
+                    Calendar.admin_unit_id == admin_unit_id,
+                    CalendarEntry.event_id == event_id,
+                )
+                .order_by(func.lower(Calendar.name), Calendar.id)
+            ).scalars()
+        )
+
+    def list_public_calendars_of_other_organizations(
+        self, event_id: ObjectId, admin_unit_id: ObjectId
+    ) -> List[CalendarRefReadModel]:
+        rows = self.session.execute(
+            select(Calendar.id, Calendar.name, AdminUnit.id, AdminUnit.name)
+            .join(CalendarEntry, CalendarEntry.calendar_id == Calendar.id)
+            .join(AdminUnit, AdminUnit.id == Calendar.admin_unit_id)
+            .where(
+                CalendarEntry.event_id == event_id,
+                Calendar.admin_unit_id != admin_unit_id,
+                Calendar.private.is_(False),
+            )
+            .order_by(func.lower(Calendar.name), Calendar.id)
+        ).all()
+
+        return [
+            CalendarRefReadModel(
+                id=row[0],
+                name=row[1],
+                organization=OrganizationRefReadModel(id=row[2], name=row[3]),
             )
             for row in rows
         ]

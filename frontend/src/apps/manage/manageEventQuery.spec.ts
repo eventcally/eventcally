@@ -191,6 +191,16 @@ describe("manageEventQuery", () => {
     expect("sort" in params).toBe(false);
   });
 
+  it("keeps the calendar filter in the URL and sends it to the BFF", () => {
+    const filter = fromRouteQuery({ calendar_id: "7" }, defaults);
+
+    expect(filter.calendar_id).toBe(7);
+    expect(toRouteQuery(filter, defaults)).toEqual({ calendar_id: "7" });
+    expect(toBffParams(filter).calendar_id).toBe(7);
+    expect(toBffParams(emptyFilter(defaults)).calendar_id).toBeUndefined();
+    expect(fromRouteQuery({ calendar_id: "x" }, defaults).calendar_id).toBeNull();
+  });
+
   it("sends include_references only when set", () => {
     expect(toBffParams(emptyFilter(defaults)).include_references).toBeUndefined();
     expect(

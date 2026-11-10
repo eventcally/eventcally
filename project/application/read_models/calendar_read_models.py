@@ -48,3 +48,13 @@ class CalendarFilterInfo(BaseReadModel):
     id: ObjectId
     admin_unit_id: ObjectId
     private: bool
+
+
+class CalendarRefReadModel(BaseReadModel):
+    """A public calendar with its organization (the "In calendars" block)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    id: ObjectId
+    name: str
+    organization: OrganizationRefReadModel

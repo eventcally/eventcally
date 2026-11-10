@@ -29,6 +29,8 @@ export interface ManageEventFilter {
   page: number;
   /** Also the events of other organizations this organization references. */
   include_references: boolean;
+  /** Only the events of this calendar (own and foreign ones). */
+  calendar_id: number | null;
   /** List or calendar; the calendar ignores date range, sort and page. */
   view: ManageEventView;
   calendar_view: CalendarView;
@@ -67,6 +69,7 @@ export function emptyFilter(defaults: ManageEventDefaults): ManageEventFilter {
     sort: "min_start",
     page: 1,
     include_references: false,
+    calendar_id: null,
     view: "list",
     calendar_view: "dayGridMonth",
     calendar_date: "",
@@ -120,6 +123,7 @@ export function fromRouteQuery(
   filter.sort = SORTS.includes(sort) ? sort : "min_start";
   filter.page = positiveInt(query.page) ?? 1;
   filter.include_references = text(query.include_references) === "1";
+  filter.calendar_id = positiveInt(query.calendar_id);
   if (text(query.view) === "calendar") {
     const calendarView = text(query.calendar_view) as CalendarView;
     filter.view = "calendar";
@@ -160,6 +164,7 @@ export function toRouteQuery(
   set("is_recurring", filter.is_recurring);
   if (filter.sort !== "min_start") set("sort", filter.sort);
   if (filter.include_references) set("include_references", "1");
+  set("calendar_id", filter.calendar_id);
   if (filter.view === "calendar") {
     set("view", "calendar");
     if (filter.calendar_view !== "dayGridMonth") set("calendar_view", filter.calendar_view);
@@ -190,6 +195,7 @@ export function toBffParams(filter: ManageEventFilter) {
     created_at_to: filter.created_at_to || undefined,
     is_recurring: filter.is_recurring || undefined,
     include_references: filter.include_references || undefined,
+    calendar_id: filter.calendar_id ?? undefined,
     sort: filter.sort,
   };
 }

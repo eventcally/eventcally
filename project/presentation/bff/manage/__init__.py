@@ -7,6 +7,7 @@ bff_manage_bp = Blueprint("bff_manage", __name__, url_prefix="/manage")
 from project.presentation.bff.manage import api_keys  # noqa: E402, F401
 from project.presentation.bff.manage import app_installations  # noqa: E402, F401
 from project.presentation.bff.manage import apps  # noqa: E402, F401
+from project.presentation.bff.manage import calendars  # noqa: E402, F401
 from project.presentation.bff.manage import custom_widgets  # noqa: E402, F401
 from project.presentation.bff.manage import event_forms  # noqa: E402, F401
 from project.presentation.bff.manage import event_organizers  # noqa: E402, F401

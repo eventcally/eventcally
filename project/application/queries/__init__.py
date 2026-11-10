@@ -115,6 +115,7 @@ from .list_dump_events_query import ListDumpEventsQuery
 from .list_dump_organizations_query import ListDumpOrganizationsQuery
 from .list_dump_organizers_query import ListDumpOrganizersQuery
 from .list_dump_places_query import ListDumpPlacesQuery
+from .list_event_calendar_ids_query import ListEventCalendarIdsQuery
 from .list_event_categories_query import ListEventCategoriesQuery
 from .list_event_dates_query import ListEventDatesQuery
 from .list_event_organizers_query import EventOrganizerSort, ListEventOrganizersQuery
@@ -158,6 +159,7 @@ from .list_outgoing_organization_relations_query import (
 from .list_outgoing_organization_verification_requests_query import (
     ListOutgoingOrganizationVerificationRequestsQuery,
 )
+from .list_public_calendars_for_event_query import ListPublicCalendarsForEventQuery
 from .list_recurring_event_ids_query import ListRecurringEventIdsQuery
 from .list_reference_request_suggestions_query import (
     ListReferenceRequestSuggestionsQuery,

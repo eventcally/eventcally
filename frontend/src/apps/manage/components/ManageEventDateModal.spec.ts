@@ -19,6 +19,8 @@ const options = {
   can_request_reference: true,
   can_read_references: true,
   can_write_references: true,
+  calendars: [] as { id: number; name: string; private: boolean }[],
+  can_write_calendars: false,
 };
 
 function row(over: Partial<ManageEventDate["event"]> = {}): ManageEventDate {
@@ -36,6 +38,7 @@ function row(over: Partial<ManageEventDate["event"]> = {}): ManageEventDate {
       organizer_name: "Jam Crew",
       place_label: "Rathaus 38640 Goslar",
       is_reference: false,
+      is_own: true,
       reference_id: null,
       organization_name: null,
       ...over,

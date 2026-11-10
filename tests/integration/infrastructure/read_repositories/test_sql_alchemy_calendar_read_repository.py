@@ -172,3 +172,29 @@ def test_get_filter_infos(read_repo, calendars):
         (ids["alpha"], admin_unit_id, False),
         (ids["secret"], admin_unit_id, True),
     }
+
+
+def test_event_calendar_reads(read_repo, app, db, seeder, calendars):
+    admin_unit_id, ids = calendars
+    _, other_admin_unit_id = _other_organization(seeder)
+    event_id = seeder.create_event(admin_unit_id, name="Shared")
+    own = seeder.create_calendar(admin_unit_id, "Mine")
+    public = seeder.create_calendar(other_admin_unit_id, "Their public")
+    private = seeder.create_calendar(other_admin_unit_id, "Their private", private=True)
+    for calendar_id in (own, public, private):
+        seeder.create_calendar_entry(calendar_id, event_id)
+
+    assert read_repo("event_admin_unit_id", event_id) == admin_unit_id
+    assert read_repo("event_admin_unit_id", 4711) is None
+    assert read_repo("list_calendar_ids_of_event", admin_unit_id, event_id) == [own]
+    foreign = read_repo(
+        "list_public_calendars_of_other_organizations", event_id, admin_unit_id
+    )
+    assert [(c.id, c.name, c.organization.id) for c in foreign] == [
+        (public, "Their public", other_admin_unit_id)
+    ]
+
+
+def _other_organization(seeder):
+    user_id = seeder.create_user("third@test.de")
+    return user_id, seeder.create_admin_unit(user_id, "Dritte Crew")

@@ -4,6 +4,7 @@ from flask_babel import gettext
 
 from project.presentation.bff.public.schemas import (
     PublicCalendarLinks,
+    PublicCalendarRef,
     PublicEventAudit,
     PublicEventCategoryGroup,
     PublicEventDateRow,
@@ -16,6 +17,7 @@ from project.presentation.bff.public.schemas import (
     PublicEventRights,
     PublicImage,
     PublicOrganizationBadge,
+    PublicOrganizationRef,
     PublicShareLinks,
 )
 from project.presentation.shared.urls import url_for_image
@@ -126,6 +128,7 @@ def event_detail(
     show_rating: bool,
     share_links: dict,
     calendar_links: dict,
+    public_calendars=None,
 ) -> PublicEventDetail:
     """The public payload of an event. What only editors may see is decided here:
     the rating (`show_rating`), the internal tags and the audit labels follow the
@@ -200,6 +203,20 @@ def event_detail(
             [_reference_request(r) for r in event.reference_requests]
             if rights["can_create_reference_request"]
             else []
+        ),
+        public_calendars=(
+            [
+                PublicCalendarRef(
+                    id=c.id,
+                    name=c.name,
+                    organization=PublicOrganizationRef(
+                        id=c.organization.id, name=c.organization.name
+                    ),
+                )
+                for c in public_calendars
+            ]
+            if can_update and public_calendars is not None
+            else None
         ),
         dates=[
             PublicEventDateRow(id=d.id, start=d.start, end=d.end, allday=d.allday)
