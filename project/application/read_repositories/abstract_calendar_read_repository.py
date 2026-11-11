@@ -54,6 +54,12 @@ class AbstractCalendarReadRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def lookup_public(
+        self, keyword: str, limit: int
+    ) -> List[CalendarRefReadModel]:  # pragma: no cover
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def is_name_taken(
         self,
         admin_unit_id: ObjectId,

@@ -248,9 +248,15 @@ def _review_event(event, start_definition) -> ReviewEvent:
     )
 
 
-def _calendar_ids(id: int, body: EventReferenceRequestVerify, query_bus: QueryBus):
+def _calendar_ids(
+    id: int,
+    body: EventReferenceRequestVerify | EventReferenceRequestReject,
+    query_bus: QueryBus,
+):
     """The calendars to put the event into, checked before the reference is created so
-    the calendar command cannot fail on input afterwards."""
+    the calendar command cannot fail on input afterwards. A rejected request may still
+    put the event into calendars (the organization does not reference it, but lists
+    it in a calendar)."""
     if not body.calendar_ids:
         return []
 
@@ -374,7 +380,8 @@ def reject_incoming_event_reference_request(
     message_bus: MessageBus = Provide[Application.cqrs.message_bus],
     query_bus: QueryBus = Provide[Application.cqrs.query_bus],
 ):
-    _reference_request_or_404(id, request_id, query_bus)
+    review = _reference_request_or_404(id, request_id, query_bus)
+    calendar_ids = _calendar_ids(id, body, query_bus)
     message_bus.handle_command(
         RejectEventReferenceRequestCommand(
             actor=actor(),
@@ -383,6 +390,17 @@ def reject_incoming_event_reference_request(
             auto_verify=False,
         )
     )
+
+    if calendar_ids:
+        message_bus.handle_command(
+            SetEventCalendarsCommand(
+                actor=actor(),
+                admin_unit_id=id,
+                event_id=review.event.id,
+                calendar_ids=calendar_ids,
+            )
+        )
+
     return _reviewed(
         gettext("Request successfully updated"),
         "manage_admin_unit.incoming_event_reference_requests",

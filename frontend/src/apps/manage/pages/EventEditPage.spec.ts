@@ -211,6 +211,12 @@ describe("EventEditPage", () => {
       }),
     );
 
+    // Own card between the rating and the reference requests.
+    const headers = wrapper.findAll(".card-header").map((header) => header.text());
+    expect(headers.indexOf("Calendars")).toBe(headers.indexOf("Rating") + 1);
+    expect(wrapper.find("[data-test=calendars-card]").text()).toContain(
+      "Put the event into calendars of your organization.",
+    );
     expect((wrapper.find("#calendar-1").element as HTMLInputElement).checked).toBe(true);
     await wrapper.find("#calendar-2").setValue(true);
     await wrapper.find("#submit").trigger("click");
@@ -224,7 +230,7 @@ describe("EventEditPage", () => {
     POST.mockResolvedValue({ data: { id: 3, redirect_url: "/x" } });
     const wrapper = await mountPage();
 
-    expect(wrapper.find("[data-test=calendars]").exists()).toBe(false);
+    expect(wrapper.find("[data-test=calendars-card]").exists()).toBe(false);
     await wrapper.find("#submit").trigger("click");
     await wrapper.find("form").trigger("submit");
     await flushPromises();

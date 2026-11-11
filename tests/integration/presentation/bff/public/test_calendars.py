@@ -39,3 +39,37 @@ def test_get_private_calendar(client, seeder, utils):
 
 def test_get_unknown_calendar(client, utils):
     assert utils.get_json(_url(4711)).status_code == 404
+
+
+def test_lookup_calendars(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    sports = seeder.create_calendar(admin_unit_id, "Sport")
+    seeder.create_calendar(admin_unit_id, "Geheim", private=True)
+
+    body = utils.get_json_ok("/bff/public/calendars?keyword=crew&per_page=5").json
+
+    assert body == {
+        "items": [
+            {
+                "id": sports,
+                "name": "Sport",
+                "organization": {"id": admin_unit_id, "name": "Meine Crew"},
+            }
+        ]
+    }
+
+
+def test_get_calendar_carries_the_calendar_organization(client, seeder, utils):
+    _, owner_admin_unit_id = seeder.setup_base(log_in=False)
+    calendar_id = seeder.create_calendar(owner_admin_unit_id, "Stadtfeste")
+
+    assert utils.get_json_ok(_url(calendar_id)).json["calendar_organization"] is None
+
+    _, admin_unit_id = seeder.setup_base(email="member@test.de", name="Andere Crew")
+    seeder.create_calendar(admin_unit_id, "Eigener")
+    utils.get_ok("/organizations")
+
+    assert utils.get_json_ok(_url(calendar_id)).json["calendar_organization"] == {
+        "id": admin_unit_id,
+        "name": "Andere Crew",
+    }

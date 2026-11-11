@@ -321,3 +321,22 @@ def test_search_with_unknown_or_private_calendar_is_400(client, seeder, utils):
 
     assert utils.get_json(f"{SEARCH_URL}?calendar_id=4711").status_code == 400
     assert utils.get_json(f"{SEARCH_URL}?calendar_id={private_id}").status_code == 400
+
+
+def test_options_resolve_the_visible_filtered_calendars(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    public = seeder.create_calendar(admin_unit_id, "Sport")
+    private = seeder.create_calendar(admin_unit_id, "Geheim", private=True)
+
+    body = utils.get_json_ok(
+        f"{OPTIONS_URL}?calendar_id={public}&calendar_id={private}&calendar_id={public}"
+    ).json
+
+    # A private calendar stays hidden from outsiders, duplicates collapse.
+    assert body["calendars"] == [
+        {
+            "id": public,
+            "name": "Sport",
+            "organization": {"id": admin_unit_id, "name": "Meine Crew"},
+        }
+    ]

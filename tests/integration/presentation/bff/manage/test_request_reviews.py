@@ -688,3 +688,31 @@ def test_reference_verify_with_calendars_needs_the_calendar_permission(
 
     assert response.status_code == 403
     assert _reference_request(app, db, request_id)[0] == "inbox"
+
+
+def test_reference_reject_can_still_put_the_event_into_calendars(
+    client, app, db, seeder, utils, reference
+):
+    calendar_id = seeder.create_calendar(reference["admin_unit_id"])
+
+    response = utils.post_json(
+        f"{reference['url']}/reject",
+        {"rejection_reason": 0, "calendar_ids": [calendar_id]},
+    )
+
+    assert response.status_code == 200
+    assert _reference_request(app, db, reference["request_id"])[0] == "rejected"
+    assert _calendar_ids(app, reference["event_id"]) == [calendar_id]
+
+
+def test_reference_reject_checks_the_calendars_before_rejecting(
+    client, app, db, seeder, utils, reference
+):
+    foreign = seeder.create_calendar(reference["other_admin_unit_id"], "Fremd")
+
+    response = utils.post_json(
+        f"{reference['url']}/reject", {"rejection_reason": 0, "calendar_ids": [foreign]}
+    )
+
+    assert response.status_code == 422
+    assert _reference_request(app, db, reference["request_id"])[0] == "inbox"

@@ -2429,6 +2429,14 @@
             ],
             "default": null
           },
+          "calendars": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PublicCalendarRef"
+            },
+            "title": "Calendars",
+            "type": "array"
+          },
           "categories": {
             "items": {
               "$ref": "#/components/schemas/WidgetCategory"
@@ -3928,6 +3936,14 @@
       },
       "EventReferenceRequestReject": {
         "properties": {
+          "calendar_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Calendar Ids",
+            "type": "array"
+          },
           "rejection_reason": {
             "anyOf": [
               {
@@ -7920,6 +7936,17 @@
       },
       "PublicCalendar": {
         "properties": {
+          "calendar_organization": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicOrganizationRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
           "description": {
             "anyOf": [
               {
@@ -7997,6 +8024,23 @@
           "ics"
         ],
         "title": "PublicCalendarLinks",
+        "type": "object"
+      },
+      "PublicCalendarLookup": {
+        "description": "Public calendars whose name or organization name contains the keyword.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicCalendarRef"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "PublicCalendarLookup",
         "type": "object"
       },
       "PublicCalendarRef": {
@@ -26183,6 +26227,87 @@
         "summary": "Events of a configured external calendar"
       }
     },
+    "/bff/public/calendars": {
+      "get": {
+        "operationId": "bff_public_lookup_calendars",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "keyword",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 255,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCalendarLookup"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Find public calendars by calendar or organization name"
+      }
+    },
     "/bff/public/calendars/{id}": {
       "get": {
         "operationId": "bff_public_get_calendar",
@@ -26605,6 +26730,18 @@
                 }
               ],
               "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "calendar_id",
+            "required": false,
+            "schema": {
+              "default": [],
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
             }
           }
         ],

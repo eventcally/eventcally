@@ -5,6 +5,7 @@ import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AppTypeahead from "@/shared/AppTypeahead.vue";
 import LocationFilter from "@/shared/LocationFilter.vue";
+import MultiTypeahead from "@/shared/MultiTypeahead.vue";
 import { type EventDateFilter, hasExtendedFilter } from "../eventDateQuery";
 
 type Options = components["schemas"]["EventDateSearchOptions"];
@@ -19,6 +20,7 @@ const { t } = useI18n();
 const draft = ref<EventDateFilter>({ ...props.filter });
 const organization = ref<Ref | null>(null);
 const organizer = ref<Ref | null>(null);
+const calendars = ref<Ref[]>([]);
 const extended = ref(hasExtendedFilter(props.filter));
 
 function syncRefs() {
@@ -30,6 +32,27 @@ function syncRefs() {
     props.options.organizer && props.options.organizer.id === props.filter.organizer_id
       ? props.options.organizer
       : null;
+  // The label names the organization too: calendar names repeat across organizations.
+  calendars.value = props.filter.calendar_id.flatMap((id) => {
+    const calendar = props.options.calendars.find((item) => item.id === id);
+    return calendar ? [{ id, name: calendarLabel(calendar) }] : [];
+  });
+}
+
+function calendarLabel(calendar: { name: string; organization: { name: string } }) {
+  return `${calendar.name} (${calendar.organization.name})`;
+}
+
+function setCalendars(value: Ref[]) {
+  calendars.value = value;
+  draft.value.calendar_id = value.map((item) => item.id);
+}
+
+async function fetchCalendars(keyword: string): Promise<Ref[]> {
+  const { data } = await api.GET("/bff/public/calendars", {
+    params: { query: { keyword, per_page: 10 } },
+  });
+  return (data?.items ?? []).map((c) => ({ id: c.id, name: calendarLabel(c) }));
 }
 
 watch(
@@ -151,6 +174,19 @@ function submit() {
       </div>
 
       <div class="row g-2 mb-3">
+        <label class="col-sm-2 col-form-label" for="calendar_id">{{ t("Calendars") }}</label>
+        <div class="col-sm-10">
+          <MultiTypeahead
+            :model-value="calendars"
+            input-id="calendar_id"
+            :fetch="fetchCalendars"
+            :placeholder="t('Enter calendar or organization')"
+            @update:model-value="setCalendars"
+          />
+        </div>
+      </div>
+
+      <div class="row g-2 mb-3">
         <label class="col-sm-2 col-form-label" for="postal_code">{{ t("Postal code") }}</label>
         <div class="col-sm-10">
           <input
@@ -257,7 +293,7 @@ function submit() {
         aria-controls="extended_search_form"
         @click="extended = !extended"
       >
-        {{ t("More filters") }}
+        {{ extended ? t("Fewer filters") : t("More filters") }}
       </button>
       <button
         id="toggle-map-btn"

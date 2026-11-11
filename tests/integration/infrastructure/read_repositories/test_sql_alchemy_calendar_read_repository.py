@@ -198,3 +198,26 @@ def test_event_calendar_reads(read_repo, app, db, seeder, calendars):
 def _other_organization(seeder):
     user_id = seeder.create_user("third@test.de")
     return user_id, seeder.create_admin_unit(user_id, "Dritte Crew")
+
+
+def test_lookup_public(read_repo, seeder, calendars):
+    _, ids = calendars
+    _, unverified_admin_unit_id = _other_organization(seeder)
+    seeder.create_calendar(unverified_admin_unit_id, "Unverified sports")
+
+    def lookup(keyword, limit=10):
+        return [
+            (c.name, c.organization.name)
+            for c in read_repo("lookup_public", keyword, limit)
+        ]
+
+    # Private calendars and calendars of unverified organizations never match.
+    assert lookup("") == [
+        ("Alpha", "Meine Crew"),
+        ("Other crew calendar", "Andere Crew"),
+        ("Sports club", "Meine Crew"),
+    ]
+    assert lookup("sport") == [("Sports club", "Meine Crew")]
+    # The organization name matches too.
+    assert lookup("andere") == [("Other crew calendar", "Andere Crew")]
+    assert lookup("", limit=1) == [("Alpha", "Meine Crew")]

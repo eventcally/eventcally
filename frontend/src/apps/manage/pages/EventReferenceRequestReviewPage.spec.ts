@@ -201,7 +201,7 @@ describe("EventReferenceRequestReviewPage", () => {
 
     expect(POST).toHaveBeenCalledWith(`${BASE}/reject`, {
       ...PARAMS,
-      body: { rejection_reason: null },
+      body: { rejection_reason: null, calendar_ids: [] },
     });
     expect(assign).toHaveBeenCalledWith("/list");
   });
@@ -219,7 +219,26 @@ describe("EventReferenceRequestReviewPage", () => {
     body("[data-test=reject-confirm]")!.click();
     await flushPromises();
 
-    expect(POST.mock.calls[0][1].body).toEqual({ rejection_reason: 4 });
+    expect(POST.mock.calls[0][1].body).toEqual({ rejection_reason: 4, calendar_ids: [] });
+  });
+
+  it("can put the event into calendars while rejecting", async () => {
+    GET.mockResolvedValue({
+      data: review({ calendars: [{ id: 1, name: "Sport", private: false }] }),
+    });
+    POST.mockResolvedValue({ data: { redirect_url: "/list" } });
+    const wrapper = await mountPage();
+
+    await open(wrapper, "reject");
+    expect(body("[data-test=reject-calendars]")?.textContent).toContain(
+      "Also put the event into calendars of your organization.",
+    );
+    (body("#reject-calendar-1") as HTMLInputElement).click();
+    await flushPromises();
+    body("[data-test=reject-confirm]")!.click();
+    await flushPromises();
+
+    expect(POST.mock.calls[0][1].body).toEqual({ rejection_reason: null, calendar_ids: [1] });
   });
 
   it("shows a server error inline and keeps the page", async () => {

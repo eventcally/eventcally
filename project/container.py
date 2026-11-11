@@ -927,6 +927,10 @@ class Cqrs(containers.DeclarativeContainer):
                     repo=read_repos.calendar_read_repo,
                     authz=actor_authorization_service,
                 ),
+                queries.LookupPublicCalendarsQuery: providers.Factory(
+                    query_handlers.LookupPublicCalendarsHandler,
+                    repo=read_repos.calendar_read_repo,
+                ),
                 queries.IsCalendarNameTakenQuery: providers.Factory(
                     query_handlers.IsCalendarNameTakenHandler,
                     repo=read_repos.calendar_read_repo,

@@ -233,6 +233,7 @@ class EventDateSearchParams(PageParams):
 class EventDateSearchOptionsParams(BaseModel):
     admin_unit_id: Optional[int] = None
     organizer_id: Optional[int] = None
+    calendar_id: List[int] = []
 
 
 class EventDateSearchOptions(BaseModel):
@@ -245,6 +246,8 @@ class EventDateSearchOptions(BaseModel):
     referencing_organization: Optional[PublicOrganizationRef] = None
     # The session's organization when it may put events into its calendars.
     calendar_organization: Optional[PublicOrganizationRef] = None
+    # The calendars of the `calendar_id` filter the caller may see.
+    calendars: List["PublicCalendarRef"] = []
 
 
 class PublicEventDatePlace(BaseModel):
@@ -413,6 +416,8 @@ class PublicCalendar(BaseModel):
     ical_url: str
     # Only for members who may manage the calendar.
     manage_url: Optional[str] = None
+    # The session's organization when it may put events into its calendars.
+    calendar_organization: Optional[PublicOrganizationRef] = None
 
 
 class PublicCalendarRef(BaseModel):
@@ -474,3 +479,14 @@ class PublicEventDateDetail(BaseModel):
     end: Optional[datetime] = None
     allday: bool = False
     event: PublicEventDetail
+
+
+class PublicCalendarLookupParams(BaseModel):
+    keyword: str = Field(default="", max_length=255)
+    per_page: int = Field(default=10, ge=1, le=50)
+
+
+class PublicCalendarLookup(BaseModel):
+    """Public calendars whose name or organization name contains the keyword."""
+
+    items: List[PublicCalendarRef]

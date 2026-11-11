@@ -194,6 +194,7 @@ from .list_webhook_delivery_attempts_for_app_handler import (
 from .lookup_custom_event_categories_handler import LookupCustomEventCategoriesHandler
 from .lookup_event_organizers_handler import LookupEventOrganizersHandler
 from .lookup_event_places_handler import LookupEventPlacesHandler
+from .lookup_public_calendars_handler import LookupPublicCalendarsHandler
 from .search_event_dates_handler import SearchEventDatesHandler
 from .search_events_handler import SearchEventsHandler
 from .search_organizations_handler import SearchOrganizationsHandler

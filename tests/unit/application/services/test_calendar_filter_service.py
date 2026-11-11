@@ -42,6 +42,9 @@ class FakeRepo(AbstractCalendarReadRepository):
     ):  # pragma: no cover
         return []
 
+    def lookup_public(self, keyword, limit):  # pragma: no cover
+        return []
+
     def is_name_taken(self, admin_unit_id, name, exclude_id=None):  # pragma: no cover
         return False
 

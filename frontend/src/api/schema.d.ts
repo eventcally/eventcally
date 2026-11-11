@@ -2111,6 +2111,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/public/calendars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Find public calendars by calendar or organization name */
+        get: operations["bff_public_lookup_calendars"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/public/calendars/{id}": {
         parameters: {
             query?: never;
@@ -3859,6 +3876,11 @@ export interface components {
         EventDateSearchOptions: {
             /** @default null */
             calendar_organization: components["schemas"]["PublicOrganizationRef"] | null;
+            /**
+             * Calendars
+             * @default []
+             */
+            calendars: components["schemas"]["PublicCalendarRef"][];
             /** Categories */
             categories: components["schemas"]["WidgetCategory"][];
             /**
@@ -4509,6 +4531,11 @@ export interface components {
         };
         /** EventReferenceRequestReject */
         EventReferenceRequestReject: {
+            /**
+             * Calendar Ids
+             * @default []
+             */
+            calendar_ids: number[];
             /**
              * Rejection Reason
              * @default null
@@ -6199,6 +6226,8 @@ export interface components {
         };
         /** PublicCalendar */
         PublicCalendar: {
+            /** @default null */
+            calendar_organization: components["schemas"]["PublicOrganizationRef"] | null;
             /**
              * Description
              * @default null
@@ -6231,6 +6260,14 @@ export interface components {
             google: string | null;
             /** Ics */
             ics: string;
+        };
+        /**
+         * PublicCalendarLookup
+         * @description Public calendars whose name or organization name contains the keyword.
+         */
+        PublicCalendarLookup: {
+            /** Items */
+            items: components["schemas"]["PublicCalendarRef"][];
         };
         /** PublicCalendarRef */
         PublicCalendarRef: {
@@ -18005,6 +18042,65 @@ export interface operations {
             };
         };
     };
+    bff_public_lookup_calendars: {
+        parameters: {
+            query?: {
+                keyword?: string;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicCalendarLookup"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_public_get_calendar: {
         parameters: {
             query?: never;
@@ -18143,6 +18239,7 @@ export interface operations {
             query?: {
                 admin_unit_id?: number | null;
                 organizer_id?: number | null;
+                calendar_id?: number[];
             };
             header?: never;
             path?: never;

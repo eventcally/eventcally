@@ -75,7 +75,7 @@ const reject = (reason: number | null) =>
   decide(
     api.POST("/bff/manage/organizations/{id}/incoming-event-reference-requests/{request_id}/reject", {
       params: { path: path() },
-      body: { rejection_reason: reason },
+      body: { rejection_reason: reason, calendar_ids: calendarIds.value },
     }),
   );
 
@@ -107,6 +107,16 @@ onMounted(load);
           @reject="reject"
           @reset="error = null"
         >
+          <template #reject-fields>
+            <div v-if="review.calendars?.length" class="mb-3" data-test="reject-calendars">
+              <label class="form-label d-block">{{ t("Calendars") }}</label>
+              <div class="text-body-secondary mb-1">
+                {{ t("Also put the event into calendars of your organization.") }}
+              </div>
+              <CalendarPicker v-model="calendarIds" :choices="review.calendars" id-prefix="reject-calendar" />
+            </div>
+          </template>
+
           <template #accept-fields>
             <div v-if="review.rating_choices.length > 1" class="mb-3">
               <label class="form-label" for="rating">{{ t("Rating") }}</label>

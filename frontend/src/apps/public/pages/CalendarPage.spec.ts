@@ -1,6 +1,6 @@
-import { flushPromises, mount } from "@vue/test-utils";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
 import { createBootstrap } from "bootstrap-vue-next";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createI18n } from "vue-i18n";
 
 vi.mock("@/shared/boot", () => ({
@@ -55,7 +55,9 @@ function answer(cal: object | null, list: object = dates([date(1), date(2)])) {
       ? cal
         ? { data: cal }
         : { error: { message: "Not found" } }
-      : list,
+      : path === "/bff/manage/organizations/{id}/events/{event_id}/calendars"
+        ? { data: { choices: [], selected_ids: [] } }
+        : list,
   );
 }
 
@@ -72,6 +74,8 @@ async function mountPage() {
 }
 
 describe("CalendarPage", () => {
+  enableAutoUnmount(afterEach);
+
   beforeEach(() => {
     GET.mockReset();
     document.body.innerHTML = "";
@@ -150,5 +154,26 @@ describe("CalendarPage", () => {
     const wrapper = await mountPage();
 
     expect(wrapper.find(".alert-danger").text()).toBe("Boom");
+  });
+
+  it("offers adding a date's event to a calendar of the session's organization", async () => {
+    answer(calendar({ calendar_organization: { id: 9, name: "Mine" } }));
+    const wrapper = await mountPage();
+
+    const buttons = wrapper.findAll("[data-test=add-to-calendar]");
+    expect(buttons).toHaveLength(2);
+    await buttons[1].trigger("click");
+    await flushPromises();
+
+    expect(GET).toHaveBeenLastCalledWith("/bff/manage/organizations/{id}/events/{event_id}/calendars", {
+      params: { path: { id: 9, event_id: 102 } },
+    });
+  });
+
+  it("offers no calendar action without a calendar organization", async () => {
+    answer(calendar());
+    const wrapper = await mountPage();
+
+    expect(wrapper.find("[data-test=add-to-calendar]").exists()).toBe(false);
   });
 });

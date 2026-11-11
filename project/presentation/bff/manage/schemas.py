@@ -979,6 +979,9 @@ class EventReferenceRequestVerify(BaseModel):
 class EventReferenceRequestReject(BaseModel):
     # `0` and `None` both mean no reason.
     rejection_reason: Optional[int] = None
+    # Put the event into these calendars of the organization even though the
+    # reference is rejected.
+    calendar_ids: List[int] = []
 
     @field_validator("rejection_reason")
     @classmethod

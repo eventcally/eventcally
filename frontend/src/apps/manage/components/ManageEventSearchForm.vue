@@ -354,7 +354,7 @@ function reset() {
         aria-controls="extended_search_form"
         @click="extended = !extended"
       >
-        {{ t("More filters") }}
+        {{ extended ? t("Fewer filters") : t("More filters") }}
       </button>
       <button type="button" class="btn btn-outline-secondary mt-1 me-1" data-test="reset" @click="reset">
         {{ t("Reset") }}

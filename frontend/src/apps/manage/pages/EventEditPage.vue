@@ -612,19 +612,6 @@ onMounted(load);
               />
             </LabeledField>
             <LabeledField
-              v-if="eventForm.calendars?.length"
-              :label="t('Calendars')"
-              :description="t('Put the event into calendars of your organization.')"
-              :error="errors.calendar_ids"
-            >
-              <CalendarPicker
-                v-model="form.calendarIds"
-                :choices="eventForm.calendars"
-                id-prefix="calendar"
-                data-test="calendars"
-              />
-            </LabeledField>
-            <LabeledField
               :label="t('Link URL')"
               label-for="external_link"
               :description="t('Enter a link to an external website containing more information about the event.')"
@@ -678,6 +665,24 @@ onMounted(load);
             >
               <BFormSelect id="rating" v-model="form.rating" :options="choices(eventForm.rating_choices)" />
             </LabeledField>
+          </div>
+        </div>
+
+        <div v-if="eventForm.calendars?.length" class="card mb-4" data-test="calendars-card">
+          <div class="card-header">{{ t("Calendars") }}</div>
+          <div class="card-body pb-0">
+            <p class="text-muted">{{ t("Put the event into calendars of your organization.") }}</p>
+            <div class="mb-3">
+              <CalendarPicker
+                v-model="form.calendarIds"
+                :choices="eventForm.calendars"
+                id-prefix="calendar"
+                data-test="calendars"
+              />
+              <div v-if="errors.calendar_ids" class="invalid-feedback d-block">
+                {{ errors.calendar_ids }}
+              </div>
+            </div>
           </div>
         </div>
 

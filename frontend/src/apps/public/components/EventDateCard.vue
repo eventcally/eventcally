@@ -115,7 +115,7 @@ function toggleReference() {
         </div>
       </div>
     </div>
-    <div v-if="reference || canAssignCalendar" class="card-footer py-1 d-flex flex-wrap gap-3">
+    <div v-if="reference || canAssignCalendar" class="card-footer py-1 d-flex flex-wrap column-gap-3 row-gap-0">
       <button
         v-if="reference?.state === 'own'"
         type="button"

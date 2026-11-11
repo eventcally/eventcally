@@ -9,6 +9,7 @@ from project.application.query_handlers import (
     ListCalendarsHandler,
     ListEventCalendarIdsHandler,
     ListPublicCalendarsForEventHandler,
+    LookupPublicCalendarsHandler,
 )
 from project.application.read_models.calendar_read_models import (
     CalendarReadModel,
@@ -71,6 +72,10 @@ class FakeRepo(AbstractCalendarReadRepository):
                 organization=OrganizationRefReadModel(id=8, name="X"),
             )
         ]
+
+    def lookup_public(self, keyword, limit):
+        self.lookup = (keyword, limit)
+        return []
 
     def is_name_taken(self, admin_unit_id, name, exclude_id=None):
         return (admin_unit_id, name, exclude_id) == (7, "Taken", 3)
@@ -166,3 +171,15 @@ def test_public_calendars_for_event_are_for_event_editors_only():
         )
         == []
     )
+
+
+def test_lookup_public_calendars_strips_the_keyword():
+    repo = FakeRepo()
+
+    assert (
+        LookupPublicCalendarsHandler(repo).handle(
+            queries.LookupPublicCalendarsQuery(keyword="  Sport ", limit=5)
+        )
+        == []
+    )
+    assert repo.lookup == ("Sport", 5)

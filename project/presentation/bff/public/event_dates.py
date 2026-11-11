@@ -3,6 +3,7 @@ from flask import abort
 from flask_security import current_user
 
 from project.application.queries import (
+    GetCalendarQuery,
     GetEventOrganizerQuery,
     GetOrganizationQuery,
     ListAllEventCategoriesQuery,
@@ -24,6 +25,7 @@ from project.presentation.bff.public.schemas import (
     EventDateSearchOptions,
     EventDateSearchOptionsParams,
     EventDateSearchParams,
+    PublicCalendarRef,
     PublicChoice,
     PublicDistance,
     PublicEventDate,
@@ -66,6 +68,25 @@ def _organization_ref(admin_unit):
         return None
 
     return PublicOrganizationRef(id=admin_unit.id, name=admin_unit.name)
+
+
+def _calendar_refs(calendar_ids, query_bus: QueryBus):
+    """The filtered calendars the caller may see (private ones need calendars:read)."""
+    refs = []
+
+    for calendar_id in dict.fromkeys(calendar_ids):
+        calendar = query_bus.handle(GetCalendarQuery(id=calendar_id))
+
+        if calendar:
+            refs.append(
+                PublicCalendarRef(
+                    id=calendar.id,
+                    name=calendar.name,
+                    organization=_organization_ref(calendar.admin_unit),
+                )
+            )
+
+    return refs
 
 
 @bff_route(
@@ -112,6 +133,7 @@ def get_event_date_search_options(
         organizer=_organization_ref(organizer),
         referencing_organization=_organization_ref(_referencing_organization()),
         calendar_organization=_organization_ref(calendar_organization()),
+        calendars=_calendar_refs(query.calendar_id, query_bus),
     )
 
 

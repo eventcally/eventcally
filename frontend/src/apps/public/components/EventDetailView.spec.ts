@@ -146,7 +146,25 @@ describe("EventDetailView", () => {
     expect(block.find("a").attributes("href")).toBe("/calendars/4");
 
     const none = await mountView(makeEvent({ public_calendars: [] }));
-    expect(none.find("[data-test=public-calendars]").exists()).toBe(false);
+    expect(none.find("[data-test=calendars]").exists()).toBe(false);
+  });
+
+  it("puts the calendars into their own box between the reference requests and the dates", async () => {
+    const wrapper = await mountView(
+      makeEvent({
+        rights: { ...makeEvent().rights, can_create_reference_request: true },
+        public_calendars: [],
+        calendar_organization: { id: 7, name: "Crew" },
+      }),
+    );
+
+    const boxes = wrapper
+      .findAll(".card[data-test]")
+      .map((box) => box.attributes("data-test"))
+      .filter((name) => ["reference-requests", "calendars", "dates"].includes(name!));
+    expect(boxes).toEqual(["reference-requests", "calendars", "dates"]);
+    expect(wrapper.find("[data-test=calendars]").text()).toContain("Add to organization calendar");
+    expect(wrapper.find("[data-test=public-calendars]").exists()).toBe(false);
   });
 
   it("shows the property list of a full event", async () => {

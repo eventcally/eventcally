@@ -189,6 +189,7 @@ from .list_webhook_delivery_attempts_for_app_query import (
 from .lookup_custom_event_categories_query import LookupCustomEventCategoriesQuery
 from .lookup_event_organizers_query import LookupEventOrganizersQuery
 from .lookup_event_places_query import LookupEventPlacesQuery
+from .lookup_public_calendars_query import LookupPublicCalendarsQuery
 from .organization_relation_sort import OrganizationRelationSort
 from .page_request import PageRequest
 from .search_event_dates_query import SearchEventDatesQuery

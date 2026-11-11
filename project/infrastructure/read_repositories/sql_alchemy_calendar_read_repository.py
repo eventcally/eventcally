@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from sqlalchemy import exists, func, select
+from sqlalchemy import exists, func, or_, select
 from sqlalchemy.orm import joinedload, undefer_group
 
 from project.application.queries.list_calendars_query import (
@@ -160,6 +160,32 @@ class SqlAlchemyCalendarReadRepository(AbstractCalendarReadRepository):
                 Calendar.private.is_(False),
             )
             .order_by(func.lower(Calendar.name), Calendar.id)
+        ).all()
+
+        return [
+            CalendarRefReadModel(
+                id=row[0],
+                name=row[1],
+                organization=OrganizationRefReadModel(id=row[2], name=row[3]),
+            )
+            for row in rows
+        ]
+
+    def lookup_public(self, keyword: str, limit: int) -> List[CalendarRefReadModel]:
+        filters = [Calendar.private.is_(False), AdminUnit.is_verified]
+
+        if keyword:
+            like = f"%{keyword}%"
+            filters.append(or_(Calendar.name.ilike(like), AdminUnit.name.ilike(like)))
+
+        rows = self.session.execute(
+            select(Calendar.id, Calendar.name, AdminUnit.id, AdminUnit.name)
+            .join(AdminUnit, AdminUnit.id == Calendar.admin_unit_id)
+            .where(*filters)
+            .order_by(
+                func.lower(Calendar.name), func.lower(AdminUnit.name), Calendar.id
+            )
+            .limit(limit)
         ).all()
 
         return [

@@ -6,6 +6,7 @@ import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AppPager from "@/shared/AppPager.vue";
 import { boot } from "@/shared/boot";
+import CalendarAssignModal from "@/shared/CalendarAssignModal.vue";
 import IcalExportModal from "@/shared/IcalExportModal.vue";
 import LinkifiedText from "@/shared/LinkifiedText.vue";
 import { publicPages } from "@/shared/legacy";
@@ -24,6 +25,14 @@ const currentPage = ref(1);
 const loading = ref(false);
 const loadError = ref<string | null>(null);
 const icalVisible = ref(false);
+const calendarOrganizationId = computed(() => calendar.value?.calendar_organization?.id ?? null);
+const calendarEventId = ref<number | null>(null);
+const showCalendars = ref(false);
+
+function assignCalendars(eventId: number) {
+  calendarEventId.value = eventId;
+  showCalendars.value = true;
+}
 
 const searchUrl = computed(() => `${publicPages.eventDatesSearch}?calendar_id=${props.id}`);
 
@@ -116,6 +125,8 @@ onMounted(async () => {
             :key="eventDate.id"
             :event-date="eventDate"
             :locale="boot.locale"
+            :can-assign-calendar="calendarOrganizationId !== null"
+            @assign-calendar="assignCalendars"
           />
           <p
             v-if="page && page.items.length === 0"
@@ -130,6 +141,12 @@ onMounted(async () => {
           v-model:page="currentPage"
           :pages="page.pages"
           :total="page.total"
+        />
+        <CalendarAssignModal
+          v-if="calendarOrganizationId !== null"
+          v-model="showCalendars"
+          :organization-id="calendarOrganizationId"
+          :event-id="calendarEventId"
         />
       </div>
     </BOverlay>

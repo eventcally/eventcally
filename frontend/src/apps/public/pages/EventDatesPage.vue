@@ -56,12 +56,18 @@ function idOf(value: unknown): number | undefined {
   return parsed > 0 ? parsed : undefined;
 }
 
+function idsOf(value: unknown): number[] {
+  const values = Array.isArray(value) ? value : [value];
+  return values.map((item) => Number.parseInt(String(item ?? ""), 10)).filter((id) => id > 0);
+}
+
 async function loadOptions() {
   const { data, error: err } = await api.GET("/bff/public/event-dates/options", {
     params: {
       query: {
         admin_unit_id: idOf(route.query.admin_unit_id),
         organizer_id: idOf(route.query.organizer_id),
+        calendar_id: idsOf(route.query.calendar_id),
       },
     },
   });
@@ -94,12 +100,14 @@ async function search({ scroll = true }: { scroll?: boolean } = {}) {
 async function apply({ scroll = true }: { scroll?: boolean } = {}) {
   const org = idOf(route.query.admin_unit_id) ?? null;
   const organizer = idOf(route.query.organizer_id) ?? null;
+  const calendars = idsOf(route.query.calendar_id);
   const known = options.value;
 
   if (
     !known ||
     (org !== (known.organization?.id ?? null) && org !== null) ||
-    (organizer !== (known.organizer?.id ?? null) && organizer !== null)
+    (organizer !== (known.organizer?.id ?? null) && organizer !== null) ||
+    calendars.some((id) => !known.calendars.some((calendar) => calendar.id === id))
   ) {
     if (!(await loadOptions())) return;
   }
