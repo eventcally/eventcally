@@ -21,6 +21,10 @@
                   <div class="dropdown-menu" aria-labelledby="navbarAdminUnitEventsDropdown">
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.events', id=current_admin_unit.id) }}">{{ _('Show events') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_create', id=current_admin_unit.id) }}">{{ _('Create event') }}</a>
+                    {% if has_access(current_admin_unit, 'calendars:read') %}
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.calendars', id=current_admin_unit.id) }}">{{ _('Calendars') }}</a>
+                    {% endif %}
                   </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -57,9 +61,6 @@
 
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_organizers', id=current_admin_unit.id) }}">{{ _('Organizers') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.event_places', id=current_admin_unit.id) }}">{{ _('Places') }}</a>
-                    {% if has_access(current_admin_unit, 'calendars:read') %}
-                    <a class="dropdown-item" href="{{ url_for('manage_admin_unit.calendars', id=current_admin_unit.id) }}">{{ _('Calendars') }}</a>
-                    {% endif %}
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.organization_members', id=current_admin_unit.id) }}">{{ _('Members') }}</a>
                     <a class="dropdown-item" href="{{ url_for('manage_admin_unit.organization_member_invitations', id=current_admin_unit.id) }}">{{ _('Organization member invitations') }}</a>

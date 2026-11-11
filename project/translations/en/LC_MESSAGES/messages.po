@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-11 09:09+0100\n"
+"POT-Creation-Date: 2026-11-11 09:40+0100\n"
 "PO-Revision-Date: 2021-04-30 15:04+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -252,7 +252,7 @@ msgstr ""
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:138
 #: project/presentation/shared/permissions.py:174
-#: project/presentation/web/templates/_managebar.html:91
+#: project/presentation/web/templates/_managebar.html:92
 #: project/presentation/web/views/manage_admin_unit/api_key/shells.py:17
 #: project/presentation/web/views/user_blueprint/shells.py:105
 #: project/presentation/web/views/user_blueprint/shells.py:111
@@ -707,7 +707,7 @@ msgstr ""
 #: frontend/src/shared/CalendarAssignModal.vue:81
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:139
-#: project/presentation/web/templates/_managebar.html:61
+#: project/presentation/web/templates/_managebar.html:26
 #: project/presentation/web/views/manage_admin_unit/calendar/shells.py:17
 msgid "Calendars"
 msgstr ""
@@ -1149,7 +1149,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/CustomWidgetsPage.vue:91
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:140
-#: project/presentation/web/templates/_managebar.html:88
+#: project/presentation/web/templates/_managebar.html:89
 #: project/presentation/web/views/manage.py:128
 msgid "Custom widgets"
 msgstr ""
@@ -2279,7 +2279,7 @@ msgstr ""
 
 #: frontend/src/apps/manage/pages/OrganizationExportPage.vue:47
 #: project/presentation/shared/permissions.py:144
-#: project/presentation/web/templates/_managebar.html:86
+#: project/presentation/web/templates/_managebar.html:87
 #: project/presentation/web/views/manage.py:148
 msgid "Export"
 msgstr ""
@@ -2551,7 +2551,7 @@ msgstr ""
 #: frontend/src/apps/manage/components/EventReferenceRequestsList.vue:77
 #: frontend/src/apps/manage/pages/EventReferenceRequestReviewPage.vue:89
 #: project/presentation/shared/permissions.py:150
-#: project/presentation/web/templates/_managebar.html:37
+#: project/presentation/web/templates/_managebar.html:41
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference_request/shells.py:24
 msgid "Incoming reference requests"
 msgstr ""
@@ -2563,7 +2563,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/IncomingEventReferencePage.vue:91
 #: frontend/src/apps/manage/pages/IncomingEventReferencesPage.vue:128
 #: project/presentation/shared/permissions.py:152
-#: project/presentation/web/templates/_managebar.html:34
+#: project/presentation/web/templates/_managebar.html:38
 #: project/presentation/web/views/manage_admin_unit/incoming_event_reference/shells.py:17
 msgid "Incoming references"
 msgstr ""
@@ -2571,7 +2571,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/IncomingVerificationRequestsPage.vue:91
 #: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:81
 #: project/presentation/shared/permissions.py:147
-#: project/presentation/web/templates/_managebar.html:73
+#: project/presentation/web/templates/_managebar.html:74
 #: project/presentation/web/views/manage_admin_unit/incoming_verification_request/shells.py:26
 msgid "Incoming verification requests"
 msgstr ""
@@ -2877,7 +2877,7 @@ msgid "Max. height"
 msgstr ""
 
 #: frontend/src/apps/manage/pages/OrganizationVerificationRequestReviewPage.vue:129
-#: project/presentation/web/templates/_managebar.html:64
+#: project/presentation/web/templates/_managebar.html:65
 msgid "Members"
 msgstr ""
 
@@ -3235,7 +3235,7 @@ msgstr ""
 #: project/presentation/web/forms/reference.py:13
 #: project/presentation/web/ical.py:41
 #: project/presentation/web/templates/_macros.html:137
-#: project/presentation/web/templates/_managebar.html:47
+#: project/presentation/web/templates/_managebar.html:51
 #: project/presentation/web/views/manage_admin_unit/admin_unit/shells.py:41
 #: project/templates/email/referenced_event_changed_notice.txt:6
 msgid "Organization"
@@ -3268,7 +3268,7 @@ msgstr ""
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:153
 #: project/presentation/shared/permissions.py:176
-#: project/presentation/web/templates/_managebar.html:81
+#: project/presentation/web/templates/_managebar.html:82
 #: project/presentation/web/views/manage_admin_unit/organization_invitation/shells.py:17
 #: project/presentation/web/views/user_blueprint/shells.py:286
 msgid "Organization invitations"
@@ -3298,7 +3298,7 @@ msgstr ""
 #: frontend/src/apps/user/pages/ProfilePage.vue:88
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:155
-#: project/presentation/web/templates/_managebar.html:65
+#: project/presentation/web/templates/_managebar.html:66
 #: project/presentation/web/views/manage_admin_unit/member_invitation/shells.py:15
 #: project/presentation/web/views/user_blueprint/shells.py:262
 msgid "Organization member invitations"
@@ -3406,7 +3406,7 @@ msgstr ""
 msgid "Organizer"
 msgstr ""
 
-#: project/presentation/web/templates/_managebar.html:58
+#: project/presentation/web/templates/_managebar.html:62
 msgid "Organizers"
 msgstr ""
 
@@ -3442,14 +3442,14 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventReferenceRequestCreatePage.vue:115
 #: frontend/src/apps/manage/pages/OutgoingEventReferenceRequestPage.vue:43
 #: project/presentation/shared/permissions.py:164
-#: project/presentation/web/templates/_managebar.html:42
+#: project/presentation/web/templates/_managebar.html:46
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference_request/shells.py:24
 msgid "Outgoing reference requests"
 msgstr ""
 
 #: frontend/src/apps/manage/pages/OutgoingEventReferencesPage.vue:61
 #: project/presentation/shared/permissions.py:166
-#: project/presentation/web/templates/_managebar.html:35
+#: project/presentation/web/templates/_managebar.html:39
 #: project/presentation/web/views/manage_admin_unit/outgoing_event_reference/shells.py:15
 msgid "Outgoing references"
 msgstr ""
@@ -3457,7 +3457,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestPage.vue:68
 #: frontend/src/apps/manage/pages/OutgoingVerificationRequestsPage.vue:100
 #: project/presentation/shared/permissions.py:161
-#: project/presentation/web/templates/_managebar.html:54
+#: project/presentation/web/templates/_managebar.html:58
 #: project/presentation/web/views/manage_admin_unit/outgoing_verification_request/shells.py:17
 msgid "Outgoing verification requests"
 msgstr ""
@@ -3476,7 +3476,12 @@ msgstr ""
 msgid "Padding"
 msgstr ""
 
-#: frontend/src/shared/AppPager.vue:18 frontend/src/shared/AppPager.vue:32
+#: frontend/src/shared/AppPager.vue:33
+#, python-format
+msgid "Page %(page)d of %(pages)d"
+msgstr ""
+
+#: frontend/src/shared/AppPager.vue:18 frontend/src/shared/AppPager.vue:35
 #, python-format
 msgid "Page %(page)d of %(pages)d (%(total)d total)"
 msgstr ""
@@ -3556,7 +3561,7 @@ msgstr ""
 #: frontend/src/apps/manage/pages/EventPlacesPage.vue:130
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:142
-#: project/presentation/web/templates/_managebar.html:59
+#: project/presentation/web/templates/_managebar.html:63
 #: project/presentation/web/views/manage_admin_unit/event_place/shells.py:17
 msgid "Places"
 msgstr ""
@@ -3673,7 +3678,7 @@ msgstr ""
 #: frontend/src/apps/user/components/ProfileBreadcrumb.vue:14
 #: frontend/src/apps/user/pages/ProfilePage.vue:37
 #: project/presentation/web/jinja_filters.py:56
-#: project/presentation/web/templates/_managebar.html:93
+#: project/presentation/web/templates/_managebar.html:94
 #: project/presentation/web/views/user.py:17
 msgid "Profile"
 msgstr ""
@@ -3814,7 +3819,7 @@ msgstr ""
 
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:109
 #: frontend/src/apps/manage/pages/ManageEventsPage.vue:278
-#: project/presentation/web/templates/_managebar.html:28
+#: project/presentation/web/templates/_managebar.html:32
 msgid "References"
 msgstr ""
 
@@ -3858,7 +3863,7 @@ msgstr ""
 msgid "Relation to %(admin_unit_name)s"
 msgstr ""
 
-#: project/presentation/web/templates/_managebar.html:72
+#: project/presentation/web/templates/_managebar.html:73
 msgid "Relations"
 msgstr ""
 
@@ -4138,7 +4143,7 @@ msgstr ""
 #: frontend/src/apps/user/pages/ProfilePage.vue:54
 #: project/infrastructure/babel_extract.py:1
 #: project/presentation/shared/permissions.py:158
-#: project/presentation/web/templates/_managebar.html:85
+#: project/presentation/web/templates/_managebar.html:86
 #: project/presentation/web/views/manage_admin_unit/admin_unit/shells.py:67
 msgid "Settings"
 msgstr ""
@@ -4262,7 +4267,7 @@ msgstr ""
 msgid "Subscribe"
 msgstr ""
 
-#: project/presentation/web/templates/_managebar.html:103
+#: project/presentation/web/templates/_managebar.html:104
 msgid "Switch organization"
 msgstr ""
 
@@ -4886,7 +4891,7 @@ msgstr ""
 
 #: frontend/src/apps/manage/pages/OrganizationWidgetsPage.vue:88
 #: project/presentation/shared/permissions.py:170
-#: project/presentation/web/templates/_managebar.html:89
+#: project/presentation/web/templates/_managebar.html:90
 #: project/presentation/web/views/manage_admin_unit/admin_unit/shells.py:24
 msgid "Widgets"
 msgstr ""
