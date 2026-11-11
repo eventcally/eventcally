@@ -47,6 +47,8 @@ class _ConcreteUoW(AbstractUnitOfWork):
         self.organization_members = _MockRepo()
         self.users = _MockRepo()
         self.custom_widgets = _MockRepo()
+        self.calendars = _MockRepo()
+        self.calendar_entries = _MockRepo()
         self.api_keys = _MockRepo()
         self.app_keys = _MockRepo()
         self.oauth2_clients = _MockRepo()

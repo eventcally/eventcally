@@ -49,7 +49,7 @@ test.describe("Manage", () => {
     await page.locator("[data-test=toggle-filter]").click();
     await page.getByRole("button", { name: "Weitere Filter" }).click();
     await screenshot(page, "search-form");
-    await page.getByRole("button", { name: "Weitere Filter" }).click();
+    await page.getByRole("button", { name: "Weniger Filter" }).click();
 
     // The filter lives in the URL and narrows the list.
     await page.locator("#keyword").fill("Gibtesnicht");

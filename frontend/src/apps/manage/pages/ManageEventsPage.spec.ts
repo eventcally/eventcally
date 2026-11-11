@@ -53,6 +53,8 @@ const options = {
   can_request_reference: true,
   can_read_references: true,
   can_write_references: true,
+  calendars: [] as { id: number; name: string; private: boolean }[],
+  can_write_calendars: false,
 };
 
 const item = (over = {}) => ({
@@ -662,6 +664,70 @@ describe("ManageEventsPage", () => {
       );
       expect(dateCalls()).toHaveLength(2);
       expect(listCalls()).toHaveLength(0);
+    });
+  });
+
+  describe("calendars", () => {
+    const withCalendars = { ...options, calendars: [{ id: 5, name: "Sport", private: false }], can_write_calendars: true };
+    const foreign = () =>
+      item({ id: 13, name: "Fremdes Konzert", is_own: false, organization_name: "Andere Crew", internal_tags: null });
+
+    const menu = (index: number) => document.querySelectorAll<HTMLElement>("ul.dropdown-menu")[index];
+    const openActions = async (wrapper: ReturnType<typeof mount>, index: number) => {
+      await wrapper.findAll(".event-actions button")[index].trigger("click");
+      await flushPromises();
+      return [...menu(index).querySelectorAll<HTMLElement>(".dropdown-item")].map((i) =>
+        i.textContent?.trim(),
+      );
+    };
+
+    beforeEach(() => {
+      GET.mockReset().mockImplementation((path: string) =>
+        Promise.resolve(
+          path.endsWith("/options")
+            ? { data: withCalendars }
+            : path.endsWith("/calendars")
+              ? { data: { choices: withCalendars.calendars, selected_ids: [] } }
+              : listPage([item(), foreign()]),
+        ),
+      );
+    });
+
+    it("filters by calendar from the URL and offers the filter", async () => {
+      const { wrapper } = await mountPage("/manage/admin_unit/3/events?calendar_id=5");
+
+      expect(listCalls()[0][1].params.query.calendar_id).toBe(5);
+      expect((wrapper.find("#calendar_id").element as HTMLSelectElement).value).toBe("5");
+    });
+
+    it("offers the calendar action on own and foreign rows, but edit only on own rows", async () => {
+      const { wrapper } = await mountPage();
+
+      expect(await openActions(wrapper, 0)).toContain("Edit");
+      expect(await openActions(wrapper, 0)).toContain("Calendars…");
+      expect(await openActions(wrapper, 1)).toEqual(["View", "Calendars…", "More"]);
+    });
+
+    it("opens the assign modal for the row", async () => {
+      const { wrapper } = await mountPage();
+      await openActions(wrapper, 1);
+      menu(1).querySelector<HTMLElement>('[data-test="assign-calendars"]')!.click();
+      await flushPromises();
+
+      expect(GET).toHaveBeenCalledWith(
+        "/bff/manage/organizations/{id}/events/{event_id}/calendars",
+        { params: { path: { id: 3, event_id: 13 } } },
+      );
+    });
+
+    it("hides the filter and the action without calendars", async () => {
+      GET.mockReset().mockImplementation((path: string) =>
+        Promise.resolve(path.endsWith("/options") ? { data: options } : listPage([item()])),
+      );
+      const { wrapper } = await mountPage();
+
+      expect(wrapper.find("#calendar_id").exists()).toBe(false);
+      expect(await openActions(wrapper, 0)).not.toContain("Calendars…");
     });
   });
 });

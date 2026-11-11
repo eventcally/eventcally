@@ -89,6 +89,7 @@ function reject() {
           </option>
         </select>
       </div>
+      <slot name="reject-fields" />
       <template #footer>
         <button type="button" class="btn btn-secondary" :disabled="busy" @click="rejectOpen = false">
           {{ t("Cancel") }}

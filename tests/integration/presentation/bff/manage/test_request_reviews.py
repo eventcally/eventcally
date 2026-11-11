@@ -589,3 +589,130 @@ def test_verification_reject_with_unknown_reason_is_422(
 
     assert response.status_code == 422
     assert _verification_request(app, db, verification["request_id"])[0] == "inbox"
+
+
+# reference requests with calendars
+
+
+def _calendar_ids(app, event_id):
+    with app.app_context():
+        from project.infrastructure.models import CalendarEntry
+
+        return sorted(
+            e.calendar_id
+            for e in CalendarEntry.query.filter(CalendarEntry.event_id == event_id)
+        )
+
+
+def test_reference_review_offers_the_calendars(client, seeder, utils, reference):
+    first = seeder.create_calendar(reference["admin_unit_id"], "Erster")
+    second = seeder.create_calendar(reference["admin_unit_id"], "Zweiter", private=True)
+
+    review = utils.get_json_ok(f"{reference['url']}/review").json
+
+    assert [(c["id"], c["private"]) for c in review["calendars"]] == [
+        (first, False),
+        (second, True),
+    ]
+
+
+def test_reference_verify_puts_the_event_into_calendars(
+    client, app, db, seeder, utils, reference
+):
+    calendar_id = seeder.create_calendar(reference["admin_unit_id"])
+
+    response = utils.post_json(
+        f"{reference['url']}/verify", {"rating": 50, "calendar_ids": [calendar_id]}
+    )
+
+    assert response.status_code == 200
+    assert _reference_request(app, db, reference["request_id"])[0] == "verified"
+    assert _calendar_ids(app, reference["event_id"]) == [calendar_id]
+
+
+def test_reference_verify_without_calendars_adds_none(
+    client, app, db, seeder, utils, reference
+):
+    seeder.create_calendar(reference["admin_unit_id"])
+
+    response = utils.post_json(f"{reference['url']}/verify", {"rating": 50})
+
+    assert response.status_code == 200
+    assert _calendar_ids(app, reference["event_id"]) == []
+
+
+def test_reference_verify_rejects_foreign_calendars_before_verifying(
+    client, app, db, seeder, utils, reference
+):
+    foreign = seeder.create_calendar(reference["other_admin_unit_id"], "Fremd")
+
+    response = utils.post_json(
+        f"{reference['url']}/verify", {"rating": 50, "calendar_ids": [foreign]}
+    )
+
+    assert response.status_code == 422
+    assert _reference_request(app, db, reference["request_id"])[0] == "inbox"
+
+
+def test_reference_verify_with_calendars_needs_the_calendar_permission(
+    client, app, db, seeder, utils
+):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Reviewer")
+    calendar_id = seeder.create_calendar(admin_unit_id)
+    _, _, _, request_id = seeder.create_incoming_reference_request(admin_unit_id)
+    with app.app_context():
+        from project.infrastructure.extensions import db as database
+        from project.infrastructure.models import AdminUnitMemberRole
+
+        database.session.add(
+            AdminUnitMemberRole(
+                name="request_reviewer",
+                title="Reviewer",
+                permissions=[
+                    "incoming_event_reference_requests:read",
+                    "incoming_event_reference_requests:write",
+                ],
+            )
+        )
+        database.session.commit()
+    seeder.create_admin_unit_member(admin_unit_id, ["request_reviewer"])
+    utils.login()
+    utils.get_ok("/organizations")
+    url = REFERENCE_URL.format(admin_unit_id, request_id)
+
+    assert utils.get_json_ok(f"{url}/review").json["calendars"] == []
+    response = utils.post_json(
+        f"{url}/verify", {"rating": 50, "calendar_ids": [calendar_id]}
+    )
+
+    assert response.status_code == 403
+    assert _reference_request(app, db, request_id)[0] == "inbox"
+
+
+def test_reference_reject_can_still_put_the_event_into_calendars(
+    client, app, db, seeder, utils, reference
+):
+    calendar_id = seeder.create_calendar(reference["admin_unit_id"])
+
+    response = utils.post_json(
+        f"{reference['url']}/reject",
+        {"rejection_reason": 0, "calendar_ids": [calendar_id]},
+    )
+
+    assert response.status_code == 200
+    assert _reference_request(app, db, reference["request_id"])[0] == "rejected"
+    assert _calendar_ids(app, reference["event_id"]) == [calendar_id]
+
+
+def test_reference_reject_checks_the_calendars_before_rejecting(
+    client, app, db, seeder, utils, reference
+):
+    foreign = seeder.create_calendar(reference["other_admin_unit_id"], "Fremd")
+
+    response = utils.post_json(
+        f"{reference['url']}/reject", {"rejection_reason": 0, "calendar_ids": [foreign]}
+    )
+
+    assert response.status_code == 422
+    assert _reference_request(app, db, reference["request_id"])[0] == "inbox"

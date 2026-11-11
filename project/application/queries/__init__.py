@@ -13,6 +13,7 @@ from .get_app_installation_query import GetAppInstallationQuery
 from .get_app_key_query import GetAppKeyQuery
 from .get_app_query import GetAppQuery
 from .get_app_webhook_delivery_query import GetAppWebhookDeliveryQuery
+from .get_calendar_query import GetCalendarQuery
 from .get_current_organization_query import GetCurrentOrganizationQuery
 from .get_custom_event_category_query import GetCustomEventCategoryQuery
 from .get_custom_widget_query import GetCustomWidgetQuery
@@ -89,6 +90,7 @@ from .get_user_organization_membership_query import GetUserOrganizationMembershi
 from .get_user_profile_query import GetUserProfileQuery
 from .get_webhook_delivery_for_app_query import GetWebhookDeliveryForAppQuery
 from .has_other_admin_query import HasOtherAdminQuery
+from .is_calendar_name_taken_query import IsCalendarNameTakenQuery
 from .is_event_organizer_name_taken_query import IsEventOrganizerNameTakenQuery
 from .is_event_place_name_taken_query import IsEventPlaceNameTakenQuery
 from .is_organization_name_taken_query import IsOrganizationNameTakenQuery
@@ -103,6 +105,7 @@ from .list_app_webhook_delivery_attempts_query import (
     ListAppWebhookDeliveryAttemptsQuery,
 )
 from .list_apps_query import ListAppsQuery
+from .list_calendars_query import CalendarSort, ListCalendarsQuery
 from .list_custom_event_categories_query import ListCustomEventCategoriesQuery
 from .list_custom_event_category_sets_query import ListCustomEventCategorySetsQuery
 from .list_custom_widgets_query import ListCustomWidgetsQuery
@@ -112,6 +115,7 @@ from .list_dump_events_query import ListDumpEventsQuery
 from .list_dump_organizations_query import ListDumpOrganizationsQuery
 from .list_dump_organizers_query import ListDumpOrganizersQuery
 from .list_dump_places_query import ListDumpPlacesQuery
+from .list_event_calendar_ids_query import ListEventCalendarIdsQuery
 from .list_event_categories_query import ListEventCategoriesQuery
 from .list_event_dates_query import ListEventDatesQuery
 from .list_event_organizers_query import EventOrganizerSort, ListEventOrganizersQuery
@@ -155,11 +159,13 @@ from .list_outgoing_organization_relations_query import (
 from .list_outgoing_organization_verification_requests_query import (
     ListOutgoingOrganizationVerificationRequestsQuery,
 )
+from .list_public_calendars_for_event_query import ListPublicCalendarsForEventQuery
 from .list_recurring_event_ids_query import ListRecurringEventIdsQuery
 from .list_reference_request_suggestions_query import (
     ListReferenceRequestSuggestionsQuery,
 )
 from .list_roles_query import ListRolesQuery
+from .list_sitemap_calendars_query import ListSitemapCalendarsQuery
 from .list_sitemap_events_query import ListSitemapEventsQuery
 from .list_upcoming_event_dates_query import ListUpcomingEventDatesQuery
 from .list_user_api_keys_query import ListUserApiKeysQuery
@@ -183,6 +189,7 @@ from .list_webhook_delivery_attempts_for_app_query import (
 from .lookup_custom_event_categories_query import LookupCustomEventCategoriesQuery
 from .lookup_event_organizers_query import LookupEventOrganizersQuery
 from .lookup_event_places_query import LookupEventPlacesQuery
+from .lookup_public_calendars_query import LookupPublicCalendarsQuery
 from .organization_relation_sort import OrganizationRelationSort
 from .page_request import PageRequest
 from .search_event_dates_query import SearchEventDatesQuery

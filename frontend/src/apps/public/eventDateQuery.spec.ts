@@ -45,6 +45,7 @@ describe("eventDateQuery", () => {
       category_id: 3,
       tag: "live",
       admin_unit_id: 7,
+      calendar_id: [],
       organizer_id: 9,
       postal_code: "38640",
       coordinate: "51.9,10.4",
@@ -114,11 +115,20 @@ describe("eventDateQuery", () => {
       date_to: "2030-12-31",
       organizer_id: 4,
       admin_unit_id: 2,
+      calendar_id: [5, 6],
       not_referenced: true,
       page: 2,
     };
 
+    expect(toRouteQuery(filter, defaults)).toMatchObject({ calendar_id: ["5", "6"] });
     expect(fromRouteQuery(toRouteQuery(filter, defaults) as never, defaults)).toEqual(filter);
+  });
+
+  it("reads one or several calendars and drops invalid and repeated ids", () => {
+    expect(fromRouteQuery({ calendar_id: "4" }, defaults).calendar_id).toEqual([4]);
+    expect(fromRouteQuery({ calendar_id: ["4", "x", "0", "4", "7"] }, defaults).calendar_id).toEqual([4, 7]);
+    expect(toBffParams({ ...emptyFilter(defaults), calendar_id: [4, 7] }).calendar_id).toEqual([4, 7]);
+    expect(toBffParams(emptyFilter(defaults)).calendar_id).toBeUndefined();
   });
 
   it("builds the BFF params", () => {
@@ -148,5 +158,6 @@ describe("eventDateQuery", () => {
     expect(hasExtendedFilter({ ...emptyFilter(defaults), keyword: "x", date_to: "2030-12-01" })).toBe(false);
     expect(hasExtendedFilter({ ...emptyFilter(defaults), tag: "x" })).toBe(true);
     expect(hasExtendedFilter({ ...emptyFilter(defaults), not_referenced: true })).toBe(true);
+    expect(hasExtendedFilter({ ...emptyFilter(defaults), calendar_id: [3] })).toBe(true);
   });
 });

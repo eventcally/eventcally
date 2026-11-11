@@ -155,6 +155,7 @@ def list_incoming_event_references(
         pages=page.pages,
         can_write=has_access(SimpleNamespace(id=id), "incoming_event_references:write"),
         rating_choices=_rating_choices(),
+        can_assign_calendars=has_access(SimpleNamespace(id=id), "calendars:write"),
     )
 
 
@@ -217,6 +218,7 @@ def get_incoming_event_reference(
         rating_choices=_rating_choices(),
         audit=ManageAudit(**reference.audit.model_dump()) if reference.audit else None,
         can_write=has_access(SimpleNamespace(id=id), "incoming_event_references:write"),
+        can_assign_calendars=has_access(SimpleNamespace(id=id), "calendars:write"),
     )
 
 

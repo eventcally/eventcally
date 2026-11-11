@@ -197,6 +197,10 @@ class ManageEventListOptions(BaseModel):
     # Whether the list may include the events the organization references.
     can_read_references: bool
     can_write_references: bool
+    # Calendars of the organization (the filter and the assign modal); empty without
+    # calendars:read.
+    calendars: List["CalendarChoice"] = []
+    can_write_calendars: bool = False
 
 
 class ManageEventListParams(PageParams):
@@ -219,6 +223,8 @@ class ManageEventListParams(PageParams):
     sort: Literal["min_start", "-last_modified_at", "-created_at"] = "min_start"
     # Also the events of other organizations this organization references.
     include_references: bool = False
+    # Only the events of this calendar (own and foreign ones).
+    calendar_id: Optional[int] = None
 
     @field_validator("*", mode="before")
     @classmethod
@@ -271,6 +277,8 @@ class ManageEventDateEvent(BaseModel):
     is_reference: bool = False
     reference_id: Optional[int] = None
     organization_name: Optional[str] = None
+    # Whether the organization owns the event (a calendar also holds foreign ones).
+    is_own: bool = True
 
 
 class ManageEventDate(BaseModel):
@@ -322,6 +330,9 @@ class ManageEventListItem(BaseModel):
     is_reference: bool = False
     reference_id: Optional[int] = None
     organization_name: Optional[str] = None
+    # Whether the organization owns the event. Foreign rows (references or events of
+    # a calendar) only offer the calendar action.
+    is_own: bool = True
 
 
 class ManageEventPage(BaseModel):
@@ -647,6 +658,10 @@ class EventForm(BaseModel):
     attendance_mode_choices: List[EventFormChoice]
     rating: int = 50
     rating_choices: List[EventFormChoice]
+    # The organization's calendars the event is in; the field is hidden without
+    # `calendars:write` or without calendars.
+    calendars: List["CalendarChoice"] = []
+    calendar_ids: List[int] = []
     # Create only: organizations that can be asked to reference the event.
     reference_request_choices: List[ManageRef] = []
     reference_request_ids: List[int] = []
@@ -686,6 +701,8 @@ class EventSaveBase(BaseModel):
     target_group_origin: EventTargetGroupOrigin = EventTargetGroupOrigin.both
     attendance_mode: EventAttendanceMode = EventAttendanceMode.offline
     rating: int = 50
+    # `None` leaves the calendars alone; a list needs `calendars:write` and sets them.
+    calendar_ids: Optional[List[int]] = None
 
     @field_validator(
         "description",
@@ -929,6 +946,9 @@ class EventReferenceRequestReview(BaseModel):
     default_rating: int = 50
     rejection_reasons: List[ReviewChoice]
     list_url: str
+    # The organization's calendars to put the event into with the accept (empty
+    # without `calendars:write`).
+    calendars: List["CalendarChoice"] = []
 
 
 class OrganizationVerificationRequestReview(BaseModel):
@@ -944,6 +964,8 @@ class OrganizationVerificationRequestReview(BaseModel):
 class EventReferenceRequestVerify(BaseModel):
     rating: int = 50
     auto_verify: bool = False
+    # Also put the event into these calendars of the organization.
+    calendar_ids: List[int] = []
 
     @field_validator("rating")
     @classmethod
@@ -957,6 +979,9 @@ class EventReferenceRequestVerify(BaseModel):
 class EventReferenceRequestReject(BaseModel):
     # `0` and `None` both mean no reason.
     rejection_reason: Optional[int] = None
+    # Put the event into these calendars of the organization even though the
+    # reference is rejected.
+    calendar_ids: List[int] = []
 
     @field_validator("rejection_reason")
     @classmethod
@@ -1108,6 +1133,7 @@ class EventReferenceListItem(BaseModel):
 class IncomingEventReferenceListPage(ManageListPage):
     items: List[EventReferenceListItem]
     rating_choices: List[ManageIntChoice]
+    can_assign_calendars: bool = False
 
 
 class OutgoingEventReferenceListPage(ManageListPage):
@@ -1123,6 +1149,7 @@ class IncomingEventReferenceRead(BaseModel):
     rating_choices: List[ManageIntChoice]
     audit: Optional[ManageAudit] = None
     can_write: bool
+    can_assign_calendars: bool = False
 
 
 class IncomingEventReferenceRating(BaseModel):
@@ -1637,3 +1664,77 @@ class InstallableAppRead(BaseModel):
 
 class AppInstallSave(BaseModel):
     app_id: int
+
+
+class CalendarChoice(BaseModel):
+    id: int
+    name: str
+    private: bool = False
+
+
+class CalendarListItem(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    private: bool = False
+    number_of_events: int = 0
+    last_modified_at: Optional[datetime] = None
+    # Only public calendars have a public page.
+    public_url: Optional[str] = None
+
+
+class CalendarListPage(ManageListPage):
+    items: List[CalendarListItem]
+
+
+class CalendarForm(BaseModel):
+    # `None` and empty fields when creating.
+    id: Optional[int] = None
+    name: str = ""
+    description: Optional[str] = None
+    private: bool = False
+
+
+class CalendarSave(BaseModel):
+    name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
+    ]
+    description: Optional[str] = None
+    private: bool = False
+    # Created from another form (a modal): no flash.
+    inline: bool = False
+
+    @field_validator("description", mode="before")
+    @classmethod
+    def _description_empty_to_none(cls, value):
+        return _empty_to_none(value)
+
+
+class CalendarSaved(BaseModel):
+    id: int
+    redirect_url: str
+
+
+class CalendarNameAvailabilityParams(BaseModel):
+    name: Optional[str] = Field(default=None, max_length=255)
+    # The calendar itself does not count as taken (update form).
+    exclude_id: Optional[int] = None
+
+
+class CalendarNameAvailability(BaseModel):
+    name_taken: Optional[bool] = None
+
+
+class CalendarChoices(BaseModel):
+    items: List[CalendarChoice]
+
+
+class EventCalendars(BaseModel):
+    """The calendars of the organization and those the event is in."""
+
+    choices: List[CalendarChoice]
+    selected_ids: List[int]
+
+
+class EventCalendarsSave(BaseModel):
+    calendar_ids: List[int]

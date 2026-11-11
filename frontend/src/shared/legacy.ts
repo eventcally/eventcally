@@ -21,6 +21,8 @@ export const publicPages = {
   organizationEventDates: (id: number) => `/eventdates?admin_unit_id=${id}`,
   event: (id: number) => `/event/${id}`,
   organizer: (id: number) => `/organizers/${id}`,
+  calendar: (id: number) => `/calendars/${id}`,
+  calendarIcal: (id: number) => `/calendars/${id}/ical`,
   eventDate: (id: number) => `/eventdate/${id}`,
   eventDates: (organizerId: number) => `/eventdates?organizer_id=${organizerId}`,
   eventActions: (id: number) => `/event/${id}/actions`,

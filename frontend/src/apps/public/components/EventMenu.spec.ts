@@ -1,7 +1,10 @@
 import { mount } from "@vue/test-utils";
 import { createBootstrap } from "bootstrap-vue-next";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createI18n } from "vue-i18n";
+vi.mock("@/shared/boot", () => ({ boot: { locale: "en", csrfToken: "x", loginUrl: "/login" } }));
+vi.mock("@/shared/notify", () => ({ useNotify: () => ({ success: vi.fn(), error: vi.fn() }) }));
+
 import EventMenu from "./EventMenu.vue";
 
 const none = {
@@ -14,9 +17,9 @@ const none = {
   can_update_event: false,
 };
 
-async function mountMenu(rights: typeof none) {
+async function mountMenu(rights: typeof none, calendarOrganizationId: number | null = null) {
   const wrapper = mount(EventMenu, {
-    props: { eventId: 4, organizationId: 2, rights },
+    props: { eventId: 4, organizationId: 2, rights, calendarOrganizationId },
     attachTo: document.body,
     global: {
       plugins: [createBootstrap(), createI18n({ legacy: false, locale: "en", messages: { en: {} } })],
@@ -41,6 +44,12 @@ describe("EventMenu", () => {
     const wrapper = await mountMenu(none);
 
     expect(wrapper.find("[data-test=event-menu]").exists()).toBe(false);
+  });
+
+  it("offers adding to a calendar when the session's organization has calendars", async () => {
+    await mountMenu(none, 7);
+
+    expect(items()).toEqual([["Add to organization calendar", null], ["More…", "/event/4/actions"]]);
   });
 
   it("only offers more for a signed-in visitor", async () => {

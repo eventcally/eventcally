@@ -23,6 +23,8 @@ export function makeEvent(overrides: Partial<PublicEventDetail> = {}): PublicEve
     price_info: "5 Euro",
     tags: "fest,musik",
     internal_tags: null,
+    public_calendars: null,
+    calendar_organization: null,
     kid_friendly: true,
     accessible_for_free: null,
     age_from: 6,

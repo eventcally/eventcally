@@ -331,6 +331,14 @@ class EventSearchRequestSchema(PaginationRequestSchema, TrackableRequestSchemaMi
             "description": "Looks for events with custom categories from set with this id."
         },
     )
+    calendar_id = fields.List(
+        fields.Int(),
+        metadata={
+            "description": "Looks for events in any of these calendars. Events stay "
+            "subject to their own visibility. Unknown calendars and private calendars "
+            "of other organizations answer 400 Calendar not found."
+        },
+    )
     weekday = fields.List(
         fields.Int(validate=validate.Range(min=0, max=6)),
         metadata={

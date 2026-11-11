@@ -96,6 +96,8 @@ function eventForm(overrides: Record<string, unknown> = {}) {
       { id: 12, name: "Kultur" },
     ],
     reference_request_ids: [11],
+    calendars: [],
+    calendar_ids: [],
     can_create_place: true,
     can_create_organizer: true,
     ...overrides,
@@ -194,6 +196,46 @@ describe("EventEditPage", () => {
 
     await wrapper.find("#submit_draft").trigger("click");
     expect(wrapper.find("#submit_draft").attributes("disabled")).toBeDefined();
+  });
+
+  it("offers the calendars and sends the selection", async () => {
+    POST.mockResolvedValue({ data: { id: 3, redirect_url: "/x" } });
+    const wrapper = await mountPage(
+      { organizationId: 5 },
+      eventForm({
+        calendars: [
+          { id: 1, name: "Sport", private: false },
+          { id: 2, name: "Intern", private: true },
+        ],
+        calendar_ids: [1],
+      }),
+    );
+
+    // Own card between the rating and the reference requests.
+    const headers = wrapper.findAll(".card-header").map((header) => header.text());
+    expect(headers.indexOf("Calendars")).toBe(headers.indexOf("Rating") + 1);
+    expect(wrapper.find("[data-test=calendars-card]").text()).toContain(
+      "Put the event into calendars of your organization.",
+    );
+    expect((wrapper.find("#calendar-1").element as HTMLInputElement).checked).toBe(true);
+    await wrapper.find("#calendar-2").setValue(true);
+    await wrapper.find("#submit").trigger("click");
+    await wrapper.find("form").trigger("submit");
+    await flushPromises();
+
+    expect(POST.mock.calls[0][1].body.calendar_ids).toEqual([1, 2]);
+  });
+
+  it("leaves the calendars alone when there are none to choose from", async () => {
+    POST.mockResolvedValue({ data: { id: 3, redirect_url: "/x" } });
+    const wrapper = await mountPage();
+
+    expect(wrapper.find("[data-test=calendars-card]").exists()).toBe(false);
+    await wrapper.find("#submit").trigger("click");
+    await wrapper.find("form").trigger("submit");
+    await flushPromises();
+
+    expect(POST.mock.calls[0][1].body.calendar_ids).toBeNull();
   });
 
   it("publishes with the main button", async () => {

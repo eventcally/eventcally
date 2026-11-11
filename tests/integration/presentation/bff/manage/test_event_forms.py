@@ -1134,3 +1134,80 @@ def test_referenced_recurring_event_change_sends_mail_but_diff_is_indistinguisha
     # The mail correctly reports that something changed, but the rendered
     # lines are byte-identical: the recipient cannot tell what changed.
     assert old_line == new_line == "- 06.04.26 11:00 (Serientermin)"
+
+
+# calendars
+
+
+def _calendar_ids(app, event_id):
+    with app.app_context():
+        from project.infrastructure.models import CalendarEntry
+
+        return sorted(
+            e.calendar_id
+            for e in CalendarEntry.query.filter(CalendarEntry.event_id == event_id)
+        )
+
+
+def test_forms_offer_and_prefill_calendars(client, seeder, utils, setup):
+    admin_unit_id, event_id = setup
+    calendar_id = seeder.create_calendar(admin_unit_id, "Sport")
+    seeder.create_calendar(admin_unit_id, "Musik", private=True)
+    seeder.create_calendar_entry(calendar_id, event_id)
+    urls = _urls(admin_unit_id, event_id)
+
+    create = utils.get_json_ok(urls["create_form"]).json
+    assert [c["name"] for c in create["calendars"]] == ["Musik", "Sport"]
+    assert create["calendar_ids"] == []
+
+    form = utils.get_json_ok(urls["form"]).json
+    assert form["calendar_ids"] == [calendar_id]
+
+
+def test_template_copy_leaves_calendars_empty(client, seeder, utils, setup):
+    admin_unit_id, event_id = setup
+    calendar_id = seeder.create_calendar(admin_unit_id, "Sport")
+    seeder.create_calendar_entry(calendar_id, event_id)
+    urls = _urls(admin_unit_id)
+
+    form = utils.get_json_ok(f"{urls['create_form']}?template_id={event_id}").json
+
+    assert form["calendar_ids"] == []
+
+
+def test_create_and_update_set_the_calendars(client, app, seeder, utils, setup):
+    admin_unit_id, event_id = setup
+    first = seeder.create_calendar(admin_unit_id, "Erster")
+    second = seeder.create_calendar(admin_unit_id, "Zweiter")
+    urls = _urls(admin_unit_id, event_id)
+
+    response = utils.post_json(
+        urls["events"], _body(seeder, admin_unit_id, calendar_ids=[first])
+    )
+    assert response.status_code == 201
+    assert _calendar_ids(app, response.json["id"]) == [first]
+
+    response = utils.put_json(
+        urls["event"], _body(seeder, admin_unit_id, calendar_ids=[second])
+    )
+    assert response.status_code == 200
+    assert _calendar_ids(app, event_id) == [second]
+
+    # Without the field the calendars stay as they are.
+    utils.put_json(urls["event"], _body(seeder, admin_unit_id))
+    assert _calendar_ids(app, event_id) == [second]
+
+
+def test_foreign_calendar_ids_reject_the_whole_save(client, app, seeder, utils, setup):
+    admin_unit_id, event_id = setup
+    other_id = _other_organization(seeder)
+    foreign = seeder.create_calendar(other_id, "Fremd")
+    urls = _urls(admin_unit_id, event_id)
+
+    response = utils.post_json(
+        urls["events"], _body(seeder, admin_unit_id, calendar_ids=[foreign])
+    )
+
+    assert response.status_code == 422
+    assert response.json["errors"][0]["loc"][-1] == "calendar_ids"
+    assert _find_event(app, admin_unit_id, "Neue Veranstaltung") is None

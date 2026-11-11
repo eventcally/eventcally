@@ -19,6 +19,8 @@ const options = {
   can_request_reference: true,
   can_read_references: true,
   can_write_references: true,
+  calendars: [] as { id: number; name: string; private: boolean }[],
+  can_write_calendars: false,
 };
 
 function mountForm(filter = {}, refs: Record<string, unknown> = {}) {

@@ -27,6 +27,7 @@ from project.infrastructure.models import (
     AdminUnitVerificationRequest,
     AdminUnitVerificationRequestReviewStatus,
     ApiKey,
+    Calendar,
     CustomWidget,
     Event,
     EventOrganizer,
@@ -340,6 +341,7 @@ _OWNER_COLUMNS = {
     ResourceKind.event_place: (EventPlace, EventPlace.admin_unit_id),
     ResourceKind.event_organizer: (EventOrganizer, EventOrganizer.admin_unit_id),
     ResourceKind.custom_widget: (CustomWidget, CustomWidget.admin_unit_id),
+    ResourceKind.calendar: (Calendar, Calendar.admin_unit_id),
     ResourceKind.event_reference: (EventReference, EventReference.admin_unit_id),
     ResourceKind.event_reference_request_target: (
         EventReferenceRequest,

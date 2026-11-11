@@ -28,6 +28,7 @@ import project.presentation.web.views.manage_admin_unit.admin_unit.shells
 import project.presentation.web.views.manage_admin_unit.api_key.shells
 import project.presentation.web.views.manage_admin_unit.app.shells
 import project.presentation.web.views.manage_admin_unit.app_installation.shells
+import project.presentation.web.views.manage_admin_unit.calendar.shells
 import project.presentation.web.views.manage_admin_unit.event.shells
 import project.presentation.web.views.manage_admin_unit.event_organizer.shells
 import project.presentation.web.views.manage_admin_unit.event_place.shells

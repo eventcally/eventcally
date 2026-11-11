@@ -4,6 +4,7 @@ import {
   type RouteRecordRaw,
 } from "vue-router";
 import { boot } from "@/shared/boot";
+import CalendarPage from "./pages/CalendarPage.vue";
 import EventActionsPage from "./pages/EventActionsPage.vue";
 import EventDatePage from "./pages/EventDatePage.vue";
 import EventDatesPage from "./pages/EventDatesPage.vue";
@@ -32,6 +33,7 @@ export const routes: RouteRecordRaw[] = [
     props: (route) => ({ id: Number(route.params.id) }),
   },
   { path: "/eventdates", name: "event-dates", component: EventDatesPage },
+  { path: "/calendars/:id(\\d+)", name: "calendar", component: CalendarPage, props: numericId },
   { path: "/organizations", name: "organizations", component: OrganizationsPage },
   {
     path: "/organizations/:id(\\d+)",

@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 from urllib.parse import quote_plus
 
 from dependency_injector.wiring import Provide, inject
@@ -8,6 +9,7 @@ from project.application.commands import (
     ApproveOrganizationVerificationRequestCommand,
     RejectEventReferenceRequestCommand,
     RejectOrganizationVerificationRequestCommand,
+    SetEventCalendarsCommand,
     VerifyEventReferenceRequestCommand,
 )
 from project.application.message_bus import MessageBus
@@ -17,6 +19,7 @@ from project.application.queries import (
 )
 from project.application.query_bus import QueryBus
 from project.container import Application
+from project.domain.errors.unauthorized_error import UnauthorizedError
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.enums.event_reference_request_rejection_reason import (
     EventReferenceRequestRejectionReason,
@@ -24,7 +27,9 @@ from project.domain.models.enums.event_reference_request_rejection_reason import
 from project.domain.models.enums.organization_verification_request_rejection_reason import (
     OrganizationVerificationRequestRejectionReason,
 )
+from project.presentation.bff.errors import FieldValidationError
 from project.presentation.bff.manage import bff_manage_bp
+from project.presentation.bff.manage.calendars import calendar_choices
 from project.presentation.bff.manage.organization_form import actor
 from project.presentation.bff.manage.schemas import (
     EventReferenceRequestReject,
@@ -44,6 +49,7 @@ from project.presentation.bff.manage.schemas import (
     ReviewOrganizationMember,
 )
 from project.presentation.bff.routing import bff_route
+from project.presentation.shared.access import has_access
 from project.presentation.shared.event_rating import event_rating_choices
 from project.presentation.shared.query_results import result_or_404
 from project.presentation.shared.urls import url_for_image
@@ -242,6 +248,29 @@ def _review_event(event, start_definition) -> ReviewEvent:
     )
 
 
+def _calendar_ids(
+    id: int,
+    body: EventReferenceRequestVerify | EventReferenceRequestReject,
+    query_bus: QueryBus,
+):
+    """The calendars to put the event into, checked before the reference is created so
+    the calendar command cannot fail on input afterwards. A rejected request may still
+    put the event into calendars (the organization does not reference it, but lists
+    it in a calendar)."""
+    if not body.calendar_ids:
+        return []
+
+    if not has_access(SimpleNamespace(id=id), "calendars:write"):
+        raise UnauthorizedError()
+
+    allowed = {choice.id for choice in calendar_choices(query_bus, id)}
+
+    if not set(body.calendar_ids) <= allowed:
+        raise FieldValidationError(["calendar_ids"], gettext("Calendar not found"))
+
+    return body.calendar_ids
+
+
 def _reviewed(text: str, endpoint: str, id: int) -> RequestReviewed:
     flash(text, "success")
     return RequestReviewed(redirect_url=url_for(endpoint, id=id))
@@ -283,6 +312,11 @@ def get_incoming_event_reference_request_review(
         rating_choices=_choices(event_rating_choices),
         rejection_reasons=_choices(_REFERENCE_REJECTION_REASONS),
         list_url=url_for("manage_admin_unit.incoming_event_reference_requests", id=id),
+        calendars=(
+            calendar_choices(query_bus, id)
+            if has_access(SimpleNamespace(id=id), "calendars:write")
+            else []
+        ),
     )
 
 
@@ -302,7 +336,8 @@ def verify_incoming_event_reference_request(
     message_bus: MessageBus = Provide[Application.cqrs.message_bus],
     query_bus: QueryBus = Provide[Application.cqrs.query_bus],
 ):
-    _reference_request_or_404(id, request_id, query_bus)
+    review = _reference_request_or_404(id, request_id, query_bus)
+    calendar_ids = _calendar_ids(id, body, query_bus)
     message_bus.handle_command(
         VerifyEventReferenceRequestCommand(
             actor=actor(),
@@ -311,6 +346,17 @@ def verify_incoming_event_reference_request(
             auto_verify=body.auto_verify,
         )
     )
+
+    if calendar_ids:
+        message_bus.handle_command(
+            SetEventCalendarsCommand(
+                actor=actor(),
+                admin_unit_id=id,
+                event_id=review.event.id,
+                calendar_ids=calendar_ids,
+            )
+        )
+
     return _reviewed(
         gettext("Reference successfully created"),
         "manage_admin_unit.incoming_event_reference_requests",
@@ -334,7 +380,8 @@ def reject_incoming_event_reference_request(
     message_bus: MessageBus = Provide[Application.cqrs.message_bus],
     query_bus: QueryBus = Provide[Application.cqrs.query_bus],
 ):
-    _reference_request_or_404(id, request_id, query_bus)
+    review = _reference_request_or_404(id, request_id, query_bus)
+    calendar_ids = _calendar_ids(id, body, query_bus)
     message_bus.handle_command(
         RejectEventReferenceRequestCommand(
             actor=actor(),
@@ -343,6 +390,17 @@ def reject_incoming_event_reference_request(
             auto_verify=False,
         )
     )
+
+    if calendar_ids:
+        message_bus.handle_command(
+            SetEventCalendarsCommand(
+                actor=actor(),
+                admin_unit_id=id,
+                event_id=review.event.id,
+                calendar_ids=calendar_ids,
+            )
+        )
+
     return _reviewed(
         gettext("Request successfully updated"),
         "manage_admin_unit.incoming_event_reference_requests",

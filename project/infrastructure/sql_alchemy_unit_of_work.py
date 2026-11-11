@@ -8,6 +8,8 @@ from project.domain.abstract_unit_of_work import AbstractUnitOfWork
 from project.infrastructure.repositories import (
     SqlAlchemyApiKeyRepository,
     SqlAlchemyAppKeyRepository,
+    SqlAlchemyCalendarEntryRepository,
+    SqlAlchemyCalendarRepository,
     SqlAlchemyCustomWidgetRepository,
     SqlAlchemyEventOrganizerRepository,
     SqlAlchemyEventPlaceRepository,
@@ -90,6 +92,8 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
         )
         self.organization_members = SqlAlchemyOrganizationMemberRepository(self.session)
         self.custom_widgets = SqlAlchemyCustomWidgetRepository(self.session)
+        self.calendars = SqlAlchemyCalendarRepository(self.session)
+        self.calendar_entries = SqlAlchemyCalendarEntryRepository(self.session)
         self.api_keys = SqlAlchemyApiKeyRepository(self.session)
         self.app_keys = SqlAlchemyAppKeyRepository(self.session)
         self.oauth2_clients = SqlAlchemyOAuth2ClientRepository(self.session)

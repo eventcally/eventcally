@@ -34,6 +34,7 @@ const reference = (over = {}) => ({
   ],
   audit: { created_at: "2026-11-04T10:00:00Z", created_by_label: "me@test.de" },
   can_write: true,
+  can_assign_calendars: false,
   ...over,
 });
 const mountIt = () => mountPage(IncomingEventReferencePage, { organizationId: 3, id: 5 }, URL, MESSAGES);
@@ -71,6 +72,30 @@ describe("IncomingEventReferencePage", () => {
 
     expect(items().map((i) => i.textContent?.trim())).toEqual(["Edit", "Delete", "View event"]);
     expect(items()[2].getAttribute("href")).toBe("/event/8");
+  });
+
+  it("offers the calendars when the user may assign them", async () => {
+    GET.mockImplementation(async (path: string) =>
+      path.endsWith("/calendars")
+        ? { data: { choices: [], selected_ids: [] } }
+        : { data: reference({ can_assign_calendars: true }) },
+    );
+    const { wrapper } = await mountIt();
+    await openActions(wrapper);
+
+    expect(items().map((i) => i.textContent?.trim())).toEqual([
+      "Edit",
+      "Delete",
+      "Calendars…",
+      "View event",
+    ]);
+    items()[2].click();
+    await flushPromises();
+
+    expect(GET).toHaveBeenLastCalledWith(
+      "/bff/manage/organizations/{id}/events/{event_id}/calendars",
+      { params: { path: { id: 3, event_id: 8 } } },
+    );
   });
 
   it("offers only the event without write permission", async () => {

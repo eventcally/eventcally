@@ -258,6 +258,15 @@ class AdminUnitGeneratedMixin(TrackableMixin, ApiKeyOwnerMixin):
         )
 
     @declared_attr
+    def calendars(cls):
+        return relationship(
+            "Calendar",
+            cascade="all, delete-orphan",
+            back_populates="admin_unit",
+            primaryjoin="Calendar.admin_unit_id == AdminUnit.id",
+        )
+
+    @declared_attr
     def location(cls):
         return relationship(
             "Location",

@@ -5,7 +5,10 @@ from io import StringIO
 
 from flask import current_app, url_for
 
-from project.application.queries import ListSitemapEventsQuery
+from project.application.queries import (
+    ListSitemapCalendarsQuery,
+    ListSitemapEventsQuery,
+)
 from project.shared.paths import cache_path, robots_txt_path, sitemap_path
 from project.shared.utils import make_dir
 
@@ -28,6 +31,21 @@ def generate_sitemap():
         lastmod = (
             event.last_modified_at.strftime("%Y-%m-%d")
             if event.last_modified_at
+            else None
+        )
+        lastmod_tag = f"<lastmod>{lastmod}</lastmod>" if lastmod else ""
+        buf.write(f"<url><loc>{loc}</loc>{lastmod_tag}</url>")
+
+    calendars = current_app.container.cqrs.query_bus().handle(
+        ListSitemapCalendarsQuery()
+    )
+    logger.info("Found sitemap calendars", extra={"count": len(calendars)})
+
+    for calendar in calendars:
+        loc = url_for("main.calendar", id=calendar.id)
+        lastmod = (
+            calendar.last_modified_at.strftime("%Y-%m-%d")
+            if calendar.last_modified_at
             else None
         )
         lastmod_tag = f"<lastmod>{lastmod}</lastmod>" if lastmod else ""
@@ -56,6 +74,7 @@ def generate_robots_txt():
     buf.write(f"Allow: /eventdates{os.linesep}")
     buf.write(f"Allow: /eventdate/{os.linesep}")
     buf.write(f"Allow: /event/{os.linesep}")
+    buf.write(f"Allow: /calendars/{os.linesep}")
 
     if os.path.exists(sitemap_path):
         sitemap_url = url_for("main.sitemap_xml")

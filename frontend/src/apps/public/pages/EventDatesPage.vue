@@ -7,6 +7,7 @@ import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AppPager from "@/shared/AppPager.vue";
 import { boot } from "@/shared/boot";
+import CalendarAssignModal from "@/shared/CalendarAssignModal.vue";
 import { useNotify } from "@/shared/notify";
 import EventDateCard from "../components/EventDateCard.vue";
 import EventDateSearchForm from "../components/EventDateSearchForm.vue";
@@ -39,11 +40,25 @@ const results = ref<HTMLElement | null>(null);
 const map = ref<InstanceType<typeof EventDatesMap> | null>(null);
 
 const defaults = computed(() => ({ date_from: options.value?.default_date_from ?? "" }));
+const calendarOrganizationId = computed(() => options.value?.calendar_organization?.id ?? null);
+const calendarEventId = ref<number | null>(null);
+const showCalendars = ref(false);
+
+function assignCalendars(eventId: number) {
+  calendarEventId.value = eventId;
+  showCalendars.value = true;
+}
+
 const referencingId = computed(() => options.value?.referencing_organization?.id ?? null);
 
 function idOf(value: unknown): number | undefined {
   const parsed = Number.parseInt(String(Array.isArray(value) ? value[0] : (value ?? "")), 10);
   return parsed > 0 ? parsed : undefined;
+}
+
+function idsOf(value: unknown): number[] {
+  const values = Array.isArray(value) ? value : [value];
+  return values.map((item) => Number.parseInt(String(item ?? ""), 10)).filter((id) => id > 0);
 }
 
 async function loadOptions() {
@@ -52,6 +67,7 @@ async function loadOptions() {
       query: {
         admin_unit_id: idOf(route.query.admin_unit_id),
         organizer_id: idOf(route.query.organizer_id),
+        calendar_id: idsOf(route.query.calendar_id),
       },
     },
   });
@@ -84,12 +100,14 @@ async function search({ scroll = true }: { scroll?: boolean } = {}) {
 async function apply({ scroll = true }: { scroll?: boolean } = {}) {
   const org = idOf(route.query.admin_unit_id) ?? null;
   const organizer = idOf(route.query.organizer_id) ?? null;
+  const calendars = idsOf(route.query.calendar_id);
   const known = options.value;
 
   if (
     !known ||
     (org !== (known.organization?.id ?? null) && org !== null) ||
-    (organizer !== (known.organizer?.id ?? null) && organizer !== null)
+    (organizer !== (known.organizer?.id ?? null) && organizer !== null) ||
+    calendars.some((id) => !known.calendars.some((calendar) => calendar.id === id))
   ) {
     if (!(await loadOptions())) return;
   }
@@ -208,7 +226,9 @@ function showInList(eventDateId: number) {
                 :event-date="eventDate"
                 :locale="boot.locale"
                 :busy="busy"
+                :can-assign-calendar="calendarOrganizationId !== null"
                 @fly-to="flyTo"
+                @assign-calendar="assignCalendars"
                 @reference="reference"
                 @unreference="unreference"
               />
@@ -231,5 +251,11 @@ function showInList(eventDateId: number) {
         </div>
       </div>
     </div>
+    <CalendarAssignModal
+      v-if="calendarOrganizationId !== null"
+      v-model="showCalendars"
+      :organization-id="calendarOrganizationId"
+      :event-id="calendarEventId"
+    />
   </div>
 </template>

@@ -15,6 +15,8 @@ from project.infrastructure.models.admin_unit_verification_request_generated imp
 )
 from project.infrastructure.models.api_key import ApiKey
 from project.infrastructure.models.app import AppInstallation, AppKey
+from project.infrastructure.models.calendar import Calendar
+from project.infrastructure.models.calendar_entry import CalendarEntry
 from project.infrastructure.models.custom_widget import CustomWidget
 from project.infrastructure.models.event import Event
 from project.infrastructure.models.event_category import (

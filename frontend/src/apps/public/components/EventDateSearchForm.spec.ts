@@ -20,6 +20,8 @@ const baseOptions = {
   organization: null,
   organizer: null,
   referencing_organization: null,
+  calendar_organization: null,
+  calendars: [] as { id: number; name: string; organization: { id: number; name: string } }[],
 };
 
 function mountForm(filter = {}, options: Record<string, unknown> = {}) {
@@ -39,7 +41,9 @@ describe("EventDateSearchForm", () => {
       Promise.resolve(
         path === "/bff/public/organizations"
           ? { data: { items: [{ id: 7, name: "Jam Org" }] } }
-          : { data: { items: [{ id: 9, name: "Jam Crew" }] } },
+          : path === "/bff/public/calendars"
+            ? { data: { items: [{ id: 5, name: "Sport", organization: { id: 7, name: "Jam Org" } }] } }
+            : { data: { items: [{ id: 9, name: "Jam Crew" }] } },
       ),
     );
   });
@@ -52,6 +56,39 @@ describe("EventDateSearchForm", () => {
     await wrapper.find("#toggle-search-btn").trigger("click");
 
     expect(extendedVisible(wrapper)).toBe(true);
+  });
+
+  it("labels the toggle by its state", async () => {
+    const wrapper = mountForm();
+    const toggle = wrapper.find("#toggle-search-btn");
+    expect(toggle.text()).toBe("More filters");
+
+    await toggle.trigger("click");
+
+    expect(toggle.text()).toBe("Fewer filters");
+  });
+
+  it("shows the filtered calendars with their organization and picks more", async () => {
+    const wrapper = mountForm(
+      { calendar_id: [4] },
+      { calendars: [{ id: 4, name: "Feste", organization: { id: 8, name: "Stadt" } }] },
+    );
+    expect(extendedVisible(wrapper)).toBe(true);
+    expect(wrapper.findAll('[data-test="chip"]').map((chip) => chip.text())).toEqual([
+      "Feste (Stadt)",
+    ]);
+
+    await wrapper.find("#calendar_id").setValue("Spo");
+    vi.advanceTimersByTime(250);
+    await flushPromises();
+    expect(GET).toHaveBeenLastCalledWith("/bff/public/calendars", {
+      params: { query: { keyword: "Spo", per_page: 10 } },
+    });
+    expect(wrapper.find('[data-test="option"]').text()).toContain("Sport (Jam Org)");
+    await wrapper.find('[data-test="option"]').trigger("click");
+
+    await wrapper.find("form").trigger("submit");
+    expect(wrapper.emitted("search")![0][0]).toMatchObject({ calendar_id: [4, 5] });
   });
 
   it("starts expanded when an extended filter is set", () => {

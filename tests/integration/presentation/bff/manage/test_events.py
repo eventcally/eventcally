@@ -767,3 +767,68 @@ def test_delete_access(client, seeder, utils):
 
     assert utils.get_json(_delete_form_url(admin_unit_id, event_id)).status_code == 403
     assert utils.post_json(_delete_url(admin_unit_id, event_id), {}).status_code == 403
+
+
+# calendars
+
+
+def test_calendar_filter_lists_own_and_foreign_events(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    other_id = _foreign_admin_unit(seeder)
+    seeder.verify_admin_unit(other_id)
+    own = seeder.create_event(admin_unit_id, name="Own", start=FUTURE)
+    seeder.create_event(admin_unit_id, name="Not in calendar", start=FUTURE)
+    foreign = seeder.create_event(other_id, name="Foreign", start=FUTURE)
+    calendar_id = seeder.create_calendar(admin_unit_id, "Mix")
+    seeder.create_calendar_entry(calendar_id, own)
+    seeder.create_calendar_entry(calendar_id, foreign)
+
+    response = _list(utils, admin_unit_id, calendar_id=calendar_id)
+
+    assert response.status_code == 200
+    rows = {i["name"]: i for i in response.json["items"]}
+    assert sorted(rows) == ["Foreign", "Own"]
+    assert rows["Own"]["is_own"] is True
+    assert rows["Foreign"]["is_own"] is False
+    assert rows["Foreign"]["is_reference"] is False
+    assert rows["Foreign"]["organization_name"] == "Andere Crew"
+    assert rows["Foreign"]["internal_tags"] is None
+
+
+def test_unknown_calendar_filter_is_400(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+
+    assert _list(utils, admin_unit_id, calendar_id=4711).status_code == 400
+
+
+def test_options_carry_the_calendars(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+    seeder.create_calendar(admin_unit_id, "Mix", private=True)
+
+    options = utils.get_json_ok(OPTIONS_URL.format(admin_unit_id)).json
+
+    assert [(c["name"], c["private"]) for c in options["calendars"]] == [("Mix", True)]
+    assert options["can_write_calendars"] is True
+
+
+def test_options_hide_calendars_without_the_read_permission(client, app, seeder, utils):
+    owner_id = seeder.create_user("owner@owner")
+    admin_unit_id = seeder.create_admin_unit(owner_id, "Other crew")
+    seeder.create_calendar(admin_unit_id, "Mix")
+    with app.app_context():
+        from project.infrastructure.extensions import db
+        from project.infrastructure.models import AdminUnitMemberRole
+
+        db.session.add(
+            AdminUnitMemberRole(
+                name="events_reader", title="Reader", permissions=["events:read"]
+            )
+        )
+        db.session.commit()
+    seeder.create_admin_unit_member(admin_unit_id, ["events_reader"])
+    utils.login()
+
+    options = utils.get_json_ok(OPTIONS_URL.format(admin_unit_id)).json
+
+    assert options["calendars"] == []
+    assert options["can_write_calendars"] is False

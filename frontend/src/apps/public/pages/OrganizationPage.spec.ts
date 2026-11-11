@@ -27,6 +27,7 @@ const organization = {
   logo_url: "/image/1?s=120",
   ical_url: "http://localhost/organizations/5/ical",
   relation: null,
+  calendars: [],
 };
 
 const messages = {
@@ -52,6 +53,30 @@ async function mountPage() {
   await flushPromises();
   return wrapper;
 }
+
+describe("OrganizationPage calendars", () => {
+  beforeEach(() => {
+    document.body.innerHTML = "";
+  });
+
+  it("lists the public calendars of the organization", async () => {
+    GET.mockReset().mockResolvedValue({
+      data: { ...organization, calendars: [{ id: 4, name: "Sport" }] },
+    });
+    const wrapper = await mountPage();
+
+    const links = wrapper.findAll("[data-test=calendars] a");
+    expect(links.map((a) => a.text())).toEqual(["Sport"]);
+    expect(links[0].attributes("href")).toBe("/calendars/4");
+  });
+
+  it("shows no calendar section without public calendars", async () => {
+    GET.mockReset().mockResolvedValue({ data: organization });
+    const wrapper = await mountPage();
+
+    expect(wrapper.find("[data-test=calendars]").exists()).toBe(false);
+  });
+});
 
 describe("OrganizationPage", () => {
   beforeEach(() => {

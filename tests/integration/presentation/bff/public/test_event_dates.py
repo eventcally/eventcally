@@ -275,3 +275,68 @@ def test_not_referenced_is_ignored_for_anonymous(client, seeder, utils):
     seeder.create_event(admin_unit_id, name="Konzert", start=START)
 
     assert _names(utils.get_json_ok(_url(not_referenced="true"))) == ["Konzert"]
+
+
+def test_options_carry_the_calendar_organization(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base()
+
+    assert utils.get_json_ok(OPTIONS_URL).json["calendar_organization"] is None
+
+    seeder.create_calendar(admin_unit_id)
+    body = utils.get_json_ok(OPTIONS_URL).json
+
+    assert body["calendar_organization"] == {"id": admin_unit_id, "name": "Meine Crew"}
+
+
+def test_options_anonymous_have_no_calendar_organization(client, seeder, utils):
+    owner_id = seeder.create_user()
+    admin_unit_id = seeder.create_admin_unit(owner_id, verified=True)
+    seeder.create_calendar(admin_unit_id)
+
+    assert utils.get_json_ok(OPTIONS_URL).json["calendar_organization"] is None
+
+
+def test_search_filters_by_calendar(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    other_user_id = seeder.create_user("other@test.de")
+    other_admin_unit_id = seeder.create_admin_unit(
+        other_user_id, "Other Crew", verified=True
+    )
+    calendar_id = seeder.create_calendar(admin_unit_id)
+    inside = seeder.create_event(admin_unit_id, name="Inside")
+    foreign = seeder.create_event(other_admin_unit_id, name="Foreign")
+    seeder.create_event(admin_unit_id, name="Outside")
+    seeder.create_event(admin_unit_id, name="Draft", draft=True)
+    for event_id in (inside, foreign):
+        seeder.create_calendar_entry(calendar_id, event_id)
+
+    body = utils.get_json_ok(f"{SEARCH_URL}?calendar_id={calendar_id}").json
+
+    assert sorted(i["event"]["name"] for i in body["items"]) == ["Foreign", "Inside"]
+
+
+def test_search_with_unknown_or_private_calendar_is_400(client, seeder, utils):
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    private_id = seeder.create_calendar(admin_unit_id, private=True)
+
+    assert utils.get_json(f"{SEARCH_URL}?calendar_id=4711").status_code == 400
+    assert utils.get_json(f"{SEARCH_URL}?calendar_id={private_id}").status_code == 400
+
+
+def test_options_resolve_the_visible_filtered_calendars(client, seeder, utils):
+    _, admin_unit_id = seeder.setup_base(log_in=False)
+    public = seeder.create_calendar(admin_unit_id, "Sport")
+    private = seeder.create_calendar(admin_unit_id, "Geheim", private=True)
+
+    body = utils.get_json_ok(
+        f"{OPTIONS_URL}?calendar_id={public}&calendar_id={private}&calendar_id={public}"
+    ).json
+
+    # A private calendar stays hidden from outsiders, duplicates collapse.
+    assert body["calendars"] == [
+        {
+            "id": public,
+            "name": "Sport",
+            "organization": {"id": admin_unit_id, "name": "Meine Crew"},
+        }
+    ]

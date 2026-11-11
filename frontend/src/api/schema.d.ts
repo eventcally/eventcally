@@ -629,6 +629,126 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bff/manage/organizations/{id}/calendars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a calendar */
+        post: operations["bff_manage_create_calendar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/calendars/choices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The calendars of an organization for the calendar picker */
+        get: operations["bff_manage_get_calendar_choices"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/calendars/create-form": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the form to create a calendar */
+        get: operations["bff_manage_get_calendar_create_form"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/calendars/list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List the calendars of an organization */
+        get: operations["bff_manage_list_calendars"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/calendars/name-availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Whether the name of a calendar is taken */
+        get: operations["bff_manage_get_calendar_name_availability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/calendars/{calendar_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the form to update a calendar */
+        get: operations["bff_manage_get_calendar_form"];
+        /** Update a calendar */
+        put: operations["bff_manage_update_calendar"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/calendars/{calendar_id}/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete a calendar after typing its name */
+        post: operations["bff_manage_delete_calendar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/bff/manage/organizations/{id}/custom-event-categories": {
         parameters: {
             query?: never;
@@ -1019,6 +1139,24 @@ export interface paths {
         get?: never;
         /** Update an event */
         put: operations["bff_manage_update_event"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/manage/organizations/{id}/events/{event_id}/calendars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The calendars of an organization and those the event is in */
+        get: operations["bff_manage_get_event_calendars"];
+        /** Put an event into calendars of an organization */
+        put: operations["bff_manage_put_event_calendars"];
         post?: never;
         delete?: never;
         options?: never;
@@ -1965,6 +2103,40 @@ export interface paths {
         };
         /** Events of a configured external calendar */
         get: operations["bff_manage_list_external_calendar_events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/public/calendars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Find public calendars by calendar or organization name */
+        get: operations["bff_public_lookup_calendars"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/bff/public/calendars/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get calendar */
+        get: operations["bff_public_get_calendar"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3328,6 +3500,128 @@ export interface components {
              */
             url: string | null;
         };
+        /** CalendarChoice */
+        CalendarChoice: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /**
+             * Private
+             * @default false
+             */
+            private: boolean;
+        };
+        /** CalendarChoices */
+        CalendarChoices: {
+            /** Items */
+            items: components["schemas"]["CalendarChoice"][];
+        };
+        /** CalendarForm */
+        CalendarForm: {
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Id
+             * @default null
+             */
+            id: number | null;
+            /**
+             * Name
+             * @default
+             */
+            name: string;
+            /**
+             * Private
+             * @default false
+             */
+            private: boolean;
+        };
+        /** CalendarListItem */
+        CalendarListItem: {
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /** Id */
+            id: number;
+            /**
+             * Last Modified At
+             * @default null
+             */
+            last_modified_at: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Number Of Events
+             * @default 0
+             */
+            number_of_events: number;
+            /**
+             * Private
+             * @default false
+             */
+            private: boolean;
+            /**
+             * Public Url
+             * @default null
+             */
+            public_url: string | null;
+        };
+        /** CalendarListPage */
+        CalendarListPage: {
+            /** Can Write */
+            can_write: boolean;
+            /** Items */
+            items: components["schemas"]["CalendarListItem"][];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Per Page */
+            per_page: number;
+            /** Total */
+            total: number;
+        };
+        /** CalendarNameAvailability */
+        CalendarNameAvailability: {
+            /**
+             * Name Taken
+             * @default null
+             */
+            name_taken: boolean | null;
+        };
+        /** CalendarSave */
+        CalendarSave: {
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /**
+             * Inline
+             * @default false
+             */
+            inline: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Private
+             * @default false
+             */
+            private: boolean;
+        };
+        /** CalendarSaved */
+        CalendarSaved: {
+            /** Id */
+            id: number;
+            /** Redirect Url */
+            redirect_url: string;
+        };
         /** CustomEventCategorySetChoice */
         CustomEventCategorySetChoice: {
             /** Id */
@@ -3416,6 +3710,21 @@ export interface components {
          * @enum {integer}
          */
         EventAttendanceMode: 1 | 2 | 3;
+        /**
+         * EventCalendars
+         * @description The calendars of the organization and those the event is in.
+         */
+        EventCalendars: {
+            /** Choices */
+            choices: components["schemas"]["CalendarChoice"][];
+            /** Selected Ids */
+            selected_ids: number[];
+        };
+        /** EventCalendarsSave */
+        EventCalendarsSave: {
+            /** Calendar Ids */
+            calendar_ids: number[];
+        };
         /** EventCreate */
         EventCreate: {
             /**
@@ -3440,6 +3749,11 @@ export interface components {
              * @default false
              */
             booked_up: boolean;
+            /**
+             * Calendar Ids
+             * @default null
+             */
+            calendar_ids: number[] | null;
             /**
              * Category Ids
              * @default []
@@ -3560,6 +3874,13 @@ export interface components {
         };
         /** EventDateSearchOptions */
         EventDateSearchOptions: {
+            /** @default null */
+            calendar_organization: components["schemas"]["PublicOrganizationRef"] | null;
+            /**
+             * Calendars
+             * @default []
+             */
+            calendars: components["schemas"]["PublicCalendarRef"][];
             /** Categories */
             categories: components["schemas"]["WidgetCategory"][];
             /**
@@ -3631,6 +3952,16 @@ export interface components {
              * @default false
              */
             booked_up: boolean;
+            /**
+             * Calendar Ids
+             * @default []
+             */
+            calendar_ids: number[];
+            /**
+             * Calendars
+             * @default []
+             */
+            calendars: components["schemas"]["CalendarChoice"][];
             /**
              * Can Create Organizer
              * @default false
@@ -4201,6 +4532,11 @@ export interface components {
         /** EventReferenceRequestReject */
         EventReferenceRequestReject: {
             /**
+             * Calendar Ids
+             * @default []
+             */
+            calendar_ids: number[];
+            /**
              * Rejection Reason
              * @default null
              */
@@ -4218,6 +4554,11 @@ export interface components {
              * @default null
              */
             auto_verify_description: string | null;
+            /**
+             * Calendars
+             * @default []
+             */
+            calendars: components["schemas"]["CalendarChoice"][];
             /**
              * Dates
              * @default []
@@ -4256,6 +4597,11 @@ export interface components {
              * @default false
              */
             auto_verify: boolean;
+            /**
+             * Calendar Ids
+             * @default []
+             */
+            calendar_ids: number[];
             /**
              * Rating
              * @default 50
@@ -4322,6 +4668,11 @@ export interface components {
              * @default false
              */
             booked_up: boolean;
+            /**
+             * Calendar Ids
+             * @default null
+             */
+            calendar_ids: number[] | null;
             /**
              * Category Ids
              * @default []
@@ -4450,6 +4801,11 @@ export interface components {
         };
         /** IncomingEventReferenceListPage */
         IncomingEventReferenceListPage: {
+            /**
+             * Can Assign Calendars
+             * @default false
+             */
+            can_assign_calendars: boolean;
             /** Can Write */
             can_write: boolean;
             /** Items */
@@ -4474,6 +4830,11 @@ export interface components {
         IncomingEventReferenceRead: {
             /** @default null */
             audit: components["schemas"]["ManageAudit"] | null;
+            /**
+             * Can Assign Calendars
+             * @default false
+             */
+            can_assign_calendars: boolean;
             /** Can Write */
             can_write: boolean;
             /** Event Id */
@@ -4603,6 +4964,11 @@ export interface components {
         ManageEventDateEvent: {
             /** Id */
             id: number;
+            /**
+             * Is Own
+             * @default true
+             */
+            is_own: boolean;
             /** Is Recurring */
             is_recurring: boolean;
             /**
@@ -4665,6 +5031,11 @@ export interface components {
              * @default null
              */
             internal_tags: string | null;
+            /**
+             * Is Own
+             * @default true
+             */
+            is_own: boolean;
             /** Is Recurring */
             is_recurring: boolean;
             /**
@@ -4734,12 +5105,22 @@ export interface components {
         };
         /** ManageEventListOptions */
         ManageEventListOptions: {
+            /**
+             * Calendars
+             * @default []
+             */
+            calendars: components["schemas"]["CalendarChoice"][];
             /** Can Read References */
             can_read_references: boolean;
             /** Can Request Reference */
             can_request_reference: boolean;
             /** Can Write */
             can_write: boolean;
+            /**
+             * Can Write Calendars
+             * @default false
+             */
+            can_write_calendars: boolean;
             /** Can Write References */
             can_write_references: boolean;
             /** Categories */
@@ -5843,6 +6224,33 @@ export interface components {
             /** Max Dates */
             max_dates: number;
         };
+        /** PublicCalendar */
+        PublicCalendar: {
+            /** @default null */
+            calendar_organization: components["schemas"]["PublicOrganizationRef"] | null;
+            /**
+             * Description
+             * @default null
+             */
+            description: string | null;
+            /** Ical Url */
+            ical_url: string;
+            /** Id */
+            id: number;
+            /**
+             * Manage Url
+             * @default null
+             */
+            manage_url: string | null;
+            /** Name */
+            name: string;
+            organization: components["schemas"]["PublicOrganizationRef"];
+            /**
+             * Private
+             * @default false
+             */
+            private: boolean;
+        };
         /** PublicCalendarLinks */
         PublicCalendarLinks: {
             /**
@@ -5852,6 +6260,22 @@ export interface components {
             google: string | null;
             /** Ics */
             ics: string;
+        };
+        /**
+         * PublicCalendarLookup
+         * @description Public calendars whose name or organization name contains the keyword.
+         */
+        PublicCalendarLookup: {
+            /** Items */
+            items: components["schemas"]["PublicCalendarRef"][];
+        };
+        /** PublicCalendarRef */
+        PublicCalendarRef: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            organization: components["schemas"]["PublicOrganizationRef"];
         };
         /** PublicChoice */
         PublicChoice: {
@@ -6064,6 +6488,8 @@ export interface components {
              */
             booked_up: boolean | null;
             calendar_links: components["schemas"]["PublicCalendarLinks"];
+            /** @default null */
+            calendar_organization: components["schemas"]["PublicOrganizationRef"] | null;
             /**
              * Categories
              * @default []
@@ -6125,6 +6551,11 @@ export interface components {
              * @default null
              */
             price_info: string | null;
+            /**
+             * Public Calendars
+             * @default null
+             */
+            public_calendars: components["schemas"]["PublicCalendarRef"][] | null;
             /** Public Status */
             public_status: string;
             /**
@@ -6355,6 +6786,11 @@ export interface components {
         };
         /** PublicOrganization */
         PublicOrganization: {
+            /**
+             * Calendars
+             * @default []
+             */
+            calendars: components["schemas"]["PublicCalendarRef"][];
             /**
              * Description
              * @default null
@@ -10726,6 +11162,520 @@ export interface operations {
             };
         };
     };
+    bff_manage_create_calendar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalendarSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarSaved"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_calendar_choices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarChoices"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_calendar_create_form: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarForm"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_list_calendars: {
+        parameters: {
+            query?: {
+                page?: number;
+                per_page?: number;
+                sort?: ("name" | "-last_modified_at" | "-number_of_events") | null;
+                keyword?: string | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarListPage"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_calendar_name_availability: {
+        parameters: {
+            query?: {
+                name?: string | null;
+                exclude_id?: number | null;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarNameAvailability"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_calendar_form: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                calendar_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarForm"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_update_calendar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                calendar_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalendarSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarSaved"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_delete_calendar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                calendar_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManageNameConfirm"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageMessage"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_manage_lookup_custom_event_categories: {
         parameters: {
             query: {
@@ -11084,6 +12034,7 @@ export interface operations {
                 is_recurring?: ("0" | "1") | null;
                 sort?: "min_start" | "-last_modified_at" | "-created_at";
                 include_references?: boolean;
+                calendar_id?: number | null;
             };
             header?: never;
             path: {
@@ -12266,6 +13217,7 @@ export interface operations {
                 is_recurring?: ("0" | "1") | null;
                 sort?: "min_start" | "-last_modified_at" | "-created_at";
                 include_references?: boolean;
+                calendar_id?: number | null;
             };
             header?: never;
             path: {
@@ -12605,6 +13557,137 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventSaved"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_get_event_calendars: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                event_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventCalendars"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_manage_put_event_calendars: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+                event_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EventCalendarsSave"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManageMessage"];
                 };
             };
             /** @description Bad Request */
@@ -16959,6 +18042,123 @@ export interface operations {
             };
         };
     };
+    bff_public_lookup_calendars: {
+        parameters: {
+            query?: {
+                keyword?: string;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicCalendarLookup"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
+    bff_public_get_calendar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicCalendar"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ValidationErrorResponse"];
+                };
+            };
+        };
+    };
     bff_public_search_event_dates: {
         parameters: {
             query?: {
@@ -16968,6 +18168,7 @@ export interface operations {
                 date_to?: string | null;
                 keyword?: string | null;
                 category_id?: number[];
+                calendar_id?: number[];
                 tag?: string | null;
                 admin_unit_id?: number | null;
                 organizer_id?: number | null;
@@ -17038,6 +18239,7 @@ export interface operations {
             query?: {
                 admin_unit_id?: number | null;
                 organizer_id?: number | null;
+                calendar_id?: number[];
             };
             header?: never;
             path?: never;

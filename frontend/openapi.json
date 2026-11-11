@@ -1625,6 +1625,264 @@
         "title": "AppWebhookFields",
         "type": "object"
       },
+      "CalendarChoice": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "private": {
+            "default": false,
+            "title": "Private",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "CalendarChoice",
+        "type": "object"
+      },
+      "CalendarChoices": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarChoice"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "CalendarChoices",
+        "type": "object"
+      },
+      "CalendarForm": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Id"
+          },
+          "name": {
+            "default": "",
+            "title": "Name",
+            "type": "string"
+          },
+          "private": {
+            "default": false,
+            "title": "Private",
+            "type": "boolean"
+          }
+        },
+        "title": "CalendarForm",
+        "type": "object"
+      },
+      "CalendarListItem": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "last_modified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last Modified At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "number_of_events": {
+            "default": 0,
+            "title": "Number Of Events",
+            "type": "integer"
+          },
+          "private": {
+            "default": false,
+            "title": "Private",
+            "type": "boolean"
+          },
+          "public_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Public Url"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "CalendarListItem",
+        "type": "object"
+      },
+      "CalendarListPage": {
+        "properties": {
+          "can_write": {
+            "title": "Can Write",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarListItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "page": {
+            "title": "Page",
+            "type": "integer"
+          },
+          "pages": {
+            "title": "Pages",
+            "type": "integer"
+          },
+          "per_page": {
+            "title": "Per Page",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "page",
+          "per_page",
+          "total",
+          "pages",
+          "can_write",
+          "items"
+        ],
+        "title": "CalendarListPage",
+        "type": "object"
+      },
+      "CalendarNameAvailability": {
+        "properties": {
+          "name_taken": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Name Taken"
+          }
+        },
+        "title": "CalendarNameAvailability",
+        "type": "object"
+      },
+      "CalendarSave": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "inline": {
+            "default": false,
+            "title": "Inline",
+            "type": "boolean"
+          },
+          "name": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "private": {
+            "default": false,
+            "title": "Private",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "CalendarSave",
+        "type": "object"
+      },
+      "CalendarSaved": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "redirect_url": {
+            "title": "Redirect Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "redirect_url"
+        ],
+        "title": "CalendarSaved",
+        "type": "object"
+      },
       "CustomEventCategorySetChoice": {
         "properties": {
           "id": {
@@ -1819,6 +2077,47 @@
         "title": "EventAttendanceMode",
         "type": "integer"
       },
+      "EventCalendars": {
+        "description": "The calendars of the organization and those the event is in.",
+        "properties": {
+          "choices": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarChoice"
+            },
+            "title": "Choices",
+            "type": "array"
+          },
+          "selected_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Selected Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "choices",
+          "selected_ids"
+        ],
+        "title": "EventCalendars",
+        "type": "object"
+      },
+      "EventCalendarsSave": {
+        "properties": {
+          "calendar_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Calendar Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "calendar_ids"
+        ],
+        "title": "EventCalendarsSave",
+        "type": "object"
+      },
       "EventCreate": {
         "properties": {
           "accessible_for_free": {
@@ -1858,6 +2157,21 @@
             "default": false,
             "title": "Booked Up",
             "type": "boolean"
+          },
+          "calendar_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Calendar Ids"
           },
           "category_ids": {
             "default": [],
@@ -2104,6 +2418,25 @@
       },
       "EventDateSearchOptions": {
         "properties": {
+          "calendar_organization": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicOrganizationRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "calendars": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PublicCalendarRef"
+            },
+            "title": "Calendars",
+            "type": "array"
+          },
           "categories": {
             "items": {
               "$ref": "#/components/schemas/WidgetCategory"
@@ -2272,6 +2605,22 @@
             "default": false,
             "title": "Booked Up",
             "type": "boolean"
+          },
+          "calendar_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Calendar Ids",
+            "type": "array"
+          },
+          "calendars": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/CalendarChoice"
+            },
+            "title": "Calendars",
+            "type": "array"
           },
           "can_create_organizer": {
             "default": false,
@@ -3587,6 +3936,14 @@
       },
       "EventReferenceRequestReject": {
         "properties": {
+          "calendar_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Calendar Ids",
+            "type": "array"
+          },
           "rejection_reason": {
             "anyOf": [
               {
@@ -3621,6 +3978,14 @@
             ],
             "default": null,
             "title": "Auto Verify Description"
+          },
+          "calendars": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/CalendarChoice"
+            },
+            "title": "Calendars",
+            "type": "array"
           },
           "dates": {
             "default": [],
@@ -3705,6 +4070,14 @@
             "default": false,
             "title": "Auto Verify",
             "type": "boolean"
+          },
+          "calendar_ids": {
+            "default": [],
+            "items": {
+              "type": "integer"
+            },
+            "title": "Calendar Ids",
+            "type": "array"
           },
           "rating": {
             "default": 50,
@@ -3839,6 +4212,21 @@
             "default": false,
             "title": "Booked Up",
             "type": "boolean"
+          },
+          "calendar_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Calendar Ids"
           },
           "category_ids": {
             "default": [],
@@ -4137,6 +4525,11 @@
       },
       "IncomingEventReferenceListPage": {
         "properties": {
+          "can_assign_calendars": {
+            "default": false,
+            "title": "Can Assign Calendars",
+            "type": "boolean"
+          },
           "can_write": {
             "title": "Can Write",
             "type": "boolean"
@@ -4209,6 +4602,11 @@
               }
             ],
             "default": null
+          },
+          "can_assign_calendars": {
+            "default": false,
+            "title": "Can Assign Calendars",
+            "type": "boolean"
           },
           "can_write": {
             "title": "Can Write",
@@ -4529,6 +4927,11 @@
             "title": "Id",
             "type": "integer"
           },
+          "is_own": {
+            "default": true,
+            "title": "Is Own",
+            "type": "boolean"
+          },
           "is_recurring": {
             "title": "Is Recurring",
             "type": "boolean"
@@ -4670,6 +5073,11 @@
             ],
             "default": null,
             "title": "Internal Tags"
+          },
+          "is_own": {
+            "default": true,
+            "title": "Is Own",
+            "type": "boolean"
           },
           "is_recurring": {
             "title": "Is Recurring",
@@ -4836,6 +5244,14 @@
       },
       "ManageEventListOptions": {
         "properties": {
+          "calendars": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/CalendarChoice"
+            },
+            "title": "Calendars",
+            "type": "array"
+          },
           "can_read_references": {
             "title": "Can Read References",
             "type": "boolean"
@@ -4846,6 +5262,11 @@
           },
           "can_write": {
             "title": "Can Write",
+            "type": "boolean"
+          },
+          "can_write_calendars": {
+            "default": false,
+            "title": "Can Write Calendars",
             "type": "boolean"
           },
           "can_write_references": {
@@ -7513,6 +7934,73 @@
         "title": "PlanningOptions",
         "type": "object"
       },
+      "PublicCalendar": {
+        "properties": {
+          "calendar_organization": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicOrganizationRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "ical_url": {
+            "title": "Ical Url",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "manage_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Manage Url"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "organization": {
+            "$ref": "#/components/schemas/PublicOrganizationRef"
+          },
+          "private": {
+            "default": false,
+            "title": "Private",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "organization",
+          "ical_url"
+        ],
+        "title": "PublicCalendar",
+        "type": "object"
+      },
       "PublicCalendarLinks": {
         "properties": {
           "google": {
@@ -7536,6 +8024,45 @@
           "ics"
         ],
         "title": "PublicCalendarLinks",
+        "type": "object"
+      },
+      "PublicCalendarLookup": {
+        "description": "Public calendars whose name or organization name contains the keyword.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicCalendarRef"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "PublicCalendarLookup",
+        "type": "object"
+      },
+      "PublicCalendarRef": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "organization": {
+            "$ref": "#/components/schemas/PublicOrganizationRef"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "organization"
+        ],
+        "title": "PublicCalendarRef",
         "type": "object"
       },
       "PublicChoice": {
@@ -8048,6 +8575,17 @@
           "calendar_links": {
             "$ref": "#/components/schemas/PublicCalendarLinks"
           },
+          "calendar_organization": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicOrganizationRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
           "categories": {
             "default": [],
             "items": {
@@ -8188,6 +8726,21 @@
             ],
             "default": null,
             "title": "Price Info"
+          },
+          "public_calendars": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PublicCalendarRef"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Public Calendars"
           },
           "public_status": {
             "title": "Public Status",
@@ -8769,6 +9322,14 @@
       },
       "PublicOrganization": {
         "properties": {
+          "calendars": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PublicCalendarRef"
+            },
+            "title": "Calendars",
+            "type": "array"
+          },
           "description": {
             "anyOf": [
               {
@@ -15757,6 +16318,724 @@
         "summary": "Deliver a webhook again"
       }
     },
+    "/bff/manage/organizations/{id}/calendars": {
+      "post": {
+        "operationId": "bff_manage_create_calendar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarSave"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarSaved"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Create a calendar"
+      }
+    },
+    "/bff/manage/organizations/{id}/calendars/choices": {
+      "get": {
+        "operationId": "bff_manage_get_calendar_choices",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarChoices"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "The calendars of an organization for the calendar picker"
+      }
+    },
+    "/bff/manage/organizations/{id}/calendars/create-form": {
+      "get": {
+        "operationId": "bff_manage_get_calendar_create_form",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarForm"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get the form to create a calendar"
+      }
+    },
+    "/bff/manage/organizations/{id}/calendars/list": {
+      "get": {
+        "operationId": "bff_manage_list_calendars",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "name",
+                    "-last_modified_at",
+                    "-number_of_events"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "keyword",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarListPage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "List the calendars of an organization"
+      }
+    },
+    "/bff/manage/organizations/{id}/calendars/name-availability": {
+      "get": {
+        "operationId": "bff_manage_get_calendar_name_availability",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 255,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "exclude_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarNameAvailability"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Whether the name of a calendar is taken"
+      }
+    },
+    "/bff/manage/organizations/{id}/calendars/{calendar_id}": {
+      "get": {
+        "operationId": "bff_manage_get_calendar_form",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarForm"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get the form to update a calendar"
+      },
+      "put": {
+        "operationId": "bff_manage_update_calendar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarSave"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarSaved"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Update a calendar"
+      }
+    },
+    "/bff/manage/organizations/{id}/calendars/{calendar_id}/delete": {
+      "post": {
+        "operationId": "bff_manage_delete_calendar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManageNameConfirm"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManageMessage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Delete a calendar after typing its name"
+      }
+    },
     "/bff/manage/organizations/{id}/custom-event-categories": {
       "get": {
         "operationId": "bff_manage_lookup_custom_event_categories",
@@ -16508,6 +17787,22 @@
             "schema": {
               "default": false,
               "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "calendar_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
             }
           }
         ],
@@ -18444,6 +19739,22 @@
               "default": false,
               "type": "boolean"
             }
+          },
+          {
+            "in": "query",
+            "name": "calendar_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null
+            }
           }
         ],
         "responses": {
@@ -18921,6 +20232,176 @@
           }
         },
         "summary": "Update an event"
+      }
+    },
+    "/bff/manage/organizations/{id}/events/{event_id}/calendars": {
+      "get": {
+        "operationId": "bff_manage_get_event_calendars",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventCalendars"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "The calendars of an organization and those the event is in"
+      },
+      "put": {
+        "operationId": "bff_manage_put_event_calendars",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventCalendarsSave"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManageMessage"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Put an event into calendars of an organization"
       }
     },
     "/bff/manage/organizations/{id}/events/{event_id}/delete": {
@@ -24746,6 +26227,155 @@
         "summary": "Events of a configured external calendar"
       }
     },
+    "/bff/public/calendars": {
+      "get": {
+        "operationId": "bff_public_lookup_calendars",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "keyword",
+            "required": false,
+            "schema": {
+              "default": "",
+              "maxLength": 255,
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCalendarLookup"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Find public calendars by calendar or organization name"
+      }
+    },
+    "/bff/public/calendars/{id}": {
+      "get": {
+        "operationId": "bff_public_get_calendar",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicCalendar"
+                }
+              }
+            },
+            "description": "OK"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Get calendar"
+      }
+    },
     "/bff/public/event-dates": {
       "get": {
         "operationId": "bff_public_search_event_dates",
@@ -24825,6 +26455,18 @@
           {
             "in": "query",
             "name": "category_id",
+            "required": false,
+            "schema": {
+              "default": [],
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          },
+          {
+            "in": "query",
+            "name": "calendar_id",
             "required": false,
             "schema": {
               "default": [],
@@ -25088,6 +26730,18 @@
                 }
               ],
               "default": null
+            }
+          },
+          {
+            "in": "query",
+            "name": "calendar_id",
+            "required": false,
+            "schema": {
+              "default": [],
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
             }
           }
         ],

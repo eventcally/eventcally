@@ -39,6 +39,9 @@ class FakeBatchRepo(AbstractBatchReadRepository):
     def list_sitemap_events(self):
         return self._record("sitemap")
 
+    def list_sitemap_calendars(self):
+        return self._record("sitemap_calendars")
+
     def list_organization_ids_due_for_deletion(self):
         return self._record("orgs")
 
@@ -92,6 +95,11 @@ def test_batch_handlers_pass_queries_through():
             handlers.ListSitemapEventsHandler,
             queries.ListSitemapEventsQuery(),
             "sitemap",
+        ),
+        (
+            handlers.ListSitemapCalendarsHandler,
+            queries.ListSitemapCalendarsQuery(),
+            "sitemap_calendars",
         ),
         (
             handlers.ListOrganizationIdsDueForDeletionHandler,

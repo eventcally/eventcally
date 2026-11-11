@@ -27,6 +27,7 @@ from project.domain.models.enums.event_public_status import EventPublicStatus
 from project.domain.types.object_id import ObjectId
 from project.infrastructure.models import (
     AdminUnit,
+    CalendarEntry,
     CustomEventCategory,
     Event,
     EventCategory,
@@ -397,9 +398,10 @@ def _event_filters(
         criteria, can_read_private_events, can_read_planned_events
     )
 
-    if reference is not None and criteria.admin_unit_id:
+    if criteria.admin_unit_id and (reference is not None or criteria.calendar_ids):
         # The private statuses are the organization's own: a referenced event of
         # another organization that went back to draft (or planned) stays hidden.
+        # The same holds for foreign events of a calendar.
         foreign = [
             status
             for status in statuses
@@ -415,6 +417,9 @@ def _event_filters(
                 and_(
                     Event.admin_unit_id != criteria.admin_unit_id,
                     Event.public_status.in_(foreign),
+                    # A calendar may hold events of an organization that lost its
+                    # verification.
+                    *([AdminUnit.is_verified] if criteria.calendar_ids else []),
                 ),
             )
         )
@@ -485,7 +490,17 @@ def _event_filters(
             Event.expected_participants >= criteria.expected_participants_min
         )
 
-    if criteria.admin_unit_id:
+    if criteria.calendar_ids:
+        filters.append(
+            exists().where(
+                CalendarEntry.event_id == Event.id,
+                CalendarEntry.calendar_id.in_(criteria.calendar_ids),
+            )
+        )
+
+    # With calendars the organization scope is dropped: a calendar holds events of
+    # other organizations that the organization does not reference.
+    if criteria.admin_unit_id and not criteria.calendar_ids:
         if reference is not None:
             if criteria.admin_unit_references_only:
                 filters.append(reference.id.isnot(None))

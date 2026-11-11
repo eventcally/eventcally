@@ -1,0 +1,26 @@
+models:
+  - name: Calendar
+    mixins: [Trackable]
+    columns:
+      - name: name
+        type: string!
+      - name: description
+        type: text
+      - name: private
+        type: boolean
+        nullable: false
+        default: false
+    relationships:
+      - name: admin_unit
+        target_model: AdminUnit
+        pattern: many-to-one
+        relation: parent
+        back_populates: calendars
+      - name: entries
+        target_model: CalendarEntry
+        pattern: one-to-many
+        relation: owned
+        back_populates: calendar
+    constraints:
+      - type: unique
+        columns: [admin_unit_id, name]

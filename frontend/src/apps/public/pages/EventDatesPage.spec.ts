@@ -44,6 +44,8 @@ const options: {
   organization: Ref;
   organizer: Ref;
   referencing_organization: Ref;
+  calendar_organization: Ref;
+  calendars: { id: number; name: string; organization: { id: number; name: string } }[];
 } = {
   default_date_from: "2030-10-01",
   categories: [{ id: 3, name: "Music" }],
@@ -55,6 +57,8 @@ const options: {
   organization: null,
   organizer: null,
   referencing_organization: null,
+  calendar_organization: null,
+  calendars: [],
 };
 
 function item(id: number, reference: unknown = null, place: unknown = null) {
@@ -120,7 +124,9 @@ describe("EventDatesPage", () => {
       Promise.resolve(
         path === "/bff/public/event-dates/options"
           ? { data: current.options }
-          : current.search,
+          : path === "/bff/manage/organizations/{id}/events/{event_id}/calendars"
+            ? { data: { choices: [], selected_ids: [] } }
+            : current.search,
       ),
     );
   });
@@ -129,7 +135,7 @@ describe("EventDatesPage", () => {
     const { wrapper } = await mountPage();
 
     expect(GET).toHaveBeenNthCalledWith(1, "/bff/public/event-dates/options", {
-      params: { query: { admin_unit_id: undefined, organizer_id: undefined } },
+      params: { query: { admin_unit_id: undefined, organizer_id: undefined, calendar_id: [] } },
     });
     expect(searchCalls()).toHaveLength(1);
     expect(searchCalls()[0][1].params.query).toMatchObject({
@@ -149,7 +155,7 @@ describe("EventDatesPage", () => {
     await mountPage("/eventdates?admin_unit_id=4&organizer_id=8&keyword=jam&category_id=0");
 
     expect(GET).toHaveBeenNthCalledWith(1, "/bff/public/event-dates/options", {
-      params: { query: { admin_unit_id: 4, organizer_id: 8 } },
+      params: { query: { admin_unit_id: 4, organizer_id: 8, calendar_id: [] } },
     });
     expect(searchCalls()[0][1].params.query).toMatchObject({
       admin_unit_id: 4,
@@ -157,6 +163,19 @@ describe("EventDatesPage", () => {
       keyword: "jam",
       category_id: undefined,
     });
+  });
+
+  it("loads the labels of the calendars in the URL and filters by them", async () => {
+    current.options = {
+      ...options,
+      calendars: [{ id: 4, name: "Feste", organization: { id: 8, name: "Stadt" } }],
+    };
+    await mountPage("/eventdates?calendar_id=4&calendar_id=6");
+
+    expect(GET).toHaveBeenNthCalledWith(1, "/bff/public/event-dates/options", {
+      params: { query: { admin_unit_id: undefined, organizer_id: undefined, calendar_id: [4, 6] } },
+    });
+    expect(searchCalls()[0][1].params.query).toMatchObject({ calendar_id: [4, 6] });
   });
 
   it("writes the filter to the URL on submit and searches again", async () => {
@@ -272,6 +291,27 @@ describe("EventDatesPage", () => {
 
       expect(notify.error).toHaveBeenCalledWith("Denied");
       expect(notify.success).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("calendars", () => {
+    it("offers adding an event to a calendar of the session's organization", async () => {
+      current.options = { ...options, calendar_organization: { id: 5, name: "Mine" } };
+      const { wrapper } = await mountPage();
+
+      await wrapper.findAll('[data-test="add-to-calendar"]')[1].trigger("click");
+      await flushPromises();
+
+      expect(GET).toHaveBeenLastCalledWith(
+        "/bff/manage/organizations/{id}/events/{event_id}/calendars",
+        { params: { path: { id: 5, event_id: 102 } } },
+      );
+    });
+
+    it("offers nothing without a calendar organization", async () => {
+      const { wrapper } = await mountPage();
+
+      expect(wrapper.find('[data-test="add-to-calendar"]').exists()).toBe(false);
     });
   });
 

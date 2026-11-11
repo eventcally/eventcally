@@ -39,7 +39,7 @@ function isActive(filter: ManageEventFilter): boolean {
         filter.sort !== "min_start",
     );
   return Boolean(
-    hasExtendedFilter(filter) || filter.keyword || filter.include_references || listOnly,
+    hasExtendedFilter(filter) || filter.keyword || filter.include_references || filter.calendar_id || listOnly,
   );
 }
 
@@ -141,6 +141,18 @@ function reset() {
           class="form-control"
           maxlength="255"
         />
+      </div>
+    </div>
+
+    <div v-if="options.calendars?.length" class="row g-2 mb-3">
+      <label class="col-sm-2 col-form-label" for="calendar_id">{{ t("Calendar") }}</label>
+      <div class="col-sm-10">
+        <select id="calendar_id" v-model="draft.calendar_id" class="form-select">
+          <option :value="null">{{ t("All") }}</option>
+          <option v-for="calendar in options.calendars" :key="calendar.id" :value="calendar.id">
+            {{ calendar.name }}
+          </option>
+        </select>
       </div>
     </div>
 
@@ -342,7 +354,7 @@ function reset() {
         aria-controls="extended_search_form"
         @click="extended = !extended"
       >
-        {{ t("More filters") }}
+        {{ extended ? t("Fewer filters") : t("More filters") }}
       </button>
       <button type="button" class="btn btn-outline-secondary mt-1 me-1" data-test="reset" @click="reset">
         {{ t("Reset") }}

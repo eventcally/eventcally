@@ -3,6 +3,7 @@ from flask import abort
 from flask_security import current_user
 
 from project.application.queries import (
+    GetCalendarQuery,
     GetEventOrganizerQuery,
     GetOrganizationQuery,
     ListAllEventCategoriesQuery,
@@ -24,6 +25,7 @@ from project.presentation.bff.public.schemas import (
     EventDateSearchOptions,
     EventDateSearchOptionsParams,
     EventDateSearchParams,
+    PublicCalendarRef,
     PublicChoice,
     PublicDistance,
     PublicEventDate,
@@ -36,6 +38,7 @@ from project.presentation.bff.public.schemas import (
 )
 from project.presentation.bff.routing import bff_route
 from project.presentation.shared.access import has_access
+from project.presentation.shared.calendar_access import calendar_organization
 from project.presentation.shared.current_admin_unit import get_current_admin_unit
 from project.presentation.shared.search_options import distance_choices
 from project.shared.dateutils import form_input_to_date, get_today
@@ -65,6 +68,25 @@ def _organization_ref(admin_unit):
         return None
 
     return PublicOrganizationRef(id=admin_unit.id, name=admin_unit.name)
+
+
+def _calendar_refs(calendar_ids, query_bus: QueryBus):
+    """The filtered calendars the caller may see (private ones need calendars:read)."""
+    refs = []
+
+    for calendar_id in dict.fromkeys(calendar_ids):
+        calendar = query_bus.handle(GetCalendarQuery(id=calendar_id))
+
+        if calendar:
+            refs.append(
+                PublicCalendarRef(
+                    id=calendar.id,
+                    name=calendar.name,
+                    organization=_organization_ref(calendar.admin_unit),
+                )
+            )
+
+    return refs
 
 
 @bff_route(
@@ -110,6 +132,8 @@ def get_event_date_search_options(
         organization=_organization_ref(admin_unit),
         organizer=_organization_ref(organizer),
         referencing_organization=_organization_ref(_referencing_organization()),
+        calendar_organization=_organization_ref(calendar_organization()),
+        calendars=_calendar_refs(query.calendar_id, query_bus),
     )
 
 
@@ -200,6 +224,7 @@ def _criteria(query: EventDateSearchParams, referencing_organization):
         ),
         keyword=(query.keyword or "").strip() or None,
         category_ids=[c for c in query.category_id if c > 0],
+        calendar_ids=query.calendar_id,
         tags=_split(query.tag),
         postal_codes=_split(query.postal_code),
         admin_unit_id=query.admin_unit_id,

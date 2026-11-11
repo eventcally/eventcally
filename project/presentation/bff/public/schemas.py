@@ -114,6 +114,8 @@ class PublicOrganization(BaseModel):
     logo_url: Optional[str] = None
     ical_url: str
     relation: Optional[PublicOrganizationRelation] = None
+    # The public calendars of the organization, by name.
+    calendars: List["PublicCalendarRef"] = []
 
 
 class WidgetEventDateParams(PageParams):
@@ -210,6 +212,9 @@ class EventDateSearchParams(PageParams):
     date_to: Optional[date] = None
     keyword: Optional[str] = Field(default=None, max_length=255)
     category_id: List[int] = []
+    # Only the dates of events in any of these calendars; an unknown calendar or a
+    # private one of another organization answers 400.
+    calendar_id: List[int] = []
     tag: Optional[str] = Field(default=None, max_length=255)
     admin_unit_id: Optional[int] = None
     organizer_id: Optional[int] = None
@@ -228,6 +233,7 @@ class EventDateSearchParams(PageParams):
 class EventDateSearchOptionsParams(BaseModel):
     admin_unit_id: Optional[int] = None
     organizer_id: Optional[int] = None
+    calendar_id: List[int] = []
 
 
 class EventDateSearchOptions(BaseModel):
@@ -238,6 +244,10 @@ class EventDateSearchOptions(BaseModel):
     organization: Optional[PublicOrganizationRef] = None
     organizer: Optional[PublicOrganizationRef] = None
     referencing_organization: Optional[PublicOrganizationRef] = None
+    # The session's organization when it may put events into its calendars.
+    calendar_organization: Optional[PublicOrganizationRef] = None
+    # The calendars of the `calendar_id` filter the caller may see.
+    calendars: List["PublicCalendarRef"] = []
 
 
 class PublicEventDatePlace(BaseModel):
@@ -397,6 +407,25 @@ class PublicEventAudit(BaseModel):
     updated_by_label: Optional[str] = None
 
 
+class PublicCalendar(BaseModel):
+    id: int
+    name: str
+    description: Optional[str] = None
+    private: bool = False
+    organization: PublicOrganizationRef
+    ical_url: str
+    # Only for members who may manage the calendar.
+    manage_url: Optional[str] = None
+    # The session's organization when it may put events into its calendars.
+    calendar_organization: Optional[PublicOrganizationRef] = None
+
+
+class PublicCalendarRef(BaseModel):
+    id: int
+    name: str
+    organization: PublicOrganizationRef
+
+
 class PublicEventDetail(BaseModel):
     id: int
     name: str
@@ -432,6 +461,11 @@ class PublicEventDetail(BaseModel):
     categories: List[PublicEventCategoryGroup] = []
     references: List[PublicEventReferrer] = []
     reference_requests: List[PublicEventReferenceRequest] = []
+    # The public calendars of other organizations that contain the event; only for
+    # editors of the event (`None` for everybody else).
+    public_calendars: Optional[List[PublicCalendarRef]] = None
+    # The session's organization when it may put events into its calendars.
+    calendar_organization: Optional[PublicOrganizationRef] = None
     dates: List[PublicEventDateRow] = []
     rights: PublicEventRights
     share_links: PublicShareLinks
@@ -445,3 +479,14 @@ class PublicEventDateDetail(BaseModel):
     end: Optional[datetime] = None
     allday: bool = False
     event: PublicEventDetail
+
+
+class PublicCalendarLookupParams(BaseModel):
+    keyword: str = Field(default="", max_length=255)
+    per_page: int = Field(default=10, ge=1, le=50)
+
+
+class PublicCalendarLookup(BaseModel):
+    """Public calendars whose name or organization name contains the keyword."""
+
+    items: List[PublicCalendarRef]

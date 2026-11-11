@@ -12,6 +12,7 @@ class ResourceKind(str, Enum):
     event_place = "event_place"
     event_organizer = "event_organizer"
     custom_widget = "custom_widget"
+    calendar = "calendar"
     event_reference = "event_reference"
     event_reference_event_owner = "event_reference_event_owner"
     event_reference_request = "event_reference_request"

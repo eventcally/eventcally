@@ -35,6 +35,10 @@ class EventSearchCriteria(CustomBaseModel):
     custom_category_set_ids: List[int] = []
     status: List[EventStatus] = []
     public_status: List[EventPublicStatus] = []
+    # OR-ed; guarded by `CalendarFilterService` (private calendars of others are
+    # refused). With calendars, `admin_unit_id` only decides which events count as
+    # "own" for the private statuses; the organization scope is dropped.
+    calendar_ids: List[ObjectId] = []
     organizer_id: Optional[ObjectId] = None
     event_place_id: Optional[ObjectId] = None
     latitude: Optional[float] = None

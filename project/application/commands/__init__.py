@@ -1,5 +1,9 @@
 from .accept_member_invitation_command import AcceptMemberInvitationCommand
 from .accept_tos_command import AcceptTosCommand
+from .add_event_to_calendar_command import (
+    AddEventToCalendarCommand,
+    AddEventToCalendarCommandResult,
+)
 from .approve_organization_verification_request_command import (
     ApproveOrganizationVerificationRequestCommand,
     ApproveOrganizationVerificationRequestCommandResult,
@@ -14,6 +18,7 @@ from .change_organization_member_roles_command import (
 from .create_api_key_command import CreateApiKeyCommand, CreateApiKeyCommandResult
 from .create_app_command import CreateAppCommand, CreateAppCommandResult
 from .create_app_key_command import CreateAppKeyCommand, CreateAppKeyCommandResult
+from .create_calendar_command import CreateCalendarCommand, CreateCalendarCommandResult
 from .create_custom_widget_command import (
     CreateCustomWidgetCommand,
     CreateCustomWidgetCommandResult,
@@ -50,6 +55,7 @@ from .decline_organization_invitation_command import (
 from .delete_api_key_command import DeleteApiKeyCommand
 from .delete_app_command import DeleteAppCommand
 from .delete_app_key_command import DeleteAppKeyCommand
+from .delete_calendar_command import DeleteCalendarCommand
 from .delete_custom_widget_command import DeleteCustomWidgetCommand
 from .delete_event_command import DeleteEventCommand
 from .delete_event_organizer_command import DeleteEventOrganizerCommand
@@ -80,6 +86,7 @@ from .reject_event_reference_request_command import RejectEventReferenceRequestC
 from .reject_organization_verification_request_command import (
     RejectOrganizationVerificationRequestCommand,
 )
+from .remove_event_from_calendar_command import RemoveEventFromCalendarCommand
 from .remove_organization_member_command import RemoveOrganizationMemberCommand
 from .report_event_command import ReportEventCommand
 from .request_event_reference_command import (
@@ -98,6 +105,7 @@ from .revoke_oauth2_token_command import RevokeOAuth2TokenCommand
 from .revoke_organization_invitation_command import RevokeOrganizationInvitationCommand
 from .send_newsletter_command import SendNewsletterCommand, SendNewsletterCommandResult
 from .send_test_mail_command import SendTestMailCommand, SendTestMailCommandResult
+from .set_event_calendars_command import SetEventCalendarsCommand
 from .start_organization_export_command import (
     StartOrganizationExportCommand,
     StartOrganizationExportCommandResult,
@@ -108,6 +116,7 @@ from .update_app_command import UpdateAppCommand
 from .update_app_installation_permissions_command import (
     UpdateAppInstallationPermissionsCommand,
 )
+from .update_calendar_command import UpdateCalendarCommand
 from .update_custom_widget_command import UpdateCustomWidgetCommand
 from .update_event_command import UpdateEventCommand
 from .update_event_organizer_command import UpdateEventOrganizerCommand
@@ -158,6 +167,14 @@ __all__ = [
     "CreateCustomWidgetCommandResult",
     "DeleteCustomWidgetCommand",
     "UpdateCustomWidgetCommand",
+    "AddEventToCalendarCommand",
+    "AddEventToCalendarCommandResult",
+    "RemoveEventFromCalendarCommand",
+    "SetEventCalendarsCommand",
+    "CreateCalendarCommand",
+    "CreateCalendarCommandResult",
+    "DeleteCalendarCommand",
+    "UpdateCalendarCommand",
     "CreateEventOrganizerCommand",
     "CreateEventOrganizerCommandResult",
     "CreateEventPlaceCommand",

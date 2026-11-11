@@ -20,6 +20,7 @@ const row = (event: Partial<ManageEventDate["event"]> = {}): ManageEventDate => 
     organizer_name: null,
     place_label: null,
     is_reference: false,
+    is_own: true,
     reference_id: null,
     organization_name: null,
     ...event,

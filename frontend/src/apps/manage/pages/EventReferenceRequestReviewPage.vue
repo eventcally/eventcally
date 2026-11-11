@@ -5,6 +5,7 @@ import { useI18n } from "vue-i18n";
 import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
 import AppBreadcrumb from "@/shared/AppBreadcrumb.vue";
+import CalendarPicker from "@/shared/CalendarPicker.vue";
 import ReviewDecisionBar from "../components/ReviewDecisionBar.vue";
 import ReviewEventCards from "../components/ReviewEventCards.vue";
 
@@ -21,6 +22,7 @@ const error = ref<string | null>(null);
 const review = ref<Review | null>(null);
 const rating = ref(50);
 const autoVerify = ref(false);
+const calendarIds = ref<number[]>([]);
 
 const title = computed(() =>
   t("Review %(model_display_name)s", { model_display_name: t("Event reference request") }),
@@ -61,7 +63,11 @@ const accept = () =>
   decide(
     api.POST("/bff/manage/organizations/{id}/incoming-event-reference-requests/{request_id}/verify", {
       params: { path: path() },
-      body: { rating: rating.value, auto_verify: autoVerify.value },
+      body: {
+        rating: rating.value,
+        auto_verify: autoVerify.value,
+        calendar_ids: calendarIds.value,
+      },
     }),
   );
 
@@ -69,7 +75,7 @@ const reject = (reason: number | null) =>
   decide(
     api.POST("/bff/manage/organizations/{id}/incoming-event-reference-requests/{request_id}/reject", {
       params: { path: path() },
-      body: { rejection_reason: reason },
+      body: { rejection_reason: reason, calendar_ids: calendarIds.value },
     }),
   );
 
@@ -101,6 +107,16 @@ onMounted(load);
           @reject="reject"
           @reset="error = null"
         >
+          <template #reject-fields>
+            <div v-if="review.calendars?.length" class="mb-3" data-test="reject-calendars">
+              <label class="form-label d-block">{{ t("Calendars") }}</label>
+              <div class="text-body-secondary mb-1">
+                {{ t("Also put the event into calendars of your organization.") }}
+              </div>
+              <CalendarPicker v-model="calendarIds" :choices="review.calendars" id-prefix="reject-calendar" />
+            </div>
+          </template>
+
           <template #accept-fields>
             <div v-if="review.rating_choices.length > 1" class="mb-3">
               <label class="form-label" for="rating">{{ t("Rating") }}</label>
@@ -116,6 +132,14 @@ onMounted(load);
                   {{ choice.label }}
                 </option>
               </select>
+            </div>
+
+            <div v-if="review.calendars?.length" class="mb-3" data-test="calendars">
+              <label class="form-label d-block">{{ t("Calendars") }}</label>
+              <div class="text-body-secondary mb-1">
+                {{ t("Also put the event into calendars of your organization.") }}
+              </div>
+              <CalendarPicker v-model="calendarIds" :choices="review.calendars" id-prefix="review-calendar" />
             </div>
 
             <div v-if="!review.auto_verify" class="mb-3">

@@ -4,7 +4,10 @@ import { createI18n } from "vue-i18n";
 import AppPager from "./AppPager.vue";
 
 const i18n = createI18n({ legacy: false, locale: "en", messages: {
-    en: { "Page %(page)d of %(pages)d (%(total)d total)": "Page {page} of {pages} ({total} total)" },
+    en: {
+      "Page %(page)d of %(pages)d (%(total)d total)": "Page {page} of {pages} ({total} total)",
+      "Page %(page)d of %(pages)d": "Page {page} of {pages}",
+    },
   } });
 
 function mountPager(page: number) {
@@ -13,7 +16,13 @@ function mountPager(page: number) {
 
 describe("AppPager", () => {
   it("shows the page and the total", () => {
-    expect(mountPager(1).text()).toContain("Page 1 of 42 (823 total)");
+    const wrapper = mountPager(1);
+    expect(wrapper.find("[data-test=long]").text()).toBe("Page 1 of 42 (823 total)");
+    // Narrow screens get the position without the total, on one line.
+    expect(wrapper.find("[data-test=short]").text()).toBe("Page 1 of 42");
+    expect(wrapper.find("[data-test=short]").classes()).toContain("d-sm-none");
+    expect(wrapper.find("[data-test=long]").classes()).toContain("d-sm-inline");
+    expect(wrapper.find("[data-test=position]").classes()).toContain("text-nowrap");
   });
 
   it("emits the next page", async () => {

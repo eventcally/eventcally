@@ -4,6 +4,7 @@ import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import type { components } from "@/api/schema";
 import { api } from "@/shared/api";
+import CalendarAssignModal from "@/shared/CalendarAssignModal.vue";
 import { manage, publicPages } from "@/shared/legacy";
 import ShareModal from "@/shared/ShareModal.vue";
 
@@ -17,6 +18,7 @@ const event = ref<PublicEventDetail | null>(null);
 const loading = ref(false);
 const loadError = ref<string | null>(null);
 const shareVisible = ref(false);
+const calendarVisible = ref(false);
 
 async function load() {
   loading.value = true;
@@ -63,6 +65,25 @@ onMounted(load);
             <small>{{ t("Reference this event on your organization's calendar.") }}</small>
           </a>
         </div>
+
+        <div v-if="event.calendar_organization" class="list-group mt-4">
+          <button
+            type="button"
+            class="list-group-item list-group-item-action"
+            data-test="add-to-calendar"
+            @click="calendarVisible = true"
+          >
+            <p class="mb-1"><i class="fa fa-calendar-plus"></i> {{ t("Add to organization calendar") }}</p>
+            <small>{{ t("Put this event into calendars of your organization.") }}</small>
+          </button>
+        </div>
+
+        <CalendarAssignModal
+          v-if="event.calendar_organization"
+          v-model="calendarVisible"
+          :organization-id="event.calendar_organization.id"
+          :event-id="event.id"
+        />
 
         <div class="list-group mt-4">
           <button type="button" class="list-group-item list-group-item-action" @click="shareVisible = true">

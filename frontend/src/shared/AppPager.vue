@@ -28,8 +28,12 @@ function go(target: number) {
         </button>
       </li>
       <li class="page-item disabled">
-        <span class="page-link">
-          {{ t("Page %(page)d of %(pages)d (%(total)d total)", { page, pages, total }) }}
+        <!-- The total does not fit next to the four buttons on narrow screens. -->
+        <span class="page-link text-nowrap" data-test="position">
+          <span class="d-sm-none" data-test="short">{{ t("Page %(page)d of %(pages)d", { page, pages }) }}</span>
+          <span class="d-none d-sm-inline" data-test="long">{{
+            t("Page %(page)d of %(pages)d (%(total)d total)", { page, pages, total })
+          }}</span>
         </span>
       </li>
       <li class="page-item" :class="{ disabled: page >= pages }">

@@ -133,6 +133,40 @@ describe("EventDetailView", () => {
     expect(document.body.textContent).toContain("Outlook");
   });
 
+  it("links the public calendars of other organizations for editors", async () => {
+    const wrapper = await mountView(
+      makeEvent({
+        public_calendars: [{ id: 4, name: "Sport", organization: { id: 2, name: "Other Crew" } }],
+      }),
+    );
+
+    const block = wrapper.find("[data-test=public-calendars]");
+    expect(block.text()).toContain("Sport");
+    expect(block.text()).toContain("Other Crew");
+    expect(block.find("a").attributes("href")).toBe("/calendars/4");
+
+    const none = await mountView(makeEvent({ public_calendars: [] }));
+    expect(none.find("[data-test=calendars]").exists()).toBe(false);
+  });
+
+  it("puts the calendars into their own box between the reference requests and the dates", async () => {
+    const wrapper = await mountView(
+      makeEvent({
+        rights: { ...makeEvent().rights, can_create_reference_request: true },
+        public_calendars: [],
+        calendar_organization: { id: 7, name: "Crew" },
+      }),
+    );
+
+    const boxes = wrapper
+      .findAll(".card[data-test]")
+      .map((box) => box.attributes("data-test"))
+      .filter((name) => ["reference-requests", "calendars", "dates"].includes(name!));
+    expect(boxes).toEqual(["reference-requests", "calendars", "dates"]);
+    expect(wrapper.find("[data-test=calendars]").text()).toContain("Add to organization calendar");
+    expect(wrapper.find("[data-test=public-calendars]").exists()).toBe(false);
+  });
+
   it("shows the property list of a full event", async () => {
     const wrapper = await mountView(
       makeEvent({

@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import type { components } from "@/api/schema";
 import { boot } from "@/shared/boot";
 import AuditLine from "@/shared/AuditLine.vue";
+import CalendarAssignModal from "@/shared/CalendarAssignModal.vue";
 import EventWarningPills from "@/shared/EventWarningPills.vue";
 import { ensureLinkScheme, formatEventDate } from "@/shared/format";
 import { manage, publicPages } from "@/shared/legacy";
@@ -29,6 +30,13 @@ const { t } = useI18n();
 
 const shareVisible = ref(false);
 const calendarVisible = ref(false);
+const assignCalendarsVisible = ref(false);
+const calendarOrganizationId = computed(() => props.event.calendar_organization?.id ?? null);
+// Other organizations' public calendars with the event (editors only) and the
+// session's organization's calendars to put it into.
+const showCalendars = computed(
+  () => Boolean(props.event.public_calendars?.length) || calendarOrganizationId.value !== null,
+);
 
 const dateLine = computed(() => formatEventDate(props.start, props.end, props.allday, boot.locale));
 const placeLine = computed(() => {
@@ -60,7 +68,12 @@ const requestPill = (status: string | null | undefined) =>
 
       <div class="p-3 clearfix">
         <div class="float-sm-end">
-          <EventMenu :event-id="event.id" :organization-id="event.organization_id" :rights="event.rights" />
+          <EventMenu
+            :event-id="event.id"
+            :organization-id="event.organization_id"
+            :rights="event.rights"
+            :calendar-organization-id="event.calendar_organization?.id ?? null"
+          />
         </div>
 
         <div class="fw-bold text-uppercase">
@@ -318,6 +331,38 @@ const requestPill = (status: string | null | undefined) =>
               class="btn btn-outline-secondary"
               ><i class="fa fa-link"></i> {{ t("Request reference") }}</a
             >
+          </div>
+        </div>
+
+        <div v-if="showCalendars" class="card mb-3" data-test="calendars">
+          <div class="card-body pb-0">
+            <h2 class="mt-0">{{ t("Calendars") }}</h2>
+          </div>
+          <div
+            v-if="event.public_calendars?.length"
+            class="list-group list-group-flush mb-4"
+            style="max-height: 30vh; overflow-y: auto"
+            data-test="public-calendars"
+          >
+            <span v-for="calendar in event.public_calendars" :key="calendar.id" class="list-group-item">
+              <a :href="publicPages.calendar(calendar.id)">{{ calendar.name }}</a>
+              <span class="text-body-secondary"> ({{ calendar.organization.name }})</span>
+            </span>
+          </div>
+          <div v-if="calendarOrganizationId !== null" class="ms-3 mb-3">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              data-test="add-to-organization-calendar"
+              @click="assignCalendarsVisible = true"
+            >
+              <i class="fa fa-calendar-plus"></i> {{ t("Add to organization calendar") }}
+            </button>
+            <CalendarAssignModal
+              v-model="assignCalendarsVisible"
+              :organization-id="calendarOrganizationId"
+              :event-id="event.id"
+            />
           </div>
         </div>
 

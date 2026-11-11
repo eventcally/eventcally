@@ -16,6 +16,7 @@ from project.application.query_bus import QueryBus
 from project.application.services.actor_authorization_service import (
     ActorAuthorizationService,
 )
+from project.application.services.calendar_filter_service import CalendarFilterService
 from project.application.services.event_change_summary_service import (
     EventChangeSummaryService,
 )
@@ -49,6 +50,9 @@ from project.infrastructure.read_repositories.sql_alchemy_app_installation_read_
 )
 from project.infrastructure.read_repositories.sql_alchemy_batch_read_repository import (
     SqlAlchemyBatchReadRepository,
+)
+from project.infrastructure.read_repositories.sql_alchemy_calendar_read_repository import (
+    SqlAlchemyCalendarReadRepository,
 )
 from project.infrastructure.read_repositories.sql_alchemy_custom_widget_read_repository import (
     SqlAlchemyCustomWidgetReadRepository,
@@ -226,6 +230,10 @@ class ReadRepos(containers.DeclarativeContainer):
         session=infrastructure.session_factory,
     )
 
+    calendar_read_repo = providers.Factory(
+        SqlAlchemyCalendarReadRepository,
+        session=infrastructure.read_session,
+    )
     event_organizer_read_repo = providers.Factory(
         SqlAlchemyEventOrganizerReadRepository,
         session=infrastructure.read_session,
@@ -435,6 +443,24 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 commands.DeleteEventOrganizerCommand: providers.Factory(
                     command_handlers.DeleteEventOrganizerHandler
+                ),
+                commands.CreateCalendarCommand: providers.Factory(
+                    command_handlers.CreateCalendarHandler
+                ),
+                commands.UpdateCalendarCommand: providers.Factory(
+                    command_handlers.UpdateCalendarHandler
+                ),
+                commands.DeleteCalendarCommand: providers.Factory(
+                    command_handlers.DeleteCalendarHandler
+                ),
+                commands.AddEventToCalendarCommand: providers.Factory(
+                    command_handlers.AddEventToCalendarHandler
+                ),
+                commands.RemoveEventFromCalendarCommand: providers.Factory(
+                    command_handlers.RemoveEventFromCalendarHandler
+                ),
+                commands.SetEventCalendarsCommand: providers.Factory(
+                    command_handlers.SetEventCalendarsHandler
                 ),
                 commands.CreateEventPlaceCommand: providers.Factory(
                     command_handlers.CreateEventPlaceHandler
@@ -855,6 +881,12 @@ class Cqrs(containers.DeclarativeContainer):
         authz=actor_authorization_service,
     )
 
+    calendar_filter_service = providers.Factory(
+        CalendarFilterService,
+        repo=read_repos.calendar_read_repo,
+        authz=actor_authorization_service,
+    )
+
     query_handler_factory = providers.Singleton(
         QueryHandlerFactory,
         factory_aggregate=providers.FactoryAggregate(
@@ -874,6 +906,34 @@ class Cqrs(containers.DeclarativeContainer):
                 queries.IsEventOrganizerNameTakenQuery: providers.Factory(
                     query_handlers.IsEventOrganizerNameTakenHandler,
                     repo=read_repos.event_organizer_read_repo,
+                ),
+                queries.ListCalendarsQuery: providers.Factory(
+                    query_handlers.ListCalendarsHandler,
+                    repo=read_repos.calendar_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.GetCalendarQuery: providers.Factory(
+                    query_handlers.GetCalendarHandler,
+                    repo=read_repos.calendar_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListEventCalendarIdsQuery: providers.Factory(
+                    query_handlers.ListEventCalendarIdsHandler,
+                    repo=read_repos.calendar_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.ListPublicCalendarsForEventQuery: providers.Factory(
+                    query_handlers.ListPublicCalendarsForEventHandler,
+                    repo=read_repos.calendar_read_repo,
+                    authz=actor_authorization_service,
+                ),
+                queries.LookupPublicCalendarsQuery: providers.Factory(
+                    query_handlers.LookupPublicCalendarsHandler,
+                    repo=read_repos.calendar_read_repo,
+                ),
+                queries.IsCalendarNameTakenQuery: providers.Factory(
+                    query_handlers.IsCalendarNameTakenHandler,
+                    repo=read_repos.calendar_read_repo,
                 ),
                 queries.ListEventPlacesQuery: providers.Factory(
                     query_handlers.ListEventPlacesHandler,
@@ -933,11 +993,13 @@ class Cqrs(containers.DeclarativeContainer):
                     query_handlers.SearchEventDatesHandler,
                     repo=read_repos.event_search_read_repo,
                     visibility=event_visibility_service,
+                    calendar_filter=calendar_filter_service,
                 ),
                 queries.SearchEventsQuery: providers.Factory(
                     query_handlers.SearchEventsHandler,
                     repo=read_repos.event_search_read_repo,
                     visibility=event_visibility_service,
+                    calendar_filter=calendar_filter_service,
                 ),
                 queries.ListEventsQuery: providers.Factory(
                     query_handlers.ListEventsHandler,
@@ -948,6 +1010,7 @@ class Cqrs(containers.DeclarativeContainer):
                     query_handlers.ListAllEventsHandler,
                     repo=read_repos.event_search_read_repo,
                     visibility=event_visibility_service,
+                    calendar_filter=calendar_filter_service,
                 ),
                 queries.ListEventDatesQuery: providers.Factory(
                     query_handlers.ListEventDatesHandler,
@@ -999,6 +1062,10 @@ class Cqrs(containers.DeclarativeContainer):
                 ),
                 queries.ListDumpEventReferencesQuery: providers.Factory(
                     query_handlers.ListDumpEventReferencesHandler,
+                    repo=read_repos.batch_read_repo,
+                ),
+                queries.ListSitemapCalendarsQuery: providers.Factory(
+                    query_handlers.ListSitemapCalendarsHandler,
                     repo=read_repos.batch_read_repo,
                 ),
                 queries.ListSitemapEventsQuery: providers.Factory(
