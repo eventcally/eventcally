@@ -4,14 +4,15 @@
 # The pre-commit ecosystem is left out on purpose: every hook rev is such a lockstep pin.
 # Version updates are minor and patch only (majors are done by hand), except for
 # GitHub Actions, whose majors come grouped with the rest.
+# Version updates run monthly (first of the month, 06:00 Berlin); security updates are not
+# scheduled and come as soon as an alert appears.
 version: 2
 
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
-      day: saturday
+      interval: monthly
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
@@ -28,8 +29,7 @@ updates:
   - package-ecosystem: docker
     directory: /                 # Dockerfile and Dockerfile.e2e
     schedule:
-      interval: weekly
-      day: saturday
+      interval: monthly
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
@@ -55,8 +55,7 @@ updates:
   - package-ecosystem: docker-compose
     directory: /                 # docker-compose.yml, .debug.yml, .test.yml
     schedule:
-      interval: weekly
-      day: saturday
+      interval: monthly
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
@@ -77,8 +76,7 @@ updates:
   - package-ecosystem: uv
     directory: /                 # pyproject.toml + uv.lock
     schedule:
-      interval: weekly
-      day: saturday
+      interval: monthly
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
@@ -113,8 +111,7 @@ updates:
   - package-ecosystem: npm
     directory: /frontend
     schedule:
-      interval: weekly
-      day: saturday
+      interval: monthly
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
@@ -136,8 +133,7 @@ updates:
   - package-ecosystem: npm
     directory: /                 # @playwright/test only
     schedule:
-      interval: weekly
-      day: saturday
+      interval: monthly
       time: "06:00"
       timezone: Europe/Berlin
     cooldown:
