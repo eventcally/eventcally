@@ -146,7 +146,7 @@ describe("EventDatesWidget", () => {
       `${location.origin}/eventdate/1`,
     ]);
     expect(card.find("a.stretched-link").attributes("target")).toBe("_blank");
-    expect(card.find("a.stretched-link").attributes("rel")).toBe("noopener noreferrer");
+    expect(card.find("a.stretched-link").attributes("rel")).toBe("noopener");
   });
 
   it("shows the organization of an event of another organization and no time for all-day", async () => {

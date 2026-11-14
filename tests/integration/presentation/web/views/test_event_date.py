@@ -99,3 +99,28 @@ def test_list(client, seeder: Seeder, utils: UtilActions):
         response = utils.get(utils.get_url("main.event_dates", **args))
         utils.assert_response_ok(response)
         utils.assert_response_contains(response, 'id="boot"')
+
+
+def test_reach_log(client, seeder: Seeder, utils: UtilActions):
+    import json
+
+    from project.infrastructure.logging_config import REACH_LOGGER
+    from tests.integration.log_capture import collect_lines
+
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    seeder.create_event(admin_unit_id)
+
+    with collect_lines(REACH_LOGGER) as lines:
+        utils.get_ok(
+            utils.get_url("main.event_date", id=1),
+            headers={"Referer": "https://www.google.com/"},
+        )
+        assert len(lines) == 1
+        record = json.loads(lines[0])
+        assert record["type"] == "reach"
+        assert record["event_date_id"] == 1
+        assert record["event_id"] == 1
+        assert record["source"] == "www.google.com"
+
+        utils.get(utils.get_url("main.event_date", id=999))
+        assert len(lines) == 1

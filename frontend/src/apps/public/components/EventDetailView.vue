@@ -111,7 +111,7 @@ const requestPill = (status: string | null | undefined) =>
                   <a
                     :href="ensureLinkScheme(link)"
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener"
                     style="word-break: break-all"
                     >{{ link }}</a
                   >
@@ -211,7 +211,7 @@ const requestPill = (status: string | null | undefined) =>
                     :href="directionsUrl"
                     class="btn btn-outline-secondary me-1"
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener"
                     ><i class="fa fa-directions"></i> {{ t("Show directions") }}</a
                   >
                   <a

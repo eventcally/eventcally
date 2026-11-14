@@ -231,7 +231,7 @@ function printPage() {
                 <a
                   :href="eventDateUrl(date)"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener"
                   class="stretched-link"
                   :aria-label="date.event.name"
                   @click="trackLinkClick(date)"
@@ -255,7 +255,7 @@ function printPage() {
                       v-if="date.event.photo.license_code"
                       :href="date.event.photo.license_url ?? undefined"
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener"
                       >{{ date.event.photo.license_code }}</a
                     >
                   </div>
@@ -285,7 +285,7 @@ function printPage() {
                 v-if="date.event.photo.license_code"
                 :href="date.event.photo.license_url ?? undefined"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
                 >{{ date.event.photo.license_code }}</a
               >
             </div>
@@ -312,7 +312,7 @@ function printPage() {
             <a
               :href="eventDateUrl(date)"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener"
               class="stretched-link"
               :aria-label="date.event.name"
               @click="trackLinkClick(date)"

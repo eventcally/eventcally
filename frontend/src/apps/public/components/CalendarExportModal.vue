@@ -24,7 +24,7 @@ const { t } = useI18n();
         class="list-group-item list-group-item-action"
         :href="links.google"
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener"
         ><i class="fab fa-fw me-2 fa-google"></i>{{ t("Google calendar") }}</a
       >
       <a class="list-group-item list-group-item-action" :href="links.ics"

@@ -56,11 +56,20 @@ the change, so recreate them with `docker compose up --detach`. It writes to
   plus the `X-Request-ID` of the response. Tokens, API keys and secrets are never
   written; values of token-like query arguments (`access_token`, `client_secret`, …)
   are redacted. Each record carries the `project`. Read them with `zcat api-usage.*.gz`.
+- `reach.YYYYMMDD.log.gz`: one JSON record per view of a single event page
+  (`/event/<id>`, `/eventdate/<id>`; `REACH_LOG`, default on; needs `LOG_FORMAT=json`):
+  `event_id`, `event_date_id`, `source`, `medium`, `campaign`, `bot`, `request_id`,
+  `project`. `source` is the `src`/`utm_source` query argument, else the host of the
+  `Referer` header, else `direct` (`internal` for our own pages, `widget` for the embedded
+  widget, `invalid` for a malformed value). No IP, user agent, path or query string is
+  written; `bot` is a user-agent guess. Read them with `zcat reach.*.gz`.
 
 The API usage files are kept for `API_USAGE_LOG_RETENTION_DAYS` (default 90) days:
 fluentd itself deletes older ones every hour. A day's file is written
 shortly after the day ends (UTC); to check a setup, set `API_USAGE_LOG_TIMEKEY=60` and a
 file appears about two minutes after the request.
+The reach files are kept for `REACH_LOG_RETENTION_DAYS` (default 400) days;
+`REACH_LOG_TIMEKEY=60` checks a staging setup the same way.
 
 `init.sh` copies `fluentd-custom.config` to `FLUENTD_CUSTOM_CONFIG_PATH`. After changing
 it, copy it again and run `docker compose up --detach fluentd` (or `restart fluentd`).

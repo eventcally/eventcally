@@ -105,6 +105,7 @@ Create `.env` file in the root directory or pass as environment variables.
 | LOG_FORMAT                  | Log line format of the app, Celery and gunicorn: `console` (readable) or `json` (one JSON object per line with `timestamp`, `level`, `logger`, `event`, `request_id`/`task_id` and the call's `extra` fields; exceptions in `exception`). `console` (multi-line tracebacks) is meant for local development and is set in `.flaskenv`. Default: json |
 | LOG_LEVEL                   | Lowest level the app writes (`DEBUG`, `INFO`, `WARNING`, `ERROR`; the Celery worker uses its `--loglevel`). `GUNICORN_LOG_LEVEL` only sets gunicorn's own lines (boot, workers); app lines always go to stderr, also with `GUNICORN_ERROR_LOG`. Default: INFO |
 | API_USAGE_LOG               | Log one record per `/api/` request (logger `eventcally.api_usage`, always at least INFO: credential, organization, app, user; no secrets; `LOG_FORMAT=json` writes it as one JSON line). Default: True |
+| REACH_LOG                   | Log one record per single event page view (logger `eventcally.reach`, always at least INFO: event, date, source of the visit; no IP, user agent or query string; `LOG_FORMAT=json` writes it as one JSON line). Default: True |
 | FEATURE_FLAGS                | Comma-separated list of opt-out feature tokens, see below. Default: empty (all features enabled). Unknown tokens are ignored.                |
 
 #### Feature flag tokens
