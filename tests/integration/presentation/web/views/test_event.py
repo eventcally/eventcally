@@ -250,3 +250,33 @@ def test_ical(client, seeder: Seeder, utils: UtilActions):
     url = utils.get_url("main.event_ical", id=event_with_recc_id)
     response = utils.get_ok(url)
     utils.assert_response_contains(response, "FREQ=DAILY;COUNT=7")
+
+
+def test_reach_log(client, seeder: Seeder, utils: UtilActions):
+    import json
+
+    from project.infrastructure.logging_config import REACH_LOGGER
+    from tests.integration.log_capture import collect_lines
+
+    user_id, admin_unit_id = seeder.setup_base(log_in=False)
+    event_id = seeder.create_event(admin_unit_id)
+
+    with collect_lines(REACH_LOGGER) as lines:
+        utils.get_ok(
+            utils.get_url("main.event", event_id=event_id),
+            headers={"Referer": "https://www.google.com/"},
+        )
+        assert len(lines) == 1
+        record = json.loads(lines[0])
+        assert record["type"] == "reach"
+        assert record["logger"] == REACH_LOGGER
+        assert record["event_id"] == event_id
+        assert record["event_date_id"] is None
+        assert record["source"] == "www.google.com"
+        assert record["bot"] is False
+        for key in ("ip", "user_agent", "path"):
+            assert key not in record
+
+        utils.get(utils.get_url("main.event", event_id=event_id + 100))
+        utils.get(utils.get_url("main.event_actions", event_id=event_id))
+        assert len(lines) == 1

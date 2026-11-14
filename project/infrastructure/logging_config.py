@@ -15,6 +15,7 @@ import structlog
 from gunicorn.glogging import Logger as BaseGunicornLogger
 
 API_USAGE_LOGGER = "eventcally.api_usage"
+REACH_LOGGER = "eventcally.reach"
 GUNICORN_ACCESS_LOGGER = "gunicorn.access"
 LOG_FORMATS = ("console", "json")
 
@@ -137,6 +138,7 @@ def init_logging(log_format: str | None = None, stream=None):
     root.setLevel(get_log_level())
     # every API request is recorded, whatever LOG_LEVEL says
     logging.getLogger(API_USAGE_LOGGER).setLevel(logging.INFO)
+    logging.getLogger(REACH_LOGGER).setLevel(logging.INFO)
 
 
 class GunicornLogger(BaseGunicornLogger):

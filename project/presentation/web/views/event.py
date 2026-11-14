@@ -9,6 +9,7 @@ from project.presentation.shared.query_results import result_or_404
 from project.presentation.web.boot import build_boot_data
 from project.presentation.web.ical import create_ical_events_for_event
 from project.presentation.web.jsonld import get_sd_for_event_date
+from project.presentation.web.reach_log import log_event_view
 from project.presentation.web.views.main_blueprint import main_bp
 from project.presentation.web.views.utils import get_meta_data
 from project.shared.dateutils import create_icalendar
@@ -29,6 +30,7 @@ def event(event_id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]):
 
     definition = event.min_start_definition
 
+    log_event_view(event.id)
     return render_template(
         "event/shell.html",
         entry="public",

@@ -17,7 +17,7 @@ const { t } = useI18n();
 
 <template>
   <EventProp v-if="url" icon="fa-link" :title="t('Link')"
-    ><a :href="ensureLinkScheme(url)" target="_blank" rel="noopener noreferrer" style="word-break: break-all">{{
+    ><a :href="ensureLinkScheme(url)" target="_blank" rel="noopener" style="word-break: break-all">{{
       url
     }}</a></EventProp
   >

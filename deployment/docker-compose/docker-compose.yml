@@ -28,6 +28,7 @@ x-web-env:
   API_READ_ANONYM: ${API_READ_ANONYM:-False}
   LOG_FORMAT: ${LOG_FORMAT:-json}
   API_USAGE_LOG: ${API_USAGE_LOG:-True}
+  REACH_LOG: ${REACH_LOG:-True}
   PROXY_FIX_X_FOR: ${PROXY_FIX_X_FOR:-1}
   FEATURE_FLAGS: ${FEATURE_FLAGS}
 
@@ -170,6 +171,8 @@ services:
       FLUENTD_CONF: fluentd-custom.config
       API_USAGE_LOG_RETENTION_DAYS: ${API_USAGE_LOG_RETENTION_DAYS:-90}
       API_USAGE_LOG_TIMEKEY: ${API_USAGE_LOG_TIMEKEY:-1d}
+      REACH_LOG_RETENTION_DAYS: ${REACH_LOG_RETENTION_DAYS:-400}
+      REACH_LOG_TIMEKEY: ${REACH_LOG_TIMEKEY:-1d}
       # Compose project whose logs are collected (the `name` above, or `-p`).
       FLUENTD_COMPOSE_PROJECT: ${FLUENTD_COMPOSE_PROJECT:-eventcally}
     volumes:

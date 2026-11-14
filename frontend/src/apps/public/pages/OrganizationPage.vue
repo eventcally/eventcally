@@ -64,7 +64,7 @@ onMounted(load);
 
           <div v-if="organization.url">
             <i class="fa fa-fw me-2 fa-link"></i>
-            <a class="text-decoration-none" :href="organization.url" target="_blank" rel="noopener noreferrer" style="word-break: break-all">{{
+            <a class="text-decoration-none" :href="organization.url" target="_blank" rel="noopener" style="word-break: break-all">{{
               organization.url
             }}</a>
           </div>

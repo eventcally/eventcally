@@ -106,7 +106,7 @@ function toggleReference() {
               v-if="photo.license_code && photo.license_url"
               :href="photo.license_url"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener"
               class="ms-1"
               >{{ photo.license_code }}</a
             >

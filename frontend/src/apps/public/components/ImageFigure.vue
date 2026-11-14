@@ -18,7 +18,7 @@ defineProps<{ image: PublicImage; imgClass?: string; maxWidth?: string; alt?: st
     <figcaption v-if="image.copyright_text || image.license_code" class="figure-caption">
       <template v-if="image.copyright_text">&copy; {{ image.copyright_text }}</template>
       <template v-if="image.license_code">
-        {{ " " }}<a :href="image.license_url ?? undefined" target="_blank" rel="noopener noreferrer">{{
+        {{ " " }}<a :href="image.license_url ?? undefined" target="_blank" rel="noopener">{{
           image.license_code
         }}</a>
       </template>

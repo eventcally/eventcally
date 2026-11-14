@@ -39,6 +39,8 @@ def load_app_config_from_env(app: Flask):
     app.config["API_READ_ANONYM"] = getenv_bool("API_READ_ANONYM", "False")
     # One JSON line per /api/ request on stdout (see presentation/api/usage_log.py).
     app.config["API_USAGE_LOG"] = getenv_bool("API_USAGE_LOG", "True")
+    # One JSON line per single event page view (see presentation/web/reach_log.py).
+    app.config["REACH_LOG"] = getenv_bool("REACH_LOG", "True")
     # Number of proxies in front of the app that append to X-Forwarded-For
     # (docker-compose: nginx = 1, Plesk + nginx = 2). 0 trusts no header.
     app.config["PROXY_FIX_X_FOR"] = int(os.getenv("PROXY_FIX_X_FOR", "0"))

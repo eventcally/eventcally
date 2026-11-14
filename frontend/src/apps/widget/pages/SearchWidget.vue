@@ -269,7 +269,7 @@ function openSearch() {
                         <a
                           :href="date.event.photo.license_url ?? undefined"
                           target="_blank"
-                          rel="noopener noreferrer"
+                          rel="noopener"
                           >{{ date.event.photo.license_code }}</a
                         >
                       </small>
@@ -300,7 +300,7 @@ function openSearch() {
                   <a
                     :href="date.event.photo.license_url ?? undefined"
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener"
                     >{{ date.event.photo.license_code }}</a
                   >
                 </small>
