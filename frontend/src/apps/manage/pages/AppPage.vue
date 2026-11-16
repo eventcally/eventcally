@@ -67,8 +67,8 @@ const keyConfirm = useConfirmAction<Key>({
 });
 
 // The private key of a new key exists only in the answer of the create call: it is downloaded
-// right away and kept here (never reloaded) until the page is left.
-const privatePem = ref<string | null>(null);
+// right away and kept here with its KID (never reloaded) until the page is left.
+const createdKey = ref<{ kid: string; pem: string } | null>(null);
 const creating = ref(false);
 
 function download(pem: string) {
@@ -95,10 +95,12 @@ async function createKey() {
     return;
   }
 
-  privatePem.value = data.private_pem;
+  createdKey.value = { kid: data.kid, pem: data.private_pem };
   download(data.private_pem);
   notify.success(
-    t("%(model_display_name)s successfully created", { model_display_name: t("App key") }),
+    t("%(model_display_name)s successfully created", {
+      model_display_name: `${t("App key")} ${data.kid}`,
+    }),
   );
   await load();
 }
@@ -175,9 +177,12 @@ function keyActions(key: Key): RowAction[] {
         <section v-if="app.can_read_keys" class="mt-4" data-test="keys">
           <h2 class="h5">{{ t("App keys") }}</h2>
 
-          <div v-if="privatePem" class="alert alert-warning" role="alert" data-test="pem-warning">
+          <div v-if="createdKey" class="alert alert-warning" role="alert" data-test="pem-warning">
+            <div data-test="pem-kid">
+              <strong>{{ t("KID") }}:</strong> <code>{{ createdKey.kid }}</code>
+            </div>
             {{ t("Please download the private key. It will only be available once.") }}
-            <BButton size="sm" variant="outline-secondary" class="ms-2" @click="download(privatePem)">
+            <BButton size="sm" variant="outline-secondary" class="ms-2" @click="download(createdKey.pem)">
               {{ t("Download") }}
             </BButton>
           </div>

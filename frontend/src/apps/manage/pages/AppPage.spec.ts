@@ -173,7 +173,8 @@ describe("AppPage", () => {
     expect(wrapper.find("[data-test=pem-warning]").text()).toContain(
       "Please download the private key. It will only be available once.",
     );
-    expect(success).toHaveBeenCalled();
+    expect(success).toHaveBeenCalledWith("App key kid-1 successfully created");
+    expect(wrapper.find("[data-test=pem-kid]").text()).toContain("kid-1");
     expect(wrapper.find("[data-test=keys]").text()).toContain("kid-1");
 
     await wrapper.find("[data-test=pem-warning] button").trigger("click");
