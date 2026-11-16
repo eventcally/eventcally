@@ -11,7 +11,7 @@ from project.presentation.shared.event_query_args import (
 )
 from project.presentation.shared.query_results import result_or_404
 from project.presentation.web.boot import build_boot_data
-from project.presentation.web.ical import create_ical_events_for_events
+from project.presentation.web.ical import create_ical_events_for_events, ical_text
 from project.presentation.web.views.main_blueprint import main_bp
 from project.shared.dateutils import create_icalendar, get_today
 
@@ -46,7 +46,7 @@ def organization_ical(id, query_bus: QueryBus = Provide[Application.cqrs.query_b
     admin_unit = result_or_404(query_bus.handle(GetOrganizationQuery(id=id)))
 
     cal = create_icalendar()
-    cal.add("x-wr-calname", admin_unit.name)
+    cal.add("x-wr-calname", ical_text(admin_unit.name))
     events = query_bus.handle(
         ListAllEventsQuery(
             criteria=event_search_criteria_from_request(

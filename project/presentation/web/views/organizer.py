@@ -10,7 +10,7 @@ from project.presentation.shared.event_query_args import (
 )
 from project.presentation.shared.query_results import result_or_404
 from project.presentation.web.boot import build_boot_data
-from project.presentation.web.ical import create_ical_events_for_events
+from project.presentation.web.ical import create_ical_events_for_events, ical_text
 from project.presentation.web.views.main_blueprint import main_bp
 from project.shared.dateutils import create_icalendar, get_today
 
@@ -34,7 +34,7 @@ def organizer_ical(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus]
     organizer = result_or_404(query_bus.handle(GetEventOrganizerQuery(id=id)))
 
     cal = create_icalendar()
-    cal.add("x-wr-calname", organizer.name)
+    cal.add("x-wr-calname", ical_text(organizer.name))
     events = query_bus.handle(
         ListAllEventsQuery(
             criteria=event_search_criteria_from_request(
