@@ -5,6 +5,7 @@ from project.domain.types.text import (
     NormalizedText,
     NullableRecurrenceRule,
     TrimmedText,
+    normalize_newlines,
 )
 
 RULE = "RRULE:FREQ=WEEKLY;COUNT=5\nEXDATE:20260504"
@@ -14,6 +15,11 @@ class TestNormalizedText:
     def test_normalizes_newlines_and_keeps_spaces(self):
         adapter = TypeAdapter(NormalizedText)
         assert adapter.validate_python(" a\r\nb\rc ") == " a\nb\nc "
+
+
+class TestNormalizeNewlines:
+    def test_all_line_endings_become_lf(self):
+        assert normalize_newlines("a\r\nb\rc\nd") == "a\nb\nc\nd"
 
 
 class TestTrimmedText:

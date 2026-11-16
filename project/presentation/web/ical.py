@@ -1,7 +1,7 @@
 """iCal builders over the event read models."""
 
 import logging
-import os
+import re
 
 import icalendar
 from flask import url_for
@@ -10,16 +10,38 @@ from icalendar.prop import vDDDLists
 
 from project.domain.models.enums.event_attendance_mode import EventAttendanceMode
 from project.domain.models.enums.event_status import EventStatus
+from project.domain.types.text import normalize_newlines
 from project.presentation.web.views.utils import truncate
 from project.shared.dateutils import berlin_tz, date_parts_are_equal, round_to_next_day
 from project.shared.utils import get_place_str
 
 logger = logging.getLogger(__name__)
 
+# RFC 5545 TEXT allows no CONTROL characters except HTAB; LF is escaped by icalendar.
+_FORBIDDEN_CONTROL_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
+
+
+def ical_text(value):
+    """Free text made safe for an iCal TEXT value: CRLF and a lone CR become LF
+    (icalendar escapes LF as `\\n`), other control characters are dropped."""
+    if not value:
+        return value
+    return _FORBIDDEN_CONTROL_CHARS.sub("", normalize_newlines(value))
+
+
+def ical_single_line(value):
+    """`ical_text` on one line, for values that are also parameter values
+    (parameters cannot escape line breaks); double quotes become single quotes
+    because DQUOTE is illegal in a parameter value."""
+    if not value:
+        return value
+    lines = (line.strip() for line in ical_text(value).split("\n"))
+    return ", ".join(line for line in lines if line).replace('"', "'")
+
 
 def populate_ical_event_with_event(ical_event: icalendar.Event, event, url: str):
     ical_event.add("url", url)
-    ical_event.add("summary", event.name)
+    ical_event.add("summary", ical_text(event.name))
 
     if event.created_at:
         ical_event.add("dtstamp", event.created_at)
@@ -34,18 +56,20 @@ def populate_ical_event_with_event(ical_event: icalendar.Event, event, url: str)
     desc_items.append(url)
 
     if event.organizer:
-        desc_items.append(f"{gettext('Organizer')}: {event.organizer.name}")
-        ical_event.add("x-eventcally-organizer", event.organizer.name)
+        organizer_name = ical_text(event.organizer.name)
+        desc_items.append(f"{gettext('Organizer')}: {organizer_name}")
+        ical_event.add("x-eventcally-organizer", organizer_name)
 
     if event.admin_unit:
-        desc_items.append(f"{gettext('Organization')}: {event.admin_unit.name}")
-        ical_event.add("x-eventcally-organization", event.admin_unit.name)
+        admin_unit_name = ical_text(event.admin_unit.name)
+        desc_items.append(f"{gettext('Organization')}: {admin_unit_name}")
+        ical_event.add("x-eventcally-organization", admin_unit_name)
 
     if event.description:
-        desc_short = truncate(event.description, 300)
-        desc_items.append(f"{os.linesep}{desc_short}")
+        desc_short = truncate(ical_text(event.description), 300)
+        desc_items.append(f"\n{desc_short}")
 
-    ical_event.add("description", os.linesep.join(desc_items))
+    ical_event.add("description", "\n".join(desc_items))
 
     if (
         event.attendance_mode
@@ -53,7 +77,7 @@ def populate_ical_event_with_event(ical_event: icalendar.Event, event, url: str)
         and event.event_place
     ):
         place = event.event_place
-        place_str = get_place_str(place)
+        place_str = ical_single_line(get_place_str(place))
         ical_event.add("location", place_str)
 
         location = place.location

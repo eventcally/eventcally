@@ -3,7 +3,7 @@ from typing import Annotated, Optional
 from pydantic import AfterValidator
 
 
-def _normalize_newlines(value: str) -> str:
+def normalize_newlines(value: str) -> str:
     return value.replace("\r\n", "\n").replace("\r", "\n")
 
 
@@ -15,7 +15,7 @@ def _empty_to_none(value: Optional[str]) -> Optional[str]:
     return value or None
 
 
-NormalizedText = Annotated[str, AfterValidator(_normalize_newlines)]
+NormalizedText = Annotated[str, AfterValidator(normalize_newlines)]
 TrimmedText = Annotated[NormalizedText, AfterValidator(str.strip)]
 RecurrenceRule = Annotated[NormalizedText, AfterValidator(_strip_lines)]
 NullableRecurrenceRule = Annotated[

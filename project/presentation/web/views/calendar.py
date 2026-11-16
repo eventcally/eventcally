@@ -11,7 +11,7 @@ from project.application.query_bus import QueryBus
 from project.container import Application
 from project.presentation.shared.query_results import result_or_404
 from project.presentation.web.boot import build_boot_data
-from project.presentation.web.ical import create_ical_events_for_events
+from project.presentation.web.ical import create_ical_events_for_events, ical_text
 from project.presentation.web.views.main_blueprint import main_bp
 from project.presentation.web.views.utils import truncate
 from project.shared.dateutils import create_icalendar, get_today
@@ -50,7 +50,7 @@ def calendar_ical(id, query_bus: QueryBus = Provide[Application.cqrs.query_bus])
         abort(404)
 
     cal = create_icalendar()
-    cal.add("x-wr-calname", calendar.name)
+    cal.add("x-wr-calname", ical_text(calendar.name))
     # No organization and no private flags: only public statuses of verified
     # organizations, like the public search.
     events = query_bus.handle(
