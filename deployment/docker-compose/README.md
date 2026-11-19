@@ -88,7 +88,7 @@ it, copy it again and run `docker compose up --detach fluentd` (or `restart flue
 
 ## Update app
 
-Adjust `WEB_TAG` in .env if necessary.
+Adjust `WEB_TAG` in .env if necessary. `update.sh` also pulls the `nginx` image, so nginx fixes on its `stable` tag arrive with every update.
 
 ```sh
 ./update.sh

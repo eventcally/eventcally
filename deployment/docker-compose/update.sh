@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-docker compose pull web worker scheduler
+docker compose pull web worker scheduler nginx
 docker compose stop web worker scheduler nginx
 docker compose exec db-backup /backup.sh
 docker compose up --detach web
